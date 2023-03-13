@@ -1,15 +1,11 @@
 @include "src/decode-www-form.awk";
 
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/test" {
-  log_request();
   finish_request(200, NULL, "Hello, test!");
 }
 
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/authed" {
-  log_request();
-  delete HTTP_RESPONSE
-  HTTP_RESPONSE["header"][1] = "Content-Type: text/html; charset=UTF-8"
-  HTTP_RESPONSE["body"] = "\
+  render_html(200, "\
 <html>\
   <head>\
     <style>\
@@ -39,14 +35,12 @@ REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/
       <div><input type=\"submit\" value=\"投稿する\"></div>\
     </form>\
   </body>\
-</html>"
-  finish_request(200, HTTP_RESPONSE["header"], HTTP_RESPONSE["body"]);
+</html>");
 }
 
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "POST" && HTTP_REQUEST["path"] == "/authed/posts" {
-  decode_www_form(HTTP_REQUEST["body"][1])
-  HTTP_RESPONSE["header"][1] = "Content-Type: text/html; charset=UTF-8"
-  HTTP_RESPONSE["body"] = "\
+  decode_www_form(HTTP_REQUEST["body"])
+  render_html(200, "\
 <html>\
   <head>\
     <style>\
@@ -71,7 +65,5 @@ REQUEST_PROCESS && HTTP_REQUEST["method"] == "POST" && HTTP_REQUEST["path"] == "
     <h1>" KV["title"] "</h1>\
     <p>" KV["content"] "</p>\
   </body>\
-</html>"
-  log_request();
-  finish_request(200, HTTP_RESPONSE["header"], HTTP_RESPONSE["body"]);
+</html>");
 }

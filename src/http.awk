@@ -24,7 +24,7 @@ function receive_request(    line, splitted, content_length, readcharlen) {
   }
 
   # read HTTP body
-  HTTP_REQUEST["body"][1] = ""
+  HTTP_REQUEST["body"] = ""
   while(content_length > 1) {
     if (content_length <= 1000) {
       readcharlen = content_length - 1
@@ -33,10 +33,11 @@ function receive_request(    line, splitted, content_length, readcharlen) {
     }
     RS = sprintf(".{%d}", readcharlen)
     INET |& getline
-    HTTP_REQUEST["body"][1] = HTTP_REQUEST["body"][1] RT
+    HTTP_REQUEST["body"] = HTTP_REQUEST["body"] RT
     content_length -= readcharlen
   }
   RS="\n"
+  log_request();
 }
 
 function http_response_status(status_num) {
@@ -74,11 +75,9 @@ function log_request() {
   for (i in HTTP_REQUEST["header"]) {
     print "    " HTTP_REQUEST["header"][i];
   }
-  print "  body:";
-  HTTP_REQUEST["body"][0] = ""
-  delete HTTP_REQUEST["body"][0]
-  for (i in HTTP_REQUEST["body"]) {
-    print "    " HTTP_REQUEST["body"][i];
+  if (HTTP_REQUEST["body"] != "") {
+    print "  body:";
+    print "    " HTTP_REQUEST["body"];
   }
   print "";
 }
@@ -93,6 +92,11 @@ function finish_request(status_num, headers, content) {
   send_response(status_num, headers, content);
   REQUEST_PROCESS = 0;
   next;
+}
+
+function render_html(status_num, content,  headers) {
+  headers[1] = "Content-Type: text/html; charset=UTF-8"
+  finish_request(status_num, headers, content)
 }
 
 function start_request() {

@@ -2,8 +2,8 @@
 
 @include "src/http.awk";
 
-
 BEGIN {
+  print "Start awkblog. listen port " PORT " ..."
   initialize_http();
 }
 
