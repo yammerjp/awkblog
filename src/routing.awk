@@ -1,7 +1,22 @@
 @include "src/decode-www-form.awk";
 
+function uuid(    ret) {
+  cmd = "uuidgen"
+  cmd | getline ret
+  close(cmd)
+  return ret
+}
+
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/test" {
   finish_request(200, NULL, "Hello, test!");
+}
+
+REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/authorize" {
+  state = uuid()
+  url = "https://github.com/login/oauth/authorize/?client_id=" AWKBLOG_OAUTH_CLIENT_KEY "&redirect_uri=" AWKBLOG_HOSTNAME "/oauth-callback&state=" state
+  headers[1] = "Location: " url
+  headers[2] = "Set-Cookie: state=" state ";"
+  finish_request(302, headers, "");
 }
 
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/authed" {

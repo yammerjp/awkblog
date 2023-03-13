@@ -44,6 +44,7 @@ function http_response_status(status_num) {
   switch(status_num) {
     case 200: return "200 OK";
     case 204: return "204 OK";
+    case 302: return "302 Found";
     case 404: return "404 Not Found";
     default:  return "500 Not Handled";
   }
