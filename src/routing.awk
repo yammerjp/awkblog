@@ -1,25 +1,38 @@
-@include "src/decode-www-form.awk";
-
-function uuid(    ret) {
-  cmd = "uuidgen"
-  cmd | getline ret
-  close(cmd)
-  return ret
-}
-
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/test" {
-  finish_request(200, NULL, "Hello, test!");
+  render_html(200, "Hello, test!");
 }
 
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/authorize" {
+REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/login" {
   state = uuid()
   url = "https://github.com/login/oauth/authorize/?client_id=" AWKBLOG_OAUTH_CLIENT_KEY "&redirect_uri=" AWKBLOG_HOSTNAME "/oauth-callback&state=" state
-  headers[1] = "Location: " url
-  headers[2] = "Set-Cookie: state=" state ";"
-  finish_request(302, headers, "");
+  COOKIES[state] = state
+  redirect302(url)
+}
+
+REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] ~ /^\/oauth-callback?/ {
+  error = HTTP_REQUEST_PARAMETERS["error"]
+  code = HTTP_REQUEST_PARAMETERS["code"]
+  if (code == "" || error != "") {
+    render_html(500, "failed")
+  }
+  # TODO verify state
+  ret = command_exec("curl -X POST -H 'Accept: application/json' 'https://github.com/login/oauth/access_token?client_id=" AWKBLOG_OAUTH_CLIENT_KEY "&client_secret=" AWKBLOG_OAUTH_CLIENT_SECRET "&code=" code "'")
+  access_token = json_extract(ret, "access_token")
+  if (access_token == "") {
+    render_html(500, "access token is not found")
+  }
+  ret = command_exec("curl -H 'Authorization: Bearer " access_token "' -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' https://api.github.com/user")
+  username = json_extract(ret, "login")
+
+  COOKIES["username"] = "\"" aes256_encrypt(username) "\""
+  render_html(200, "ok")
 }
 
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/authed" {
+  encrypted_username = get_cookie("username")
+  if (encrypted_username != "") {
+      username = aes256_decrypt(encrypted_username)
+  }
   render_html(200, "\
 <html>\
   <head>\
@@ -43,6 +56,7 @@ REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/
   </head>\
   <body>\
     <h1>hello, awkblog!</h1>\
+    <div>username: " username "</div>\
     <form action=\"/authed/posts\" method=\"post\">\
       <div><label>title:<br><input type=\"text\" name=\"title\"></label></div>\
       <div><label>content:<br><textarea name=\"content\"></textarea></label></div>\
