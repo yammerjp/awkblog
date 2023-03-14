@@ -1,4 +1,4 @@
-@include "src/json.awk"
+@include "src/lib/json.awk"
 @include "test.awk"
 
 {

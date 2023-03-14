@@ -13,11 +13,11 @@ BEGIN {
 }
 
 REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/" {
-  finish_request(200, NULL, "Hello, awkblog!");
+  root_controller()
 }
 
-@include "src/routing.awk"
+@include "routing.awk"
 
 REQUEST_PROCESS {
-  finish_request(404, NULL, "");
+  finish_request(404, "");
 }

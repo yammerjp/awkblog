@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+rm -f .autoload.awk
+find src -type f | grep -e "\.awk$" | while read path;do
+  echo "@include \"$path\"" >> .autoload.awk
+done
+
 source ./.env
 
 ./server.awk \

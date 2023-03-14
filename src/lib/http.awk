@@ -7,9 +7,14 @@ function start_request(    line, splitted, content_length, readcharlen) {
   # read first line
   RS="\n"
   INET |& getline line;
-  split(line, splitted," ");
+  if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.1$/) {
+    finish_request(400)
+    return
+  }
+  split(line, splitted,"[ ?]");
   HTTP_REQUEST["method"] = splitted[1];
   HTTP_REQUEST["path"] = splitted[2];
+  HTTP_REQUEST["parameters"] = splitted[3];
 
   content_length = 0
 
@@ -67,9 +72,9 @@ function parse_request() {
     COOKIES[key] = value
   }
   delete HTTP_REQUEST_PARAMETERS
-  idx = index(HTTP_REQUEST["path"], "?")
-  if (idx > 0) {
-    decode_www_form(substr(HTTP_REQUEST["path"], idx + 1))
+  
+  if (length(HTTP_REQUEST["parameters"]) > 0) {
+    decode_www_form(HTTP_REQUEST["parameters"])
   }
   for (i in KV) {
     HTTP_REQUEST_PARAMETERS[i] = KV[i]

@@ -1,4 +1,4 @@
-@include "src/command_exec.awk"
+@include "src/lib/command_exec.awk"
 @include "test.awk"
 
 {

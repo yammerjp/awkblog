@@ -1,3 +1,5 @@
 #!/bin/bash
 
-echo "" | gawk -f test.awk -f test/http.awk
+find test -type f | grep -e '\.awk$' | while read awkfile;do
+  echo '' | awk -f $awkfile
+done
