@@ -1,4 +1,13 @@
 @load "ordchr"
+@namespace "http"
+
+function http::IS(method, path) {
+  return REQUEST_PROCESS && HTTP_REQUEST["method"] == method && HTTP_REQUEST["path"] == path
+}
+
+function http::IS_ANY() {
+  return REQUEST_PROCESS
+}
 
 function start_request(    line, splitted, content_length, readcharlen) {
   $0 = "";
@@ -74,10 +83,10 @@ function parse_request() {
   delete HTTP_REQUEST_PARAMETERS
   
   if (length(HTTP_REQUEST["parameters"]) > 0) {
-    decode_www_form(HTTP_REQUEST["parameters"])
+    lib::decode_www_form(HTTP_REQUEST["parameters"])
   }
-  for (i in KV) {
-    HTTP_REQUEST_PARAMETERS[i] = KV[i]
+  for (i in lib::KV) {
+    HTTP_REQUEST_PARAMETERS[i] = lib::KV[i]
   }
 }
 

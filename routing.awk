@@ -1,22 +1,31 @@
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/test" {
-  render_html(200, "Hello, test!");
+http::IS("GET", "/") {
+  controller::get()
 }
 
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/login" {
-  login_controller()
+http::IS("GET", "/test") {
+  http::render_html(200, "Hello, test!");
 }
 
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] ~ "/oauth-callback" {
-  oauth_callback_controller()
+http::IS("GET", "/login") {
+  controller::login__get()
 }
 
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/authed" {
-  authed_controller()
-}
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/authed/posts/new" {
-  authed_posts_new_controller()
+http::IS("GET", "/oauth-callback") {
+  controller::oauth_callback__get()
 }
 
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "POST" && HTTP_REQUEST["path"] == "/authed/posts" {
-  authed_posts_controller()
+http::IS("GET", "/authed") {
+  controller::authed__get()
+}
+
+http::IS("GET", "/authed/posts/new") {
+  controller::authed__posts__new__get()
+}
+
+http::IS("POST", "/authed/posts") {
+  controller::authed__posts__get()
+}
+
+http::IS_ANY() {
+  http::finish_request(404, "");
 }

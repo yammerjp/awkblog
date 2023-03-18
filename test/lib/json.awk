@@ -1,6 +1,6 @@
 @include "src/lib/json.awk"
-@include "test.awk"
+@include "testutil.awk"
 
 {
-  assertEqual("yammerjp", json_extract("{ \"hoge\": 3, \"username\": \"yammerjp\" }", "username"))
+  assertEqual("yammerjp", lib::json_extract("{ \"hoge\": 3, \"username\": \"yammerjp\" }", "username"))
 }

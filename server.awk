@@ -4,20 +4,12 @@
 
 BEGIN {
   print "Start awkblog. listen port " PORT " ..."
-  initialize_http();
+  http::initialize_http();
 }
 
-!REQUEST_PROCESS {
+!http::REQUEST_PROCESS {
   # start to process a request;
-  start_request();
+  http::start_request();
 }
 
-REQUEST_PROCESS && HTTP_REQUEST["method"] == "GET" && HTTP_REQUEST["path"] == "/" {
-  root_controller()
-}
-
-@include "routing.awk"
-
-REQUEST_PROCESS {
-  finish_request(404, "");
-}
+@include "./routing.awk"

@@ -1,5 +1,7 @@
-function authed_controller() {
-  render_html(200, "\
+@namespace "controller"
+
+function authed__get() {
+  http::render_html(200, "\
 <html>\
   <head>\
     <style>\

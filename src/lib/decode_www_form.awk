@@ -1,3 +1,5 @@
+@namespace "lib"
+
 function decode_www_form(encoded_str,    encoded_parts, key, value, equal_index) {
   delete KV
   split(encoded_str, encoded_parts, "&");
