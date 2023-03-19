@@ -8,8 +8,8 @@
 
 @namespace "lib"
 
-function aes256_encrypt(str,  cmd, ret) {
-  if (!(str ~ /^[a-zA-Z0-9:]+$/)) {
+function aes256_encrypt(str        , cmd, ret) {
+  if (!(str ~ /^[a-zA-Z0-9 ]+$/)) {
     return ""
   }
   cmd = "echo '" str "' | openssl enc -e -base64 -aes-256-cbc -salt -pbkdf2 -pass env:ENCRYPTION_KEY"
@@ -18,7 +18,7 @@ function aes256_encrypt(str,  cmd, ret) {
   return base64_to_urlsafe(ret)
 }
 
-function aes256_decrypt(str,  cmd, ret) {
+function aes256_decrypt(str        , cmd, ret) {
   str = base64_to_urlunsafe(str)
   if (!(str ~ /^[a-zA-Z0-9+\/]+=*$/)) {
     return ""
@@ -37,7 +37,7 @@ function base64_to_urlsafe(str) {
 }
 
 function base64_to_urlunsafe(str) {
-  gsub("-","-", str)
+  gsub("-","+", str)
   gsub("_","/", str)
   switch (length(str) % 4) {
     case 0:
