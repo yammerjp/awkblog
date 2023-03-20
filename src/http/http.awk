@@ -90,12 +90,17 @@ function parse_request() {
   }
 }
 
-function finish_request(status_num, content) {
-  printf "%s", build_http_response(status_num, content) |& INET;
+function finish_request_from_raw(raw_content) {
+  printf "%s", raw_content |& INET;
   close(INET);
   REQUEST_PROCESS = 0;
   delete HTTP_RESPONSE_HEADERS
   next;
+
+}
+
+function finish_request(status_num, content) {
+  finish_request_from_raw(build_http_response(status_num, content))
 }
 
 function build_http_response(status_num, content,    header_str, status) {
