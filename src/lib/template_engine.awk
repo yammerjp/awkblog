@@ -5,7 +5,8 @@ function render_template(filename, variables        , prebr, ret) {
   ret = ""
   while((getline < filename) > 0) {
     if ($0 ~ /^AWKBLOG::[a-z]+$/) {
-      ret = ret sprintf("%s", variables[substr($0, 6)])
+      varname = substr($0, 10)
+      ret = ret sprintf("%s", variables[varname])
       prebr = 0
     } else {
       ret = ret sprintf("%s%s", prebr ? "\n" : "", $0)
