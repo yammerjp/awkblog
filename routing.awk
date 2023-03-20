@@ -3,7 +3,7 @@ http::IS("GET", "/") {
 }
 
 http::IS("GET", "/test") {
-  http::render_html(200, "Hello, test!");
+  http::finish_request_from_html(200, "Hello, test!");
 }
 
 http::IS("GET", "/login") {

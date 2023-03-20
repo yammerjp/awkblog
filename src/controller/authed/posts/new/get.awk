@@ -6,5 +6,5 @@ function authed__posts__new__get() {
       username = lib::aes256_decrypt(encrypted_username)
   }
   variables["username"] = username
-  http::render_html(200, lib::render_template("src/view/authed/posts/new/get.html", variables))
+  http::finish_request_from_html(200, lib::render_template("src/view/authed/posts/new/get.html", variables))
 }

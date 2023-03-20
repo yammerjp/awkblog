@@ -162,7 +162,7 @@ function initialize_http() {
   REQUEST_PROCESS = 0;
 }
 
-function render_html(status_num, content,  headers) {
+function finish_request_from_html(status_num, content,  headers) {
   HTTP_RESPONSE_HEADERS["Content-Type"] = "text/html; charset=UTF-8"
   finish_request(status_num, content)
 }
