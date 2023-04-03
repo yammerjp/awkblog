@@ -1,0 +1,16 @@
+desc: Post article title and content
+runners:
+  req: http://localhost:4567
+steps:
+- req:
+    /authed/posts:
+      post:
+        body:
+          application/x-www-form-urlencoded:
+            content: thisiscontent
+            title: helloawkblog
+            zpadding: 0
+  test: |
+    current.res.status == 200
+    && current.res.headers['Content-Type'][0] == "text/html; charset=UTF-8"
+    && current.res.rawBody == "<html>\n  <head>\n    <style>\n      html {\n        max-width: 70ch;\n        padding: 3em 1em;\n        margin: auto;\n        line-height: 1.75;\n        font-size: 1.25em;\n      }\n      h1,h2,h3,h4,h5,h6 {\n        margin: 3em 0 1em;\n      }\n      p,ul,ol {\n        margin-bottom: 2em;\n        color: #1d1d1d;\n        font-family: sans-serif;\n      }\n    </style>\n  </head>\n  <body>\n    <h1>helloawkblog</h1>\n    <p>thisiscontent</p>\n  </body>\n</html>\n"

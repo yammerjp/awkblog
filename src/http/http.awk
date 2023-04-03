@@ -2,19 +2,19 @@
 @namespace "http"
 
 function http::IS(method, path) {
-  return REQUEST_PROCESS && HTTP_REQUEST["method"] == method && HTTP_REQUEST["path"] == path
+  return REQUEST_PROCESS && HTTP_REQUEST["method"] == method && (HTTP_REQUEST["path"] == path || HTTP_REQUEST["path"] == path "/")
 }
 
 function http::IS_ANY() {
   return REQUEST_PROCESS
 }
 
-function start_request(    line, splitted, content_length, readcharlen) {
+function start_request(    line, splitted, content_length, readcharlen, leftover) {
   $0 = "";
 
   delete HTTP_REQUEST
   # read first line
-  RS="\n"
+  awk::RS="\n"
   INET |& getline line;
   if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.1$/) {
     finish_request(400)
@@ -30,31 +30,35 @@ function start_request(    line, splitted, content_length, readcharlen) {
 
   # read HTTP header
   for(i = 1; INET |& getline line > 0; i++) {
-    if (line ~ /^Content-Length: /) {
-      content_length = substr(line, 17)
-    }
-
     if (line == "" || line == "\r") {
       break;
     }
     gsub(/\r/, "" , line)
     HTTP_REQUEST["header"][i] = line;
+
+    if (line ~ /^Content-Length: /) {
+      content_length = int(substr(line, 17))
+    }
   }
 
   # read HTTP body
   HTTP_REQUEST["body"] = ""
-  while(content_length > 1) {
+
+  # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
+  leftover = 1
+
+  while(content_length > leftover) {
     if (content_length > 1000) {
       readcharlen = 1000
     } else {
-      readcharlen = content_length - 1
+      readcharlen = content_length - leftover
     }
-    RS = sprintf(".{%d}", readcharlen)
+    awk::RS = sprintf(".{%d}", readcharlen)
     INET |& getline
-    HTTP_REQUEST["body"] = HTTP_REQUEST["body"] RT
+    HTTP_REQUEST["body"] = HTTP_REQUEST["body"] awk::RT
     content_length -= readcharlen
   }
-  RS="\n"
+  awk::RS="\n"
   parse_request()
   log_request()
 

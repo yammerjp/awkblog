@@ -23,8 +23,12 @@ http::IS("GET", "/authed/posts/new") {
   controller::authed__posts__new__get()
 }
 
-http::IS("POST", "/authed/posts") {
+http::IS("GET", "/authed/posts") {
   controller::authed__posts__get()
+}
+
+http::IS("POST", "/authed/posts") {
+  controller::authed__posts__post()
 }
 
 http::IS_ANY() {

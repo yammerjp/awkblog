@@ -44,19 +44,19 @@ function decode_utf8_parcent_encoding(encoded_str,    chars, decoded_str, L, N, 
     # TODO: byte sequence verificaction
     if (chars[N+1] ~ /^[0-7]$/ ) {
       # 0xxxxxxx
-      decoded_str = sprintf("%s%c", decoded_str, strtonum("0x" chars[N+1] chars[N+2]))
+      decoded_str = sprintf("%s%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]))
       N+=3
     } else if (chars[N+1] ~ /^[c-dC-D]$/ && chars[N+3] = "%") {
       # 110xxxxx 10xxxxxx
-      decoded_str = sprintf("%s%c%c", decoded_str, strtonum("0x" chars[N+1] chars[N+2]), strtonum("0x" chars[N+4] chars[N+5]))
+      decoded_str = sprintf("%s%c%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]))
       N+=6
     } else if (chars[N+1] ~ /^[eE]$/ && chars[N+3] == "%" && chars[N+6] == "%") {
       # 1110xxxx 10xxxxxx 10xxxxxx
-      decoded_str = sprintf("%s%c%c%c", decoded_str, strtonum("0x" chars[N+1] chars[N+2]), strtonum("0x" chars[N+4] chars[N+5]), strtonum("0x" chars[N+7] chars[N+8]))
+      decoded_str = sprintf("%s%c%c%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]), awk::strtonum("0x" chars[N+7] chars[N+8]))
       N+=9
     } else if (chars[N+1] ~ /^[fF]$/ && chars[N+3] == "%" && chars[N+6] == "%" && chars[N+9] == "%") {
       # 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-      decoded_str = sprintf("%s%c%c%c%c", decoded_str, strtonum("0x" chars[N+1] chars[N+2]), strtonum("0x" chars[N+4] chars[N+5]), strtonum("0x" chars[N+7] chars[N+8]), strtonum("0x" chars[N+10] chars[N+11]))
+      decoded_str = sprintf("%s%c%c%c%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]), awk::strtonum("0x" chars[N+7] chars[N+8]), awk::strtonum("0x" chars[N+10] chars[N+11]))
       N+=12
     } else {
       print "failed"
