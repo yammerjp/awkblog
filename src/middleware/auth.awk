@@ -1,11 +1,15 @@
 @namespace "auth"
 
-function verify(        encrypted_username, username) {
-  encrypted_username = http::get_cookie("login_session")
-  if (encrypted_username == "empty") {
+function verify(        encrypted, decrypted, userid, username) {
+  encrypted = http::get_cookie("login_session")
+  if (encrypted == "empty") {
     return 0
   }
-  username = lib::aes256_decrypt(encrypted_username)
+  decrypted = lib::aes256_decrypt(encrypted)
+  split(decrypted, splitted, " ")
+  userid = splitted[1]
+  username = splitted[2]
+  MIDDLEWARE_AUTH["userid"] = userid
   MIDDLEWARE_AUTH["username"] = username
   return length(username) > 0
 }
@@ -24,8 +28,16 @@ function userid() {
   return MIDDLEWARE_AUTH["userid"]
 }
 
-function login(username) {
-  http::set_cookie("login_session", lib::aes256_encrypt(username))
+function login(userid, username,        params) {
+  delete params;
+  params[1] = userid
+  params[2] = username
+  pgsql::exec("SELECT id, name FROM accounts WHERE id =  $1 AND accounts =  $2;",  params)
+#  ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name ;
+  print "id: " pgsql::fetch_result(0, "id")
+  login_session_str = sprintf("%s %s", userid, username)
+  encrypted = lib::aes256_encrypt(login_session_str)
+  http::set_cookie("login_session", encrypted)
 }
 
 function logout() {

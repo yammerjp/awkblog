@@ -17,5 +17,17 @@ services:
     environment:
       - POSTGRES_PASSWORD=passw0rd
       - POSTGRES_USER=postgres
+  pgadmin4:
+    image: dpage/pgadmin4
+    ports:
+      - "0.0.0.0:4568:80"
+    volumes:
+        - pgadmin4_data:/var/lib/pgadmin
+    environment:
+        PGADMIN_DEFAULT_EMAIL: yammer@example.com
+        PGADMIN_DEFAULT_PASSWORD: password
+    depends_on:
+      - db
 volumes:
   db-store:
+  pgadmin4_data:
