@@ -10,4 +10,4 @@ steps:
         get:
           body: null
     test: |
-      current.res.body == null && current.res.status == 302 && current.res.headers["Location"][0] matches "^https://github.com/login/oauth/authorize/\\?client_id=[a-z0-9]+&redirect_uri=http(s)?://[a-z0-9.-]+(:[0-9]+)?/oauth-callback&state=[a-z0-9-]+$" && current.res.headers["Set-Cookie"][0] matches "^state=[a-z0-9-]+;$"
+      current.res.body == null && current.res.status == 302 && current.res.headers["Location"][0] matches "^https://github.com/login/oauth/authorize/\\?client_id=[a-z0-9]+&redirect_uri=http(s)?://[a-z0-9.-]+(:[0-9]+)?/oauth-callback&state=[a-z0-9-]+$" && current.res.headers["Set-Cookie"][0] matches "^state=[a-z0-9-]+; SameSite=Lax; HttpOnly$"
