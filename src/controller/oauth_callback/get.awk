@@ -14,7 +14,6 @@ function oauth_callback__get() {
   }
   ret = lib::command_exec("curl -H 'Authorization: Bearer " access_token "' -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' https://api.github.com/user")
   username = lib::json_extract(ret, "login")
-
-  http::COOKIES["username"] = "\"" lib::aes256_encrypt(username) "\""
+  http::set_cookie("username", lib::aes256_encrypt(username))
   http::redirect302("/authed")
 }

@@ -123,7 +123,7 @@ function build_http_response(status_num, content,    header_str, status) {
     }
   }
   if (cookies != "") {
-    header_str = header_str cookies "\n"
+    header_str = header_str "Set-Cookie: " cookies "\n"
   }
   return sprintf("HTTP/1.1 %s\n%s\n%s", status, header_str, content);
 }
@@ -158,6 +158,10 @@ function get_cookie(key) {
     }
   }
   return ""
+}
+
+function set_cookie(key, value) {
+  COOKIES[key] = value
 }
 
 function initialize_http() {
