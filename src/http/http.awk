@@ -37,6 +37,7 @@ function start_request(    line, splitted, content_length, readcharlen) {
     if (line == "" || line == "\r") {
       break;
     }
+    gsub(/\r/, "" , line)
     HTTP_REQUEST["header"][i] = line;
   }
 
@@ -65,16 +66,16 @@ function parse_request() {
   for(i in HTTP_REQUEST["header"]) {
     line = HTTP_REQUEST["header"][i]
     colon_space = index(line, ": ")
-    key = substr(line, 1, colon_space)
+    key = substr(line, 1, colon_space-1)
     value = substr(line, colon_space+2)
     HTTP_REQUEST_HEADERS[key] = value
   }
 
   delete COOKIES
-  split(HTTP_REQUEST_HEADERS["Cookie"], splitted, ";")
+  split(HTTP_REQUEST_HEADERS["Cookie"], splitted, "; ")
   for(i in splitted) {
     idx = index(splitted[i], "=")
-    key = substr(splitted[i], 1, idx)
+    key = substr(splitted[i], 1, idx-1)
     value = substr(splitted[i], idx+1)
     if (value ~ "^\".*\"$") {
       value = substr(value, 2, length(value) - 2)
@@ -109,6 +110,7 @@ function build_http_response(status_num, content,    header_str, status) {
     case 200: status = "200 OK"; break;
     case 204: status = "204 OK"; break;
     case 302: status = "302 Found"; break;
+    case 401: status = "401 Unauthorized"; break;
     case 404: status = "404 Not Found"; break;
     default:  status = "500 Not Handled";break;
   }
@@ -152,10 +154,8 @@ function log_request() {
 }
 
 function get_cookie(key) {
-  for(i in COOKIES) {
-    if (i == key) {
-      return key
-    }
+  if (key in COOKIES) {
+      return COOKIES[key]
   }
   return ""
 }
