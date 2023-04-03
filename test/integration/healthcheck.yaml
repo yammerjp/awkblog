@@ -1,0 +1,11 @@
+desc: Render top page
+runners:
+  req: http://localhost:4567
+steps:
+  login:
+    req:
+      /:
+        get:
+          body: null
+    test: |
+      current.res.status == 200
