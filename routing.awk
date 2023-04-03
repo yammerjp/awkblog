@@ -15,6 +15,7 @@ http::IS("GET", "/oauth-callback") {
 }
 
 http::IS("GET", "/authed") {
+  auth::redirect_if_failed_to_verify()
   http::finish_request_from_raw(controller::authed__get(HTTP_REQUEST_HEADERS, HTTP_REQUEST["body"]))
 }
 

@@ -71,7 +71,8 @@ function parse_request() {
     HTTP_REQUEST_HEADERS[key] = value
   }
 
-  delete COOKIES
+  delete REQUEST_COOKIES
+  delete RESPONSE_COOKIES
   split(HTTP_REQUEST_HEADERS["Cookie"], splitted, "; ")
   for(i in splitted) {
     idx = index(splitted[i], "=")
@@ -80,7 +81,7 @@ function parse_request() {
     if (value ~ "^\".*\"$") {
       value = substr(value, 2, length(value) - 2)
     }
-    COOKIES[key] = value
+    REQUEST_COOKIES[key]["value"] = value
   }
   delete HTTP_REQUEST_PARAMETERS
   
@@ -118,16 +119,27 @@ function build_http_response(status_num, content,    header_str, status) {
   for(i in HTTP_RESPONSE_HEADERS) {
     header_str = header_str i ": " HTTP_RESPONSE_HEADERS[i] "\n";
   }
-  cookies = ""
-  for (i in COOKIES) {
-    if (i != "" && COOKIES[i] != "") {
-      cookies = cookies i "=" COOKIES[i] ";"
-    }
-  }
-  if (cookies != "") {
-    header_str = header_str "Set-Cookie: " cookies "\n"
-  }
+  header_str = header_str build_cookie_header();
+
   return sprintf("HTTP/1.1 %s\n%s\n%s", status, header_str, content);
+}
+
+function build_cookie_header(        header_str, max_age, secure) {
+  header_str = ""
+  for (i in RESPONSE_COOKIES) {
+    if ("Max-Age" in RESPONSE_COOKIES[i]) {
+      max_age = sprintf("; Max-Age=%s;", RESPONSE_COOKIES[i]["Max-Age"])
+    } else {
+      max_age = ""
+    }
+    if (awk::AWKBLOG_HOSTNAME ~ /^https:\/\//) {
+      secure = sprintf("; Secure")
+    } else {
+      secure = ""
+    }
+    header_str = sprintf("%sSet-Cookie: %s=%s; SameSite=Lax; HttpOnly%s%s\n", header_str, i, RESPONSE_COOKIES[i]["value"], max_age, secure)
+  }
+  return header_str
 }
 
 function log_request() {
@@ -154,14 +166,18 @@ function log_request() {
 }
 
 function get_cookie(key) {
-  if (key in COOKIES) {
-      return COOKIES[key]
+  if (key in REQUEST_COOKIES) {
+      return REQUEST_COOKIES[key]["value"]
   }
   return ""
 }
 
 function set_cookie(key, value) {
-  COOKIES[key] = value
+  RESPONSE_COOKIES[key]["value"] = value
+}
+
+function set_cookie_max_age(key, max_age) {
+  RESPONSE_COOKIES[key]["Max-Age"] = max_age
 }
 
 function initialize_http() {
@@ -182,4 +198,8 @@ function finish_request_from_html(status_num, content) {
 function redirect302(url) {
   HTTP_RESPONSE_HEADERS["Location"] = url
   finish_request(302, "");
+}
+
+function set_header(key, value) {
+  HTTP_RESPONSE_HEADERS[key] = value
 }
