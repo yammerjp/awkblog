@@ -24,6 +24,7 @@ function start_request(    line, splitted, content_length, readcharlen) {
   HTTP_REQUEST["method"] = splitted[1];
   HTTP_REQUEST["path"] = splitted[2];
   HTTP_REQUEST["parameters"] = splitted[3];
+  HTTP_REQUEST["version"] = splitted[4];
 
   content_length = 0
 
@@ -84,9 +85,9 @@ function parse_request() {
   
   if (length(HTTP_REQUEST["parameters"]) > 0) {
     lib::decode_www_form(HTTP_REQUEST["parameters"])
-  }
-  for (i in lib::KV) {
-    HTTP_REQUEST_PARAMETERS[i] = lib::KV[i]
+    for (i in lib::KV) {
+      HTTP_REQUEST_PARAMETERS[i] = lib::KV[i]
+    }
   }
 }
 
@@ -96,7 +97,6 @@ function finish_request_from_raw(raw_content) {
   REQUEST_PROCESS = 0;
   delete HTTP_RESPONSE_HEADERS
   next;
-
 }
 
 function finish_request(status_num, content) {
@@ -134,6 +134,10 @@ function log_request() {
   print "    " HTTP_REQUEST["method"];
   print "  path:";
   print "    " HTTP_REQUEST["path"];
+  print "  parameter:";
+  for (i in HTTP_REQUEST_PARAMETERS) {
+    print "    " i ": " HTTP_REQUEST_PARAMETERS[i];
+  }
   print "  header:";
   HTTP_REQUEST["header"][0] = ""
   delete HTTP_REQUEST["header"][0]
@@ -162,9 +166,13 @@ function initialize_http() {
   REQUEST_PROCESS = 0;
 }
 
-function finish_request_from_html(status_num, content,  headers) {
+function render_html(status_num, content) {
   HTTP_RESPONSE_HEADERS["Content-Type"] = "text/html; charset=UTF-8"
-  finish_request(status_num, content)
+  return build_http_response(status_num, content)
+}
+
+function finish_request_from_html(status_num, content) {
+  finish_request_from_raw(render_html(status_num, content))
 }
 
 function redirect302(url) {

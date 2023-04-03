@@ -1,7 +1,7 @@
 @namespace "lib"
 
 function decode_www_form(encoded_str,    encoded_parts, key, value, equal_index) {
-  delete KV
+  delete lib::KV
   split(encoded_str, encoded_parts, "&");
 
   for (i in encoded_parts) {
@@ -25,7 +25,7 @@ function decode_www_form(encoded_str,    encoded_parts, key, value, equal_index)
     # utf-8 percent decode
     key = decode_utf8_parcent_encoding(key)
     value = decode_utf8_parcent_encoding(value)
-    KV[key] = value
+    lib::KV[key] = value
   }
 }
 

@@ -15,7 +15,7 @@ http::IS("GET", "/oauth-callback") {
 }
 
 http::IS("GET", "/authed") {
-  controller::authed__get()
+  http::finish_request_from_raw(controller::authed__get(HTTP_REQUEST_HEADERS, HTTP_REQUEST["body"]))
 }
 
 http::IS("GET", "/authed/posts/new") {
