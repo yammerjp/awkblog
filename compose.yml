@@ -1,0 +1,21 @@
+services:
+  gawk:
+    build: ./
+    entrypoint: /app/start.sh
+    depends_on:
+      - db
+    volumes:
+      - "./:/app"
+    ports:
+      - "4567:4567"
+    env_file:
+      - .env
+  db:
+    image: postgres:14
+    volumes:
+      - db-store:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=passw0rd
+      - POSTGRES_USER=postgres
+volumes:
+  db-store:

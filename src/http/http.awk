@@ -1,4 +1,3 @@
-@load "ordchr"
 @namespace "http"
 
 function http::IS(method, path) {
