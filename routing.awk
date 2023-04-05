@@ -20,14 +20,17 @@ http::IS("GET", "/authed") {
 }
 
 http::IS("GET", "/authed/posts/new") {
+  auth::redirect_if_failed_to_verify()
   controller::authed__posts__new__get()
 }
 
 http::IS("GET", "/authed/posts") {
+  auth::redirect_if_failed_to_verify()
   controller::authed__posts__get()
 }
 
 http::IS("POST", "/authed/posts") {
+  auth::redirect_if_failed_to_verify()
   controller::authed__posts__post()
 }
 

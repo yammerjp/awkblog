@@ -3,15 +3,12 @@
 @namespace "pgsql"
 
 function exec(query, params,        response, number_of_fields, col, number_of_row, row) {
-  if (awk::pg_sendqueryparams(Connection, query, length(params), params) == 0) {
-    printf "pg_sendquery(%s) failed: %s\n", query, ERRNO
-    return 0
-  }
-  response = awk::pg_getresult(Connection)
+  response = awk::pg_execparams(Connection, query, length(params), params)
   delete RESULT
   RESULT[0] = ""
   delete RESULT[0]
   if (response ~ /^OK/) {
+     awk::pg_clear(response)
     return 1
   }
   if (response ~ /^TUPLES /) {
@@ -25,7 +22,6 @@ o    }
          RESULT[row][columns[col]] = (awk::pg_getisnull(response,row,col) ? "<NULL>" : awk::pg_getvalue(response,row,col))
        }
      }
-     awk::pg_clear(response)
 
     if (DEBUG) {
       for(i in RESULT) {
@@ -35,8 +31,10 @@ o    }
         }
       }
     }
+    awk::pg_clear(response)
     return 1
   }
+  awk::pg_clear(response)
   return 0
 }
 

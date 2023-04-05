@@ -9,10 +9,11 @@
 @namespace "lib"
 
 function aes256_encrypt(str        , cmd, ret) {
-  if (!(str ~ /^[a-zA-Z0-9 ]+$/)) {
+  if (!(str ~ /^[a-zA-Z0-9_ -]+$/)) {
+    print "[Error]: invalid charactor is included"
     return ""
   }
-  cmd = "echo '" str "' | openssl enc -e -base64 -aes-256-cbc -salt -pbkdf2 -pass env:ENCRYPTION_KEY"
+  cmd = "echo '" str "' | openssl enc -A -base64 -aes-256-cbc -salt -pbkdf2 -pass env:ENCRYPTION_KEY"
   cmd |& getline ret
   close(cmd)
   return base64_to_urlsafe(ret)

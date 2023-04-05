@@ -1,17 +1,19 @@
 @namespace "auth"
 
-function verify(        encrypted, decrypted, userid, username) {
+function verify(        encrypted, decrypted) {
   encrypted = http::get_cookie("login_session")
-  if (encrypted == "empty") {
+  if (encrypted == "empty" || encrypted == "") {
+    print "empty"
     return 0
   }
   decrypted = lib::aes256_decrypt(encrypted)
   split(decrypted, splitted, " ")
-  userid = splitted[1]
-  username = splitted[2]
-  MIDDLEWARE_AUTH["userid"] = userid
-  MIDDLEWARE_AUTH["username"] = username
-  return length(username) > 0
+  if (splitted[1] != "AWKBLOG_LOGIN_SESSION") {
+    return 0
+  }
+  MIDDLEWARE_AUTH["userid"] = splitted[2]
+  MIDDLEWARE_AUTH["username"] = splitted[3]
+  return length(MIDDLEWARE_AUTH["userid"]) > 0 && length(MIDDLEWARE_AUTH["username"]) > 0
 }
 
 function redirect_if_failed_to_verify() {
@@ -29,13 +31,13 @@ function userid() {
 }
 
 function login(userid, username,        params) {
-  delete params;
+  query = "INSERT INTO accounts( id, name ) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;"
   params[1] = userid
   params[2] = username
-  pgsql::exec("SELECT id, name FROM accounts WHERE id =  $1 AND accounts =  $2;",  params)
-#  ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name ;
-  print "id: " pgsql::fetch_result(0, "id")
-  login_session_str = sprintf("%s %s", userid, username)
+  pgsql::exec(query, params)
+  query = "SELECT id, name FROM accounts WHERE id = $1 AND name = $2;"
+  pgsql::exec(query, params)
+  login_session_str = sprintf("AWKBLOG_LOGIN_SESSION %d %s", userid, username)
   encrypted = lib::aes256_encrypt(login_session_str)
   http::set_cookie("login_session", encrypted)
 }
