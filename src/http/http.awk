@@ -1,5 +1,16 @@
 @namespace "http"
 
+function http::IS_STARTS_WITH(method, path_prefix,        path) {
+  if (!REQUEST_PROCESS || HTTP_REQUEST["method"] != method) {
+    return 0
+  }
+  path = HTTP_REQUEST["path"]
+  if (length(path_prefix) > length(path)) {
+    return 0
+  }
+  return substr(path, 1, length(path_prefix)) == path_prefix
+}
+
 function http::IS(method, path) {
   return REQUEST_PROCESS && HTTP_REQUEST["method"] == method && (HTTP_REQUEST["path"] == path || HTTP_REQUEST["path"] == path "/")
 }
@@ -205,4 +216,8 @@ function redirect302(url) {
 
 function set_header(key, value) {
   HTTP_RESPONSE_HEADERS[key] = value
+}
+
+function request_path() {
+  return HTTP_REQUEST["path"]
 }

@@ -34,6 +34,10 @@ http::IS("POST", "/authed/posts") {
   controller::authed__posts__post()
 }
 
+http::IS_STARTS_WITH("GET", "/@") {
+  controller::_account_id__get()
+}
+
 http::IS_ANY() {
   http::finish_request(404, "");
 }
