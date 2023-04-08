@@ -16,5 +16,5 @@ function oauth_callback__get() {
   username = lib::json_extract_string(ret, "login")
   id = lib::json_extract_number(ret, "id")
   auth::login(id, username)
-  http::redirect302("/authed")
+  http::redirect302(AWKBLOG::HOST_NAME "/authed")
 }
