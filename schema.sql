@@ -5,7 +5,7 @@ CREATE TABLE accounts (
 );
 
 CREATE TABLE posts (
-  id bigint PRIMARY KEY NOT NULL,
+  id SERIAL PRIMARY KEY NOT NULL,
   account_id bigint NOT NULL REFERENCES accounts(id),
   title text,
   content text,

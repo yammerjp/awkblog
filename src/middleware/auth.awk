@@ -26,7 +26,7 @@ function get_username() {
   return MIDDLEWARE_AUTH["username"]
 }
 
-function userid() {
+function get_account_id() {
   return MIDDLEWARE_AUTH["userid"]
 }
 
