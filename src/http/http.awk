@@ -19,7 +19,7 @@ function http::IS_ANY() {
   return isRequestRecieived
 }
 
-function startRequest(    line, splitted, content_length, readcharlen, leftover) {
+function receiveRequest(    line, splitted, content_length, readcharlen, leftover) {
   $0 = "";
 
   delete HTTP_REQUEST

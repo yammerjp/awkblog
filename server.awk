@@ -25,7 +25,7 @@ BEGIN {
 
 !http::REQUEST_PROCESS {
   # start to process a request;
-  http::startRequest();
+  http::receiveRequest();
 }
 
 @include "./routing.awk"
