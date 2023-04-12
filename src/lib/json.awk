@@ -1,6 +1,6 @@
-@namespace "lib"
+@namespace "json"
 
-function jsonExtractString(json_str, key,    splitted) {
+function extractString(json_str, key,    splitted) {
   split(json_str, splitted, "\"")
   for (i = 1; i<=length(splitted);i++) {
     if (splitted[i] == key) {
@@ -10,7 +10,7 @@ function jsonExtractString(json_str, key,    splitted) {
   return ""
 }
 
-function jsonExtractNumber(json_str, key,        splitted, value) {
+function extractNumber(json_str, key,        splitted, value) {
   split(json_str, splitted, "\"")
   for (i = 1; i<=length(splitted);i++) {
     if (splitted[i] == key) {

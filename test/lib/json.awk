@@ -2,5 +2,5 @@
 @include "testutil.awk"
 
 {
-  assertEqual("yammerjp", lib::jsonExtractString("{ \"hoge\": 3, \"username\": \"yammerjp\" }", "username"))
+  assertEqual("yammerjp", json::extractString("{ \"hoge\": 3, \"username\": \"yammerjp\" }", "username"))
 }
