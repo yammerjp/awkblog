@@ -1,6 +1,6 @@
-@namespace "lib"
+@namespace "uuid"
 
-function uuid(    ret) {
+function gen(    ret) {
   cmd = "uuidgen"
   cmd | getline ret
   close(cmd)
