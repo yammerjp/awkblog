@@ -38,8 +38,8 @@ o    }
   return 0
 }
 
-function create_connection() {
-  print "create_connection"
+function createConnection() {
+  print "createConnection"
   if ((Connection = awk::pg_connect("host=db dbname=postgres user=postgres password=passw0rd")) == "") {
     printf "pg_connectionect failed: %s\n", ERRNO > "/dev/stderr"
     return 0
@@ -47,10 +47,10 @@ function create_connection() {
   return 1
 }
 
-function fetch_rows() {
+function fetchRows() {
   return length(RESULT)
 }
 
-function fetch_result(row, column_name) {
+function fetchResult(row, column_name) {
   return RESULT[row][column_name]
 }

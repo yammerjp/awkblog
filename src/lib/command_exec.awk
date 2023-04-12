@@ -1,6 +1,6 @@
 @namespace "lib"
 
-function command_exec(cmd) {
+function commandExec(cmd) {
   while((cmd | getline) > 0) {
     ret = ret $0 "\n"
   }

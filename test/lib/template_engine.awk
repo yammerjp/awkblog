@@ -7,6 +7,6 @@
   <body>\n\
     <p>hello, world!</p>\n\
   </body>\n\
-</html>\n", lib::render_template("test/lib/template_engine.html", variables))
+</html>\n", lib::renderTemplate("test/lib/template_engine.html", variables))
 }
 

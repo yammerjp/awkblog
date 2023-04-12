@@ -8,7 +8,7 @@
 
 @namespace "lib"
 
-function aes256_encrypt(str        , cmd, ret) {
+function aes256Encrypt(str        , cmd, ret) {
   if (!(str ~ /^[a-zA-Z0-9_ -]+$/)) {
     print "[Error]: invalid charactor is included"
     return ""
@@ -16,13 +16,13 @@ function aes256_encrypt(str        , cmd, ret) {
   cmd = "echo '" str "' | openssl enc -A -base64 -aes-256-cbc -salt -pbkdf2 -pass env:ENCRYPTION_KEY"
   cmd |& getline ret
   close(cmd)
-  return base64_to_urlsafe(ret)
+  return base64ToUrlsafe(ret)
 }
 
-function aes256_decrypt(str        , cmd, ret) {
-  str = base64_to_urlunsafe(str)
+function aes256Decrypt(str        , cmd, ret) {
+  str = base64ToUrlunsafe(str)
   if (!(str ~ /^[a-zA-Z0-9+/]+=*$/)) {
-    print "[Error]: aes256_decrypt"
+    print "[Error]: aes256Decrypt"
     return ""
   }
   cmd =  "echo '" str "' | openssl enc -d -base64 -aes-256-cbc -salt -pbkdf2 -pass env:ENCRYPTION_KEY"
@@ -31,14 +31,14 @@ function aes256_decrypt(str        , cmd, ret) {
   return ret
 }
 
-function base64_to_urlsafe(str) {
+function base64ToUrlsafe(str) {
   gsub("+","-", str)
   gsub("/","_", str)
   gsub("=", "", str)
   return str
 }
 
-function base64_to_urlunsafe(str) {
+function base64ToUrlunsafe(str) {
   gsub("-","+", str)
   gsub("_","/", str)
   switch (length(str) % 4) {
@@ -54,8 +54,8 @@ function base64_to_urlunsafe(str) {
 }
 
 # /^:/{
-#   print aes256_encrypt($0)
+#   print aes256Encrypt($0)
 #   }
 # /^[^:]/ {
-#   print aes256_decrypt($0)
+#   print aes256Decrypt($0)
 # }

@@ -19,7 +19,7 @@ function http::IS_ANY() {
   return REQUEST_PROCESS
 }
 
-function start_request(    line, splitted, content_length, readcharlen, leftover) {
+function startRequest(    line, splitted, content_length, readcharlen, leftover) {
   $0 = "";
 
   delete HTTP_REQUEST
@@ -27,7 +27,7 @@ function start_request(    line, splitted, content_length, readcharlen, leftover
   awk::RS="\n"
   INET |& getline line;
   if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.1$/) {
-    finish_request(400)
+    finishRequest(400)
     return
   }
   split(line, splitted,"[ ?]");
@@ -69,13 +69,13 @@ function start_request(    line, splitted, content_length, readcharlen, leftover
     content_length -= readcharlen
   }
   awk::RS="\n"
-  parse_request()
+  parseRequest()
   log_request()
 
   REQUEST_PROCESS = 1;
 }
 
-function parse_request() {
+function parseRequest() {
   delete HTTP_REQUEST_HEADERS
   for(i in HTTP_REQUEST["header"]) {
     line = HTTP_REQUEST["header"][i]
@@ -100,14 +100,14 @@ function parse_request() {
   delete HTTP_REQUEST_PARAMETERS
   
   if (length(HTTP_REQUEST["parameters"]) > 0) {
-    lib::decode_www_form(HTTP_REQUEST["parameters"])
+    lib::decodeWwwForm(HTTP_REQUEST["parameters"])
     for (i in lib::KV) {
       HTTP_REQUEST_PARAMETERS[i] = lib::KV[i]
     }
   }
 }
 
-function finish_request_from_raw(raw_content) {
+function finishRequestFromRaw(raw_content) {
   printf "%s", raw_content |& INET;
   close(INET);
   REQUEST_PROCESS = 0;
@@ -115,11 +115,11 @@ function finish_request_from_raw(raw_content) {
   next;
 }
 
-function finish_request(status_num, content) {
-  finish_request_from_raw(build_http_response(status_num, content))
+function finishRequest(status_num, content) {
+  finishRequestFromRaw(buildHttpResponse(status_num, content))
 }
 
-function build_http_response(status_num, content,    header_str, status) {
+function buildHttpResponse(status_num, content,    header_str, status) {
   
   switch(status_num) {
     case 200: status = "200 OK"; break;
@@ -133,12 +133,12 @@ function build_http_response(status_num, content,    header_str, status) {
   for(i in HTTP_RESPONSE_HEADERS) {
     header_str = header_str i ": " HTTP_RESPONSE_HEADERS[i] "\n";
   }
-  header_str = header_str build_cookie_header();
+  header_str = header_str buildCookieHeader();
 
   return sprintf("HTTP/1.1 %s\n%s\n%s", status, header_str, content);
 }
 
-function build_cookie_header(        header_str, max_age, secure) {
+function buildCookieHeader(        header_str, max_age, secure) {
   header_str = ""
   for (i in RESPONSE_COOKIES) {
     if ("Max-Age" in RESPONSE_COOKIES[i]) {
@@ -179,45 +179,45 @@ function log_request() {
   print "";
 }
 
-function get_cookie(key) {
+function getCookie(key) {
   if (key in REQUEST_COOKIES) {
       return REQUEST_COOKIES[key]["value"]
   }
   return ""
 }
 
-function set_cookie(key, value) {
+function setCookie(key, value) {
   RESPONSE_COOKIES[key]["value"] = value
 }
 
-function set_cookie_max_age(key, max_age) {
+function setCookieMaxAge(key, max_age) {
   RESPONSE_COOKIES[key]["Max-Age"] = max_age
 }
 
-function initialize_http() {
+function initializeHttp() {
   INET = "/inet/tcp/" PORT "/0/0";
   FS=""
   REQUEST_PROCESS = 0;
 }
 
-function render_html(status_num, content) {
+function renderHtml(status_num, content) {
   HTTP_RESPONSE_HEADERS["Content-Type"] = "text/html; charset=UTF-8"
-  return build_http_response(status_num, content)
+  return buildHttpResponse(status_num, content)
 }
 
-function finish_request_from_html(status_num, content) {
-  finish_request_from_raw(render_html(status_num, content))
+function sed(status_num, content) {
+  finishRequestFromRaw(renderHtml(status_num, content))
 }
 
 function redirect302(url) {
   HTTP_RESPONSE_HEADERS["Location"] = url
-  finish_request(302, "");
+  finishRequest(302, "");
 }
 
-function set_header(key, value) {
+function setHeader(key, value) {
   HTTP_RESPONSE_HEADERS[key] = value
 }
 
-function request_path() {
+function requestPath() {
   return HTTP_REQUEST["path"]
 }

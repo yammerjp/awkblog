@@ -3,7 +3,7 @@ http::IS("GET", "/") {
 }
 
 http::IS("GET", "/test") {
-  http::finish_request_from_html(200, "Hello, test!");
+  http::sed(200, "Hello, test!");
 }
 
 http::IS("GET", "/login") {
@@ -15,22 +15,22 @@ http::IS("GET", "/oauth-callback") {
 }
 
 http::IS("GET", "/authed") {
-  auth::redirect_if_failed_to_verify()
-  http::finish_request_from_raw(controller::authed__get(HTTP_REQUEST_HEADERS, HTTP_REQUEST["body"]))
+  auth::redirectIfFailedToVerify()
+  http::finishRequestFromRaw(controller::authed__get(HTTP_REQUEST_HEADERS, HTTP_REQUEST["body"]))
 }
 
 http::IS("GET", "/authed/posts/new") {
-  auth::redirect_if_failed_to_verify()
+  auth::redirectIfFailedToVerify()
   controller::authed__posts__new__get()
 }
 
 http::IS("GET", "/authed/posts") {
-  auth::redirect_if_failed_to_verify()
+  auth::redirectIfFailedToVerify()
   controller::authed__posts__get()
 }
 
 http::IS("POST", "/authed/posts") {
-  auth::redirect_if_failed_to_verify()
+  auth::redirectIfFailedToVerify()
   controller::authed__posts__post()
 }
 
@@ -39,5 +39,5 @@ http::IS_STARTS_WITH("GET", "/@") {
 }
 
 http::IS_ANY() {
-  http::finish_request(404, "");
+  http::finishRequest(404, "");
 }
