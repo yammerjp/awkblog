@@ -1,7 +1,7 @@
-@namespace "lib"
+@namespace "url"
 
 function decodeWwwForm(encoded_str,    encoded_parts, key, value, equal_index) {
-  delete lib::KV
+  delete url::params
   split(encoded_str, encoded_parts, "&");
 
   for (i in encoded_parts) {
@@ -25,7 +25,7 @@ function decodeWwwForm(encoded_str,    encoded_parts, key, value, equal_index) {
     # utf-8 percent decode
     key = decodeUtf8ParcentEncoding(key)
     value = decodeUtf8ParcentEncoding(value)
-    lib::KV[key] = value
+    url::params[key] = value
   }
 }
 

@@ -100,9 +100,9 @@ function parseRequest() {
   delete HTTP_REQUEST_PARAMETERS
   
   if (length(HTTP_REQUEST["parameters"]) > 0) {
-    lib::decodeWwwForm(HTTP_REQUEST["parameters"])
-    for (i in lib::KV) {
-      HTTP_REQUEST_PARAMETERS[i] = lib::KV[i]
+    url::decodeWwwForm(HTTP_REQUEST["parameters"])
+    for (i in url::params) {
+      HTTP_REQUEST_PARAMETERS[i] = url::params[i]
     }
   }
 }
