@@ -1,7 +1,7 @@
 @namespace "http"
 
 function http::IS_STARTS_WITH(method, path_prefix,        path) {
-  if (!REQUEST_PROCESS || HTTP_REQUEST["method"] != method) {
+  if (!isRequestRecieived || HTTP_REQUEST["method"] != method) {
     return 0
   }
   path = HTTP_REQUEST["path"]
@@ -12,11 +12,11 @@ function http::IS_STARTS_WITH(method, path_prefix,        path) {
 }
 
 function http::IS(method, path) {
-  return REQUEST_PROCESS && HTTP_REQUEST["method"] == method && (HTTP_REQUEST["path"] == path || HTTP_REQUEST["path"] == path "/")
+  return isRequestRecieived && HTTP_REQUEST["method"] == method && (HTTP_REQUEST["path"] == path || HTTP_REQUEST["path"] == path "/")
 }
 
 function http::IS_ANY() {
-  return REQUEST_PROCESS
+  return isRequestRecieived
 }
 
 function startRequest(    line, splitted, content_length, readcharlen, leftover) {
@@ -72,7 +72,7 @@ function startRequest(    line, splitted, content_length, readcharlen, leftover)
   parseRequest()
   log_request()
 
-  REQUEST_PROCESS = 1;
+  isRequestRecieived = 1;
 }
 
 function parseRequest() {
@@ -110,7 +110,7 @@ function parseRequest() {
 function finishRequestFromRaw(raw_content) {
   printf "%s", raw_content |& INET;
   close(INET);
-  REQUEST_PROCESS = 0;
+  isRequestRecieived = 0;
   delete HTTP_RESPONSE_HEADERS
   next;
 }
@@ -197,7 +197,7 @@ function setCookieMaxAge(key, max_age) {
 function initializeHttp() {
   INET = "/inet/tcp/" PORT "/0/0";
   FS=""
-  REQUEST_PROCESS = 0;
+  isRequestRecieived = 0;
 }
 
 function renderHtml(status_num, content) {
