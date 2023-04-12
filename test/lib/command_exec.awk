@@ -1,6 +1,6 @@
-@include "src/lib/commandExec.awk"
+@include "src/lib/shell.awk"
 @include "testutil.awk"
 
 {
-  assertEqual("hoge\nfuga\n", lib::commandExec("echo \"hoge\nfuga\""))
+  assertEqual("hoge\nfuga\n", shell::exec("echo \"hoge\nfuga\""))
 }
