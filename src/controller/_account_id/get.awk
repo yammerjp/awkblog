@@ -30,10 +30,10 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
     result["title"] = pgsql::fetchResult(i, "title")
     result["content"] = pgsql::fetchResult(i, "content")
     result["created_at"] = pgsql::fetchResult(i, "created_at")
-    html = html lib::renderTemplate("src/view/components/post.html", result)
+    html = html template::render("src/view/components/post.html", result)
   }
 
   template_vars["posts_html"] = html
   template_vars["username"] = username
-  http::sed(200, lib::renderTemplate("src/view/_account_id/get.html", template_vars));
+  http::sed(200, template::render("src/view/_account_id/get.html", template_vars));
 }

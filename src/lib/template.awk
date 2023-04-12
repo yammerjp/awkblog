@@ -1,6 +1,6 @@
-@namespace "lib"
+@namespace "template"
 
-function renderTemplate(filename, variables        , prebr, ret) {
+function render(filename, variables        , prebr, ret) {
   prebr = 0
   ret = ""
   while((getline < filename) > 0) {

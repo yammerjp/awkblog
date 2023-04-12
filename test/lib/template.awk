@@ -1,4 +1,4 @@
-@include "src/lib/template_engine.awk"
+@include "src/lib/template.awk"
 @include "testutil.awk"
 
 {
@@ -7,6 +7,6 @@
   <body>\n\
     <p>hello, world!</p>\n\
   </body>\n\
-</html>\n", lib::renderTemplate("test/lib/template_engine.html", variables))
+</html>\n", template::render("test/lib/template.html", variables))
 }
 

@@ -14,9 +14,9 @@ function authed__posts__get(    query, params, html, result, template_vars) {
     result["title"] = pgsql::fetchResult(i, "title")
     result["content"] = pgsql::fetchResult(i, "content")
     result["created_at"] = pgsql::fetchResult(i, "created_at")
-    html = html lib::renderTemplate("src/view/components/post.html", result)
+    html = html template::render("src/view/components/post.html", result)
   }
 
   template_vars["posts_html"] = html
-  http::sed(200, lib::renderTemplate("src/view/authed/posts/get.html", template_vars));
+  http::sed(200, template::render("src/view/authed/posts/get.html", template_vars));
 }
