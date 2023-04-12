@@ -1,4 +1,5 @@
 @include "src/lib/encryption.awk"
+@include "src/lib/base64.awk"
 @include "testutil.awk"
 
 "aes256Encrypt" {
@@ -17,11 +18,11 @@
 "base64ToUrlsafe" {
   base64 = "U2FsdGVkX1+T/ZtrrVXETUKzKs0DjeeKSeAEF6G+rdY="
   base64url = "U2FsdGVkX1-T_ZtrrVXETUKzKs0DjeeKSeAEF6G-rdY"
-  assertEqual(base64url, lib::base64ToUrlsafe(base64))
+  assertEqual(base64url, base64::urlsafe(base64))
 }
 
 "base64ToUrlunsafe" {
   base64 = "U2FsdGVkX1+T/ZtrrVXETUKzKs0DjeeKSeAEF6G+rdY="
   base64url = "U2FsdGVkX1-T_ZtrrVXETUKzKs0DjeeKSeAEF6G-rdY"
-  assertEqual(base64, lib::base64ToUrlunsafe(base64url))
+  assertEqual(base64, base64::urlunsafe(base64url))
 }

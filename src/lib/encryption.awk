@@ -16,11 +16,11 @@ function aes256Encrypt(str        , cmd, ret) {
   cmd = "echo '" str "' | openssl enc -A -base64 -aes-256-cbc -salt -pbkdf2 -pass env:ENCRYPTION_KEY"
   cmd |& getline ret
   close(cmd)
-  return base64ToUrlsafe(ret)
+  return base64::urlsafe(ret)
 }
 
 function aes256Decrypt(str        , cmd, ret) {
-  str = base64ToUrlunsafe(str)
+  str = base64::urlunsafe(str)
   if (!(str ~ /^[a-zA-Z0-9+/]+=*$/)) {
     print "[Error]: aes256Decrypt"
     return ""
@@ -30,32 +30,3 @@ function aes256Decrypt(str        , cmd, ret) {
   close(cmd)
   return ret
 }
-
-function base64ToUrlsafe(str) {
-  gsub("+","-", str)
-  gsub("/","_", str)
-  gsub("=", "", str)
-  return str
-}
-
-function base64ToUrlunsafe(str) {
-  gsub("-","+", str)
-  gsub("_","/", str)
-  switch (length(str) % 4) {
-    case 0:
-      return str
-    case 1:
-      return str "==="
-    case 2:
-      return str "=="
-    case 3:
-      return str "="
-  }
-}
-
-# /^:/{
-#   print aes256Encrypt($0)
-#   }
-# /^[^:]/ {
-#   print aes256Decrypt($0)
-# }
