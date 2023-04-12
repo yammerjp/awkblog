@@ -6,7 +6,7 @@ function verify(        encrypted, decrypted) {
     print "empty"
     return 0
   }
-  decrypted = lib::aes256Decrypt(encrypted)
+  decrypted = aes256::decrypt(encrypted)
   split(decrypted, splitted, " ")
   if (splitted[1] != "AWKBLOG_LOGIN_SESSION") {
     return 0
@@ -38,7 +38,7 @@ function login(userid, username,        params) {
   query = "SELECT id, name FROM accounts WHERE id = $1 AND name = $2;"
   pgsql::exec(query, params)
   login_session_str = sprintf("AWKBLOG_LOGIN_SESSION %d %s", userid, username)
-  encrypted = lib::aes256Encrypt(login_session_str)
+  encrypted = aes256::encrypt(login_session_str)
   http::setCookie("login_session", encrypted)
 }
 
