@@ -1,6 +1,6 @@
-@namespace "lib"
+@namespace "html"
 
-function htmlEscape(str) {
+function escape(str) {
   gsub(/&/, "\\&amp;", str)
   gsub(/'/, "\\&#x27;", str)
   gsub(/"/, "\\&#x60;", str)
