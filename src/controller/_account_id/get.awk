@@ -1,7 +1,7 @@
 @namespace "controller"
 
 function _account_id__get(        splitted, params, query, rows, id, html, result, template_vars) {
-  split(http::requestPath(), splitted, "@")
+  split(http::getPath(), splitted, "@")
   params[1] = splitted[2]
   query = "SELECT id, name FROM accounts WHERE name = $1;"
   pgsql::exec(query, params)
@@ -35,5 +35,5 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
 
   template_vars["posts_html"] = html
   template_vars["username"] = username
-  http::sed(200, template::render("src/view/_account_id/get.html", template_vars));
+  http::send(200, template::render("src/view/_account_id/get.html", template_vars));
 }

@@ -1,28 +1,34 @@
 @namespace "http"
 
-function http::IS_STARTS_WITH(method, path_prefix,        path) {
-  if (!isRequestRecieived || HTTP_REQUEST["method"] != method) {
+function http::IS_STARTS_WITH(method, pathPrefix,        path) {
+  if (!isRequestRecieived || getMethod() != method) {
     return 0
   }
-  path = HTTP_REQUEST["path"]
-  if (length(path_prefix) > length(path)) {
+  path = getPath()
+  if (length(pathPrefix) > length(path)) {
     return 0
   }
-  return substr(path, 1, length(path_prefix)) == path_prefix
+  return substr(path, 1, length(pathPrefix)) == pathPrefix
 }
 
 function http::IS(method, path) {
-  return isRequestRecieived && HTTP_REQUEST["method"] == method && (HTTP_REQUEST["path"] == path || HTTP_REQUEST["path"] == path "/")
+  return isRequestRecieived && getMethod() == method && (getPath() == path || getPath() == path "/")
 }
 
 function http::IS_ANY() {
   return isRequestRecieived
 }
 
-function receiveRequest(    line, splitted, content_length, readcharlen, leftover) {
+function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters) {
   $0 = "";
 
   delete HTTP_REQUEST
+  delete HTTP_REQUEST_PARAMETERS
+  delete REQUEST_COOKIES
+  delete RESPONSE_COOKIES
+  delete HTTP_RESPONSE_HEADERS
+  delete HTTP_REQUEST_HEADERS
+
   # read first line
   awk::RS="\n"
   INET |& getline line;
@@ -33,10 +39,18 @@ function receiveRequest(    line, splitted, content_length, readcharlen, leftove
   split(line, splitted,"[ ?]");
   HTTP_REQUEST["method"] = splitted[1];
   HTTP_REQUEST["path"] = splitted[2];
-  HTTP_REQUEST["parameters"] = splitted[3];
+  parameters = splitted[3];
   HTTP_REQUEST["version"] = splitted[4];
 
-  content_length = 0
+  if (length(parameters) > 0) {
+    url::decodeWwwForm(parameters)
+    for (i in url::params) {
+      HTTP_REQUEST_PARAMETERS[i] = url::params[i]
+    }
+  }
+
+
+  contentLength = 0
 
   # read HTTP header
   for(i = 1; INET |& getline line > 0; i++) {
@@ -44,10 +58,13 @@ function receiveRequest(    line, splitted, content_length, readcharlen, leftove
       break;
     }
     gsub(/\r/, "" , line)
-    HTTP_REQUEST["header"][i] = line;
+    colon_space = index(line, ": ")
+    key = substr(line, 1, colon_space-1)
+    value = substr(line, colon_space+2)
+    HTTP_REQUEST_HEADERS[key] = value
 
     if (line ~ /^Content-Length: /) {
-      content_length = int(substr(line, 17))
+      contentLength = int(substr(line, 17))
     }
   }
 
@@ -57,37 +74,26 @@ function receiveRequest(    line, splitted, content_length, readcharlen, leftove
   # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
   leftover = 1
 
-  while(content_length > leftover) {
-    if (content_length > 1000) {
+  while(contentLength > leftover) {
+    if (contentLength > 1000) {
       readcharlen = 1000
     } else {
-      readcharlen = content_length - leftover
+      readcharlen = contentLength - leftover
     }
     awk::RS = sprintf(".{%d}", readcharlen)
     INET |& getline
     HTTP_REQUEST["body"] = HTTP_REQUEST["body"] awk::RT
-    content_length -= readcharlen
+    contentLength -= readcharlen
   }
   awk::RS="\n"
   parseRequest()
-  log_request()
+  logRequest()
 
   isRequestRecieived = 1;
 }
 
 function parseRequest() {
-  delete HTTP_REQUEST_HEADERS
-  for(i in HTTP_REQUEST["header"]) {
-    line = HTTP_REQUEST["header"][i]
-    colon_space = index(line, ": ")
-    key = substr(line, 1, colon_space-1)
-    value = substr(line, colon_space+2)
-    HTTP_REQUEST_HEADERS[key] = value
-  }
-
-  delete REQUEST_COOKIES
-  delete RESPONSE_COOKIES
-  split(HTTP_REQUEST_HEADERS["Cookie"], splitted, "; ")
+  split(getHeader("Cookie"), splitted, "; ")
   for(i in splitted) {
     idx = index(splitted[i], "=")
     key = substr(splitted[i], 1, idx-1)
@@ -95,15 +101,8 @@ function parseRequest() {
     if (value ~ "^\".*\"$") {
       value = substr(value, 2, length(value) - 2)
     }
-    REQUEST_COOKIES[key]["value"] = value
-  }
-  delete HTTP_REQUEST_PARAMETERS
-  
-  if (length(HTTP_REQUEST["parameters"]) > 0) {
-    url::decodeWwwForm(HTTP_REQUEST["parameters"])
-    for (i in url::params) {
-      HTTP_REQUEST_PARAMETERS[i] = url::params[i]
-    }
+
+    REQUEST_COOKIES[key]["value"] = value;
   }
 }
 
@@ -111,17 +110,16 @@ function finishRequestFromRaw(raw_content) {
   printf "%s", raw_content |& INET;
   close(INET);
   isRequestRecieived = 0;
-  delete HTTP_RESPONSE_HEADERS
   next;
 }
 
-function finishRequest(status_num, content) {
-  finishRequestFromRaw(buildHttpResponse(status_num, content))
+function finishRequest(statusNum, content) {
+  finishRequestFromRaw(buildHttpResponse(statusNum, content))
 }
 
-function buildHttpResponse(status_num, content,    header_str, status) {
+function buildHttpResponse(statusNum, content,    headerStr, status) {
   
-  switch(status_num) {
+  switch(statusNum) {
     case 200: status = "200 OK"; break;
     case 204: status = "204 OK"; break;
     case 302: status = "302 Found"; break;
@@ -131,15 +129,15 @@ function buildHttpResponse(status_num, content,    header_str, status) {
   }
 
   for(i in HTTP_RESPONSE_HEADERS) {
-    header_str = header_str i ": " HTTP_RESPONSE_HEADERS[i] "\n";
+    headerStr = headerStr i ": " HTTP_RESPONSE_HEADERS[i] "\n";
   }
-  header_str = header_str buildCookieHeader();
+  headerStr = headerStr buildCookieHeader();
 
-  return sprintf("HTTP/1.1 %s\n%s\n%s", status, header_str, content);
+  return sprintf("HTTP/1.1 %s\n%s\n%s", status, headerStr, content);
 }
 
-function buildCookieHeader(        header_str, max_age, secure) {
-  header_str = ""
+function buildCookieHeader(        headerStr, max_age, secure) {
+  headerStr = ""
   for (i in RESPONSE_COOKIES) {
     if ("Max-Age" in RESPONSE_COOKIES[i]) {
       max_age = sprintf("; Max-Age=%s;", RESPONSE_COOKIES[i]["Max-Age"])
@@ -151,30 +149,29 @@ function buildCookieHeader(        header_str, max_age, secure) {
     } else {
       secure = ""
     }
-    header_str = sprintf("%sSet-Cookie: %s=%s; SameSite=Lax; HttpOnly%s%s\n", header_str, i, RESPONSE_COOKIES[i]["value"], max_age, secure)
+    headerStr = sprintf("%sSet-Cookie: %s=%s; SameSite=Lax; HttpOnly%s%s\n", headerStr, i, RESPONSE_COOKIES[i]["value"], max_age, secure)
   }
-  return header_str
+  return headerStr
 }
 
-function log_request() {
+function logRequest(        _body, headers) {
   print "request: ";
   print "  method:";
-  print "    " HTTP_REQUEST["method"];
+  print "    " getMethod();
   print "  path:";
-  print "    " HTTP_REQUEST["path"];
+  print "    " getPath();
   print "  parameter:";
   for (i in HTTP_REQUEST_PARAMETERS) {
     print "    " i ": " HTTP_REQUEST_PARAMETERS[i];
   }
   print "  header:";
-  HTTP_REQUEST["header"][0] = ""
-  delete HTTP_REQUEST["header"][0]
-  for (i in HTTP_REQUEST["header"]) {
-    print "    " HTTP_REQUEST["header"][i];
+  for (i in HTTP_REQUEST_HEADERS) {
+    print "    " i ": " HTTP_REQUEST_HEADERS[i]
   }
-  if (HTTP_REQUEST["body"] != "") {
+  _body = getBody()
+  if (_body != "") {
     print "  body:";
-    print "    " HTTP_REQUEST["body"];
+    print "    " _body
   }
   print "";
 }
@@ -200,13 +197,13 @@ function initializeHttp() {
   isRequestRecieived = 0;
 }
 
-function renderHtml(status_num, content) {
-  HTTP_RESPONSE_HEADERS["Content-Type"] = "text/html; charset=UTF-8"
-  return buildHttpResponse(status_num, content)
+function renderHtml(statusNum, content) {
+  setHeader("Content-Type", "text/html; charset=UTF-8")
+  return buildHttpResponse(statusNum, content)
 }
 
-function sed(status_num, content) {
-  finishRequestFromRaw(renderHtml(status_num, content))
+function send(statusNum, content) {
+  finishRequestFromRaw(renderHtml(statusNum, content))
 }
 
 function redirect302(url) {
@@ -218,6 +215,22 @@ function setHeader(key, value) {
   HTTP_RESPONSE_HEADERS[key] = value
 }
 
-function requestPath() {
+function getPath() {
   return HTTP_REQUEST["path"]
+}
+
+function getMethod() {
+  return HTTP_REQUEST["method"]
+}
+
+function getBody() {
+  return HTTP_REQUEST["body"]
+}
+
+function getHeader(key) {
+  return HTTP_REQUEST_HEADERS[key]
+}
+
+function getParameter(key) {
+  return HTTP_REQUEST_PARAMETERS[key]
 }

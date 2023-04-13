@@ -3,7 +3,7 @@ http::IS("GET", "/") {
 }
 
 http::IS("GET", "/test") {
-  http::sed(200, "Hello, test!");
+  http::send(200, "Hello, test!");
 }
 
 http::IS("GET", "/login") {
@@ -16,7 +16,7 @@ http::IS("GET", "/oauth-callback") {
 
 http::IS("GET", "/authed") {
   auth::redirectIfFailedToVerify()
-  http::finishRequestFromRaw(controller::authed__get(HTTP_REQUEST_HEADERS, HTTP_REQUEST["body"]))
+  http::finishRequestFromRaw(controller::authed__get(HTTP_REQUEST_HEADERS, http::getBody()))
 }
 
 http::IS("GET", "/authed/posts/new") {

@@ -1,5 +1,5 @@
 @namespace "controller"
 
 function get() {
-  http::sed(200, template::render("src/view/get.html"));
+  http::send(200, template::render("src/view/get.html"));
 }
