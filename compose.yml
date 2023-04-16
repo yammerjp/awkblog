@@ -1,7 +1,6 @@
 services:
   gawk:
     build: ./
-    entrypoint: /app/start.sh
     depends_on:
       - db
     volumes:

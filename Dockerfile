@@ -9,3 +9,5 @@ RUN apt-get update -y && apt-get install -y \
 
 WORKDIR /app
 COPY ./ /app
+
+ENTRYPOINT /app/start.sh
