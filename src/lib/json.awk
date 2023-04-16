@@ -1,7 +1,7 @@
 @namespace "json"
 
-function extractString(json_str, key,    splitted) {
-  split(json_str, splitted, "\"")
+function extractString(jsonStr, key,    splitted) {
+  split(jsonStr, splitted, "\"")
   for (i = 1; i<=length(splitted);i++) {
     if (splitted[i] == key) {
       return splitted[i+2]
@@ -10,8 +10,8 @@ function extractString(json_str, key,    splitted) {
   return ""
 }
 
-function extractNumber(json_str, key,        splitted, value) {
-  split(json_str, splitted, "\"")
+function extractNumber(jsonStr, key,        splitted, value) {
+  split(jsonStr, splitted, "\"")
   for (i = 1; i<=length(splitted);i++) {
     if (splitted[i] == key) {
       value = splitted[i+1]
