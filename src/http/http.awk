@@ -59,11 +59,11 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
     }
     gsub(/\r/, "" , line)
     colonSpace = index(line, ": ")
-    key = substr(line, 1, colonSpace-1)
+    key = tolower(substr(line, 1, colonSpace-1))
     value = substr(line, colonSpace+2)
     HTTP_REQUEST_HEADERS[key] = value
 
-    if (line ~ /^Content-Length: /) {
+    if (key == "content-length") {
       contentLength = int(substr(line, 17))
     }
   }
@@ -93,7 +93,7 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
 }
 
 function parseRequest() {
-  split(getHeader("Cookie"), splitted, "; ")
+  split(getHeader("cookie"), splitted, "; ")
   for(i in splitted) {
     idx = index(splitted[i], "=")
     key = substr(splitted[i], 1, idx-1)
@@ -198,7 +198,7 @@ function initializeHttp() {
 }
 
 function renderHtml(statusNum, content) {
-  setHeader("Content-Type", "text/html; charset=UTF-8")
+  setHeader("content-type", "text/html; charset=UTF-8")
   return buildHttpResponse(statusNum, content)
 }
 
