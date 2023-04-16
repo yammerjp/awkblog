@@ -40,7 +40,7 @@ o    }
 
 function createConnection() {
   print "createConnection"
-  if ((Connection = awk::pg_connect("host=db dbname=postgres user=postgres password=passw0rd")) == "") {
+  if ((Connection = awk::pg_connect("host=" awk::POSTGRES_HOSTNAME " dbname=" awk::POSTGRES_DATABASE " user=" awk::POSTGRES_USER" password=" awk::POSTGRES_PASSWORD)) == "") {
     printf "pg_connectionect failed: %s\n", ERRNO > "/dev/stderr"
     return 0
   }
