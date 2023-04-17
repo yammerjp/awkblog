@@ -30,6 +30,7 @@ http::IS("GET", "/authed/posts") {
 }
 
 http::IS("POST", "/authed/posts") {
+  http::guardCSRF()
   auth::redirectIfFailedToVerify()
   controller::authed__posts__post()
 }

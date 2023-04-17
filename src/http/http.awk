@@ -212,7 +212,7 @@ function send(statusNum, content) {
 
 function redirect302(url) {
   HTTP_RESPONSE_HEADERS["Location"] = url
-  finishRequest(302, "");
+  finishRequest(302, "")
 }
 
 function setHeader(key, value) {
@@ -237,4 +237,15 @@ function getHeader(key) {
 
 function getParameter(key) {
   return HTTP_REQUEST_PARAMETERS[key]
+}
+
+function guardCSRF() {
+  if (isCrossSiteRequest()) {
+    finishRequest(400)
+    return
+  }
+}
+
+function isCrossSiteRequest() {
+  return getHeader("origin") != awk::AWKBLOG_HOSTNAME
 }
