@@ -19,7 +19,7 @@ function http::IS_ANY() {
   return isRequestRecieived
 }
 
-function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters) {
+function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace) {
   $0 = "";
 
   delete HTTP_REQUEST
@@ -58,12 +58,12 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
       break;
     }
     gsub(/\r/, "" , line)
-    colon_space = index(line, ": ")
-    key = substr(line, 1, colon_space-1)
-    value = substr(line, colon_space+2)
+    colonSpace = index(line, ": ")
+    key = tolower(substr(line, 1, colonSpace-1))
+    value = substr(line, colonSpace+2)
     HTTP_REQUEST_HEADERS[key] = value
 
-    if (line ~ /^Content-Length: /) {
+    if (key == "content-length") {
       contentLength = int(substr(line, 17))
     }
   }
@@ -93,7 +93,7 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
 }
 
 function parseRequest() {
-  split(getHeader("Cookie"), splitted, "; ")
+  split(getHeader("cookie"), splitted, "; ")
   for(i in splitted) {
     idx = index(splitted[i], "=")
     key = substr(splitted[i], 1, idx-1)
@@ -106,8 +106,8 @@ function parseRequest() {
   }
 }
 
-function finishRequestFromRaw(raw_content) {
-  printf "%s", raw_content |& INET;
+function finishRequestFromRaw(rawContent) {
+  printf "%s", rawContent |& INET;
   close(INET);
   isRequestRecieived = 0;
   next;
@@ -136,25 +136,25 @@ function buildHttpResponse(statusNum, content,    headerStr, status) {
   return sprintf("HTTP/1.1 %s\n%s\n%s", status, headerStr, content);
 }
 
-function buildCookieHeader(        headerStr, max_age, secure) {
+function buildCookieHeader(        headerStr, maxAge, secure) {
   headerStr = ""
   for (i in RESPONSE_COOKIES) {
     if ("Max-Age" in RESPONSE_COOKIES[i]) {
-      max_age = sprintf("; Max-Age=%s;", RESPONSE_COOKIES[i]["Max-Age"])
+      maxAge = sprintf("; Max-Age=%s;", RESPONSE_COOKIES[i]["Max-Age"])
     } else {
-      max_age = ""
+      maxAge = ""
     }
     if (awk::AWKBLOG_HOSTNAME ~ /^https:\/\//) {
       secure = sprintf("; Secure")
     } else {
       secure = ""
     }
-    headerStr = sprintf("%sSet-Cookie: %s=%s; SameSite=Lax; HttpOnly%s%s\n", headerStr, i, RESPONSE_COOKIES[i]["value"], max_age, secure)
+    headerStr = sprintf("%sSet-Cookie: %s=%s; SameSite=Lax; HttpOnly%s%s\n", headerStr, i, RESPONSE_COOKIES[i]["value"], maxAge, secure)
   }
   return headerStr
 }
 
-function logRequest(        _body, headers) {
+function logRequest(        body, headers) {
   print "request: ";
   print "  method:";
   print "    " getMethod();
@@ -168,10 +168,10 @@ function logRequest(        _body, headers) {
   for (i in HTTP_REQUEST_HEADERS) {
     print "    " i ": " HTTP_REQUEST_HEADERS[i]
   }
-  _body = getBody()
-  if (_body != "") {
+  body = getBody()
+  if (body != "") {
     print "  body:";
-    print "    " _body
+    print "    " body
   }
   print "";
 }
@@ -187,8 +187,8 @@ function setCookie(key, value) {
   RESPONSE_COOKIES[key]["value"] = value
 }
 
-function setCookieMaxAge(key, max_age) {
-  RESPONSE_COOKIES[key]["Max-Age"] = max_age
+function setCookieMaxAge(key, maxAge) {
+  RESPONSE_COOKIES[key]["Max-Age"] = maxAge
 }
 
 function initializeHttp() {
@@ -198,7 +198,7 @@ function initializeHttp() {
 }
 
 function renderHtml(statusNum, content) {
-  setHeader("Content-Type", "text/html; charset=UTF-8")
+  setHeader("content-type", "text/html; charset=UTF-8")
   return buildHttpResponse(statusNum, content)
 }
 

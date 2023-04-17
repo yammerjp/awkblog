@@ -1,21 +1,21 @@
 @namespace "url"
 
-function decodeWwwForm(encoded_str,    encoded_parts, key, value, equal_index) {
+function decodeWwwForm(encodedStr,    encodedParts, key, value, equalIndex) {
   delete url::params
-  split(encoded_str, encoded_parts, "&");
+  split(encodedStr, encodedParts, "&");
 
-  for (i in encoded_parts) {
-    if (encoded_parts[i] == "") {
+  for (i in encodedParts) {
+    if (encodedParts[i] == "") {
       continue
     }
-    key = encoded_parts[i]
+    key = encodedParts[i]
     value = ""
 
     # split =
-    equal_index = index(key, "=")
-    if (equal_index > 0) {
-      value = substr(key, equal_index + 1)
-      key = substr(key, 1, equal_index - 1)
+    equalIndex = index(key, "=")
+    if (equalIndex > 0) {
+      value = substr(key, equalIndex + 1)
+      key = substr(key, 1, equalIndex - 1)
     }
 
     # replace +
@@ -29,14 +29,14 @@ function decodeWwwForm(encoded_str,    encoded_parts, key, value, equal_index) {
   }
 }
 
-function decodeUtf8ParcentEncoding(encoded_str,    chars, decoded_str, L, N, num, utf32num) {
-  L = length(encoded_str)
+function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, L, N, num, utf32num) {
+  L = length(encodedStr)
   N = 1
-  decoded_str = ""
-  split(encoded_str, chars, "")
+  decodedStr = ""
+  split(encodedStr, chars, "")
   while (N<=L) {
     if (chars[N] != "%" || N+2 > L) {
-      decoded_str = decoded_str chars[N]
+      decodedStr = decodedStr chars[N]
       N++
       continue
     }
@@ -44,24 +44,24 @@ function decodeUtf8ParcentEncoding(encoded_str,    chars, decoded_str, L, N, num
     # TODO: byte sequence verificaction
     if (chars[N+1] ~ /^[0-7]$/ ) {
       # 0xxxxxxx
-      decoded_str = sprintf("%s%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]))
+      decodedStr = sprintf("%s%c", decodedStr, awk::strtonum("0x" chars[N+1] chars[N+2]))
       N+=3
     } else if (chars[N+1] ~ /^[c-dC-D]$/ && chars[N+3] = "%") {
       # 110xxxxx 10xxxxxx
-      decoded_str = sprintf("%s%c%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]))
+      decodedStr = sprintf("%s%c%c", decodedStr, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]))
       N+=6
     } else if (chars[N+1] ~ /^[eE]$/ && chars[N+3] == "%" && chars[N+6] == "%") {
       # 1110xxxx 10xxxxxx 10xxxxxx
-      decoded_str = sprintf("%s%c%c%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]), awk::strtonum("0x" chars[N+7] chars[N+8]))
+      decodedStr = sprintf("%s%c%c%c", decodedStr, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]), awk::strtonum("0x" chars[N+7] chars[N+8]))
       N+=9
     } else if (chars[N+1] ~ /^[fF]$/ && chars[N+3] == "%" && chars[N+6] == "%" && chars[N+9] == "%") {
       # 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-      decoded_str = sprintf("%s%c%c%c%c", decoded_str, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]), awk::strtonum("0x" chars[N+7] chars[N+8]), awk::strtonum("0x" chars[N+10] chars[N+11]))
+      decodedStr = sprintf("%s%c%c%c%c", decodedStr, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]), awk::strtonum("0x" chars[N+7] chars[N+8]), awk::strtonum("0x" chars[N+10] chars[N+11]))
       N+=12
     } else {
       print "failed"
       exit
     }
   }
-  return decoded_str
+  return decodedStr
 }
