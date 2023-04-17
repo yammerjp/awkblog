@@ -155,6 +155,10 @@ function buildCookieHeader(        headerStr, maxAge, secure) {
 }
 
 function logRequest(        body, headers) {
+  if (getPath() == "/test") {
+    print "request: /test"
+    return
+  }
   print "request: ";
   print "  method:";
   print "    " getMethod();
