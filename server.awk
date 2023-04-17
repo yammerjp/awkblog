@@ -5,19 +5,10 @@
 BEGIN {
   pgsql::createConnection()
 
-  # query = "SELECT id, name FROM accounts WHERE id = $1 AND name = $2;"
-  # params[1] = "29299532"
-  # params[2] = "yammerjp"
-  # pgsql::exec(query, params)
-  # print "rows: " pgsql::fetchRows()
-  # print "id: " pgsql::fetchResult(0, "id")
-  # print "name: " pgsql::fetchResult(0, "name")
-
-  # query = "SELECT id, name FROM accounts ;"
-  # pgsql::exec(query)
-  # print "rows: " pgsql::fetchRows()
-  # print "id: " pgsql::fetchResult(0, "id")
-  # print "name: " pgsql::fetchResult(0, "name")
+  query = "SELECT count(id) as rows FROM posts;"
+  params[1] = ""
+  pgsql::exec(query, params)
+  print "Database Healthcheck: count(posts.id) ... " pgsql::fetchResult(0, "name")
 
   print "Start awkblog. listen port " PORT " ..."
   http::initializeHttp();
