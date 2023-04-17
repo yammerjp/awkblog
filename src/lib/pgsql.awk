@@ -38,9 +38,16 @@ o    }
   return 0
 }
 
-function createConnection() {
+function createConnection(  param) {
+  param = "host=" awk::POSTGRES_HOSTNAME " dbname=" awk::POSTGRES_DATABASE " user=" awk::POSTGRES_USER" password=" awk::POSTGRES_PASSWORD
+  if (awk::POSTGRES_SSLMODE) {
+    param = param " sslmode=" awk::POSTGRES_SSLMODE
+  }
+  if (awk::POSTGRES_OPTIONS) {
+    param = param " options=" awk::POSTGRES_OPTIONS
+  }
   print "createConnection"
-  if ((Connection = awk::pg_connect("host=" awk::POSTGRES_HOSTNAME " dbname=" awk::POSTGRES_DATABASE " user=" awk::POSTGRES_USER" password=" awk::POSTGRES_PASSWORD)) == "") {
+  if ((Connection = awk::pg_connect(param)) == "" ) {
     printf "pg_connectionect failed: %s\n", ERRNO > "/dev/stderr"
     return 0
   }
