@@ -16,7 +16,7 @@ http::IS("GET", "/oauth-callback") {
 
 http::IS("GET", "/authed") {
   auth::redirectIfFailedToVerify()
-  http::finishRequestFromRaw(controller::authed__get(HTTP_REQUEST_HEADERS, http::getBody()))
+  controller::authed__get()
 }
 
 http::IS("GET", "/authed/posts/new") {

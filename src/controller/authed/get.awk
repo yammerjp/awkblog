@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function authed__get(headers, body,        variables, username) {
+function authed__get() {
   variables["username"] = auth::getUsername()
-  return http::renderHtml(200, template::render("src/view/authed/get.html", variables))
+  http::send(200, template::render("src/view/authed/get.html", variables))
 }
