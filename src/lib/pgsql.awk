@@ -3,7 +3,13 @@
 @namespace "pgsql"
 
 function exec(query, params,        response, numberOfFields, col, numberOfRow, row) {
+  if (DEBUG) {
+    print "pgsql::exec() query: " query
+  }
   response = awk::pg_execparams(Connection, query, length(params), params)
+  if (DEBUG) {
+    print "pgsql::exec() response: " response
+  }
   delete RESULT
   RESULT[0] = ""
   delete RESULT[0]
@@ -51,6 +57,9 @@ function createConnection(  param) {
     return 0
   }
   print "created a postgres connection"
+  if (DEBUG) {
+    print "pgsql::createConnection(): Connection: " Connection
+  }
   return 1
 }
 
