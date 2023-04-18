@@ -46,11 +46,11 @@ function createConnection(  param) {
   if (awk::POSTGRES_OPTIONS) {
     param = param " options=" awk::POSTGRES_OPTIONS
   }
-  print "createConnection"
   if ((Connection = awk::pg_connect(param)) == "" ) {
     printf "pg_connectionect failed: %s\n", ERRNO > "/dev/stderr"
     return 0
   }
+  print "created a postgres connection"
   return 1
 }
 
