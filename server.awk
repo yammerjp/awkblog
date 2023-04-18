@@ -1,7 +1,3 @@
-#!/usr/bin/env -S gawk -f 
-
-@include ".autoload.awk"
-
 BEGIN {
   pgsql::createConnection()
 
