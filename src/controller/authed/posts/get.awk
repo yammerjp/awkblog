@@ -1,6 +1,9 @@
 @namespace "controller"
 
 function authed__posts__get(    query, params, html, result, template_vars) {
+  auth::redirectIfFailedToVerify()
+
+
   account_id = auth::getAccountId()
 
   query = "SELECT title, content, created_at FROM posts WHERE account_id = $1 ORDER BY created_at DESC;"

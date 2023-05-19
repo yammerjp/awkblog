@@ -1,6 +1,9 @@
 @namespace "controller"
 
 function authed__posts__post(        title, content, account_id, query, params) {
+  http::guardCSRF()
+  auth::redirectIfFailedToVerify()
+
   url::decodeWwwForm(http::HTTP_REQUEST["body"])
   title = html::escape(url::params["title"])
   content = html::escape(url::params["content"])
