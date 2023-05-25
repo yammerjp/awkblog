@@ -1,11 +1,19 @@
-BEGIN {
-  pgsql::createConnection()
+@include "src/lib/router.awk"
+@include "testutil.awk"
 
-  query = "SELECT count(id) as ids FROM posts;"
-  pgsql::exec(query)
-  rows = pgsql::fetchRows()
-  print "Database Healthcheck: count(posts.id) (rows:" rows ") ... " pgsql::fetchResult(0, "ids")
+"wildcard_compress" {
+  replaced = router::wildcard_compress("/hello/world", 1)
+  assertEqual("/*/world", replaced)
 
+  replaced = router::wildcard_compress("/hello/world", 2)
+  assertEqual("/hello/*", replaced)
+
+  replaced = router::wildcard_compress("/@yammerjp", 1)
+  assertEqual("/*", replaced)
+
+}
+
+"routing" {
   router::register("GET", "/", "controller::get")
   router::register("GET", "/test", "controller::test__get")
   router::register("GET", "/login", "controller::login__get")
@@ -17,17 +25,7 @@ BEGIN {
   router::register("GET", "/*", "controller::_account_id__get")
   router::register_notfound("controller::notfound")
 
-  router::debug_print()
-
-  print "Start awkblog. listen port " PORT " ..."
-  http::initializeHttp();
-}
-
-!http::REQUEST_PROCESS {
-  # start to process a request;
-  http::receiveRequest();
-}
-
-{
-  router::call(http::getMethod(), http::getPath())
+  assertEqual("controller::authed__posts__post", router::find("POST", "/authed/posts"))
+  assertEqual("controller::_account_id__get", router::find("GET", "/@yammerjp"))
+  assertEqual("controller::notfound", router::find("POST", "/path/to/notfound"))
 }
