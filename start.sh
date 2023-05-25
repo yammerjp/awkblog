@@ -2,10 +2,10 @@
 set -e
 cd /app
 
-# Migrate Database Schema
+echo "start.sh: Migrate Database Schema"
 /app/psqldef --user="$POSTGRES_USER" --password="$POSTGRES_PASSWORD" --host="$POSTGRES_HOSTNAME" --file=schema.sql "$POSTGRES_DATABASE"
 
-# Start Web Application
+echo "start.sh: Start Web Application"
 gawk \
   $(find src/ -type f | gawk '/\.awk$/{ printf " -f %s", $0 }') \
   -f server.awk \

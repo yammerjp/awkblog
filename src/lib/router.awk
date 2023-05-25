@@ -6,25 +6,30 @@ function default_404() {
   http::finishRequest(404, "");
 }
 
-function routing_register(method, path, callback) {
-  routing_tables[method][path] = callback
+function register(method, path, callback,      key) {
+  key = method " " path
+  routing_tables[key] = callback
 }
 
-function routing_register_notfound(callback) {
+function register_notfound(callback) {
   routing_notfound_callback = callback
 }
 
-function routing_find(method, path) {
-  if (!(method in routing_tables)) {
-    return routing_notfound_callback
+function find(method, path,        key) {
+  key = method " " path
+  if (key in routing_tables) {
+    return routing_tables[key]
   }
-  if (!(path in routing_tables[method])) {
-    return routing_notfound_callback
-  }
-  return routing_tables[method][path]
+  return routing_notfound_callback
 }
 
-function routing_call(method, path,        controller) {
-  controller = routing_find(method, path)
+function debug_print() {
+  for(i in routing_tables) {
+    printf "routing_tables[\"%s\"] = %s\n", i, routing_tables[i]
+  }
+}
+
+function call(method, path,        controller) {
+  controller = find(method, path)
   @controller();
 }

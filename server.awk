@@ -7,16 +7,18 @@ BEGIN {
   print "Database Healthcheck: count(posts.id) (rows:" rows ") ... " pgsql::fetchResult(0, "ids")
 
   print "Start awkblog. listen port " PORT " ..."
-  router::routing_register("GET", "/", "controller::get")
-  router::routing_register("GET", "/test", "controller::test__get")
-  router::routing_register("GET", "/login", "controller::login__get")
-  router::routing_register("GET", "/oauth-callback" "controller::oauth_callback__get")
-  router::routing_register("GET", "/authed", "controller::authed__get")
-  router::routing_register("GET", "/authed/posts/new", "controller::authed__posts__new__get")
-  router::routing_register("GET", "/authed/posts", "controller::authed__posts__get")
-  router::routing_register("POST", "/authed/posts", "controller::authed__posts__post")
-  router::routing_register("GET", "/@yammerjp", "controller::_account_id__get")
-  router::routing_register_notfound("controller::notfound")
+  router::register("GET", "/", "controller::get")
+  router::register("GET", "/test", "controller::test__get")
+  router::register("GET", "/login", "controller::login__get")
+  router::register("GET", "/oauth-callback", "controller::oauth_callback__get")
+  router::register("GET", "/authed", "controller::authed__get")
+  router::register("GET", "/authed/posts/new", "controller::authed__posts__new__get")
+  router::register("GET", "/authed/posts", "controller::authed__posts__get")
+  router::register("POST", "/authed/posts", "controller::authed__posts__post")
+  router::register("GET", "/@yammerjp", "controller::_account_id__get")
+  router::register_notfound("controller::notfound")
+
+  router::debug_print()
 
   http::initializeHttp();
 }
@@ -27,5 +29,5 @@ BEGIN {
 }
 
 {
-  router::routing_call(http::getMethod(), http::getPath())
+  router::call(http::getMethod(), http::getPath())
 }
