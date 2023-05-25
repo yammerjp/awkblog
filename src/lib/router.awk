@@ -23,8 +23,8 @@ function find(method, path,    key) {
     return routing_tables[key]
   }
 
-  for (i in wildcard_positions) {
-    key = method " " wildcard_compress(path, wildcard_positions[i])
+  for (pos in wildcard_positions) {
+    key = method " " wildcard_compress(path, pos)
     if (key in routing_tables) {
       return routing_tables[key]
     }
@@ -43,29 +43,25 @@ function call(method, path,        controller) {
   @controller();
 }
 
-function register_wildcard_position(path,         wildcard_idx, before_wildcard) {
-  wildcard_idx = index(path, "*")
-  if (wildcard_idx > 0) {
-    # path includes *
-    before_wildcard = substr(path, 0, wildcard_idx)
-    gsub(/[^\/]/, "", before_wildcard)
-    wildcard_positions_append(length(before_wildcard))
-  }
-}
-
-function wildcard_positions_append(pos) {
-  if (1 in wildcard_positions) {
-    wildcard_positions[length(wildcard_positions) + 1] = pos
-  } else {
-    wildcard_positions[1] = pos
-  }
-}
-
-function wildcard_compress(path, pos,        path_parts, masked_path) {
-  path = substr(path, 2)
+function register_wildcard_position(path,         pos, path_parts) {
+  path = substr(path, 2) # ignore leading a slash
   split(path, path_parts, "/")
+  for (i in path_parts) {
+    if (path_parts[i] == "*") {
+      pos = pos " " i
+    }
+  }
+  if (pos) {
+    wildcard_positions[pos] = 1
+  }
+}
+
+function wildcard_compress(path, pos,        path_parts, masked_path, pos_parts) {
+  path = substr(path, 2) # ignore leading a slash
+  split(path, path_parts, "/")
+  split_index(pos, pos_parts, " ")
   for(i in path_parts) {
-    if (i == pos) {
+    if (i in pos_parts) {
       masked_path = masked_path "/*"
     } else {
       masked_path = masked_path "/" path_parts[i]
@@ -74,3 +70,8 @@ function wildcard_compress(path, pos,        path_parts, masked_path) {
   return masked_path
 }
 
+function split_index(str, arr, sep,        arr_val) {
+  split(str, arr_val, sep)
+  for (i in arr_val)
+    arr[arr_val[i]] = 1
+}

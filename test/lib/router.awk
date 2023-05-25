@@ -23,9 +23,11 @@
   router::register("GET", "/authed/posts", "controller::authed__posts__get")
   router::register("POST", "/authed/posts", "controller::authed__posts__post")
   router::register("GET", "/*", "controller::_account_id__get")
+  router::register("GET", "/accounts/*/posts/*", "controller::_accounts__account_id__posts__post_id__get")
   router::register_notfound("controller::notfound")
 
   assertEqual("controller::authed__posts__post", router::find("POST", "/authed/posts"))
   assertEqual("controller::_account_id__get", router::find("GET", "/@yammerjp"))
   assertEqual("controller::notfound", router::find("POST", "/path/to/notfound"))
+  assertEqual("controller::_accounts__account_id__posts__post_id__get", router::find("GET", "/accounts/13/posts/15"))
 }
