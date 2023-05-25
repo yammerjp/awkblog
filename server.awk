@@ -17,8 +17,6 @@ BEGIN {
   router::register("GET", "/*", "controller::_account_id__get")
   router::register_notfound("controller::notfound")
 
-  router::debug_print()
-
   print "Start awkblog. listen port " PORT " ..."
   http::initializeHttp();
   while(1) {
