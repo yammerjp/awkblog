@@ -1,24 +1,5 @@
 @namespace "http"
 
-function http::IS_STARTS_WITH(method, pathPrefix,        path) {
-  if (!isRequestRecieived || getMethod() != method) {
-    return 0
-  }
-  path = getPath()
-  if (length(pathPrefix) > length(path)) {
-    return 0
-  }
-  return substr(path, 1, length(pathPrefix)) == pathPrefix
-}
-
-function http::IS(method, path) {
-  return isRequestRecieived && getMethod() == method && (getPath() == path || getPath() == path "/")
-}
-
-function http::IS_ANY() {
-  return isRequestRecieived
-}
-
 function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace) {
   $0 = "";
 
@@ -110,7 +91,6 @@ function finishRequestFromRaw(rawContent) {
   printf "%s", rawContent |& INET;
   close(INET);
   isRequestRecieived = 0;
-  next;
 }
 
 function finishRequest(statusNum, content) {

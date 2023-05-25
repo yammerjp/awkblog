@@ -21,13 +21,8 @@ BEGIN {
 
   print "Start awkblog. listen port " PORT " ..."
   http::initializeHttp();
-}
-
-!http::REQUEST_PROCESS {
-  # start to process a request;
-  http::receiveRequest();
-}
-
-{
-  router::call(http::getMethod(), http::getPath())
+  while(1) {
+    http::receiveRequest()
+    router::call(http::getMethod(), http::getPath())
+  }
 }

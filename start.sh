@@ -6,7 +6,7 @@ echo "start.sh: Migrate Database Schema"
 /app/psqldef --user="$POSTGRES_USER" --password="$POSTGRES_PASSWORD" --host="$POSTGRES_HOSTNAME" --file=schema.sql "$POSTGRES_DATABASE"
 
 echo "start.sh: Start Web Application"
-gawk \
+echo '' | gawk \
   $(find src/ -type f | gawk '/\.awk$/{ printf " -f %s", $0 }') \
   -f server.awk \
   -v PORT="${PORT:-8080}" \
@@ -20,4 +20,3 @@ gawk \
   -v POSTGRES_SSLMODE="${POSTGRES_SSLMODE}" \
   -v POSTGRES_OPTIONS="${POSTGRES_OPTIONS}" \
   -v DEBUG=1 \
-  < /dev/random
