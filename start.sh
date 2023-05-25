@@ -8,7 +8,6 @@ echo "start.sh: Migrate Database Schema"
 echo "start.sh: Start Web Application"
 echo '' | gawk \
   $(find src/ -type f | gawk '/\.awk$/{ printf " -f %s", $0 }') \
-  -f server.awk \
   -v PORT="${PORT:-8080}" \
   -v AWKBLOG_OAUTH_CLIENT_KEY="${AWKBLOG_OAUTH_CLIENT_KEY}" \
   -v AWKBLOG_OAUTH_CLIENT_SECRET="${AWKBLOG_OAUTH_CLIENT_SECRET}" \
