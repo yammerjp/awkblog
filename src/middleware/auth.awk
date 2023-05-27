@@ -18,7 +18,7 @@ function verify(        encrypted, decrypted) {
 
 function redirectIfFailedToVerify() {
   if (!verify()) {
-    http::redirect302("/")
+    http::sendRedirect("/")
   }
 }
 

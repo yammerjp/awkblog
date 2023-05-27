@@ -14,5 +14,5 @@ function authed__posts__post(        title, content, account_id, query, params) 
   params[3] = content
   pgsql::exec(query, params)
 
-  http::redirect302(AWKBLOG::HOST_NAME "/authed/posts")
+  http::sendRedirect(AWKBLOG::HOST_NAME "/authed/posts")
 }

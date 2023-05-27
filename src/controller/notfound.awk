@@ -1,5 +1,5 @@
 @namespace "controller"
 
 function notfound() {
-  http::finishRequest(404, "")
+  http::send(404, "")
 }

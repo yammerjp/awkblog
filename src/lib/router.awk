@@ -3,7 +3,7 @@
 routing_notfound_callback = "router::default_404"
 
 function default_404() {
-  http::finishRequest(404, "");
+  http::send(404, "");
 }
 
 function register(method, path, callback,      key) {

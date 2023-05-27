@@ -14,7 +14,7 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
   awk::RS="\n"
   INET |& getline line;
   if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.1$/) {
-    finishRequest(400)
+    send(400)
     return
   }
   split(line, splitted,"[ ?]");
@@ -87,35 +87,6 @@ function parseRequest() {
   }
 }
 
-function finishRequestFromRaw(rawContent) {
-  printf "%s", rawContent |& INET;
-  close(INET);
-  isRequestRecieived = 0;
-}
-
-function finishRequest(statusNum, content) {
-  finishRequestFromRaw(buildHttpResponse(statusNum, content))
-}
-
-function buildHttpResponse(statusNum, content,    headerStr, status) {
-  
-  switch(statusNum) {
-    case 200: status = "200 OK"; break;
-    case 204: status = "204 OK"; break;
-    case 302: status = "302 Found"; break;
-    case 401: status = "401 Unauthorized"; break;
-    case 404: status = "404 Not Found"; break;
-    default:  status = "500 Not Handled";break;
-  }
-
-  for(i in HTTP_RESPONSE_HEADERS) {
-    headerStr = headerStr i ": " HTTP_RESPONSE_HEADERS[i] "\n";
-  }
-  headerStr = headerStr buildCookieHeader();
-
-  return sprintf("HTTP/1.1 %s\n%s\n%s", status, headerStr, content);
-}
-
 function buildCookieHeader(        headerStr, maxAge, secure) {
   headerStr = ""
   for (i in RESPONSE_COOKIES) {
@@ -181,18 +152,42 @@ function initializeHttp() {
   isRequestRecieived = 0;
 }
 
-function renderHtml(statusNum, content) {
-  setHeader("content-type", "text/html; charset=UTF-8")
-  return buildHttpResponse(statusNum, content)
+function buildResponse(statusNum, content,    headerStr, status) {
+  switch(statusNum) {
+    case 200: status = "200 OK"; break;
+    case 204: status = "204 OK"; break;
+    case 302: status = "302 Found"; break;
+    case 401: status = "401 Unauthorized"; break;
+    case 404: status = "404 Not Found"; break;
+    default:  status = "500 Not Handled";break;
+  }
+
+  for(i in HTTP_RESPONSE_HEADERS) {
+    headerStr = headerStr i ": " HTTP_RESPONSE_HEADERS[i] "\n";
+  }
+  headerStr = headerStr buildCookieHeader();
+
+  return sprintf("HTTP/1.1 %s\n%s\n%s", status, headerStr, content);
+}
+
+function sendRaw(rawContent) {
+  printf "%s", rawContent |& INET;
+  close(INET);
+  isRequestRecieived = 0;
 }
 
 function send(statusNum, content) {
-  finishRequestFromRaw(renderHtml(statusNum, content))
+  sendRaw(buildResponse(statusNum, content))
 }
 
-function redirect302(url) {
+function sendHtml(statusNum, content) {
+  setHeader("content-type", "text/html; charset=UTF-8")
+  return sendRaw(buildResponse(statusNum, content))
+}
+
+function sendRedirect(url) {
   HTTP_RESPONSE_HEADERS["Location"] = url
-  finishRequest(302, "")
+  send(302, "")
 }
 
 function setHeader(key, value) {
@@ -221,7 +216,7 @@ function getParameter(key) {
 
 function guardCSRF() {
   if (isCrossSiteRequest()) {
-    finishRequest(400)
+    send(400)
     return
   }
 }

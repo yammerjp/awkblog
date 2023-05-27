@@ -8,10 +8,10 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
 
   rows = pgsql::fetchRows()
   if (rows == 0) {
-    http::finishRequest(404, "");
+    http::send(404, "");
     return
   } else if (rows > 1) {
-    http::finishRequest(500, "");
+    http::send(500, "");
     return
   }
 
@@ -35,5 +35,5 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
 
   template_vars["posts_html"] = html
   template_vars["username"] = username
-  http::send(200, template::render("src/view/_account_id/get.html", template_vars));
+  http::sendHtml(200, template::render("src/view/_account_id/get.html", template_vars));
 }

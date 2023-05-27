@@ -21,5 +21,5 @@ function authed__posts__get(    query, params, html, result, template_vars) {
   }
 
   template_vars["posts_html"] = html
-  http::send(200, template::render("src/view/authed/posts/get.html", template_vars));
+  http::sendHtml(200, template::render("src/view/authed/posts/get.html", template_vars));
 }
