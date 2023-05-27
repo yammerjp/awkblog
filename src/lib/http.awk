@@ -158,6 +158,7 @@ function buildResponse(statusNum, content,    headerStr, status) {
     case 204: status = "204 OK"; break;
     case 302: status = "302 Found"; break;
     case 401: status = "401 Unauthorized"; break;
+    case 403: status = "403 Forbidden"; break;
     case 404: status = "404 Not Found"; break;
     default:  status = "500 Not Handled";break;
   }
@@ -188,6 +189,52 @@ function sendHtml(statusNum, content) {
 function sendRedirect(url) {
   HTTP_RESPONSE_HEADERS["Location"] = url
   send(302, "")
+}
+
+function sendFile(filePath,     contents) {
+  contents = getFile(filePath)
+  if (!contents) {
+    send(404, "")
+    return
+  }
+  setHeader("Cache-Control", "no-cache")
+  setHeader("Content-Type", guessContentType(filePath))
+  send(200, contents)
+}
+
+function guessContentType(filePath) {
+  switch(filePath) {
+    case /\.html$/:
+      return "text/html; charset=utf-8"
+    case /\.css$/:
+      return "text/css"
+    case /\.js$/:
+      return "application/javascript"
+    case /\.jpg$/:
+    case /\.jpeg$/:
+      return "image/jpeg"
+    case /\.png$/:
+      return "image/png"
+      break
+    case /\.gif$/:
+      return "image/gif"
+    case /\.ico$/:
+      return "image/x-icon"
+    default:
+      return "text/plain"
+  }
+}
+
+function getFile(filePath,        contents) {
+  contents = ""
+  while (getline line < filePath > 0) {
+    if (contents) {
+      contents = contents ORS
+    }
+    contents = contents line
+  }
+  close(filePath)
+  return contents
 }
 
 function setHeader(key, value) {
