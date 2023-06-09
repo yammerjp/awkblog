@@ -1,6 +1,6 @@
 @namespace "http"
 
-function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace) {
+function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace, result) {
   $0 = "";
 
   delete HTTP_REQUEST
@@ -24,9 +24,9 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
   HTTP_REQUEST["version"] = splitted[4];
 
   if (length(parameters) > 0) {
-    url::decodeWwwForm(parameters)
-    for (i in url::params) {
-      HTTP_REQUEST_PARAMETERS[i] = url::params[i]
+    url::decodeWwwForm(result, parameters)
+    for (i in result) {
+      HTTP_REQUEST_PARAMETERS[i] = result[i]
     }
   }
 
