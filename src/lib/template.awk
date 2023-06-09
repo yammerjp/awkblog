@@ -1,21 +1,24 @@
 @namespace "template"
 
-function render(filename, variables        , prebr, ret) {
-  prebr = 0
-  ret = ""
+function render(filename, variables        , ret) {
+  RS="{{"
   while((getline < filename) > 0) {
-    if ($0 ~ /^AWKBLOG::[a-z0-9_]+$/) {
-      varname = substr($0, 10)
-      ret = ret sprintf("%s", variables[varname])
-      prebr = 0
+    if (RS == "{{") {
+      ret = ret $0
+      RS = "}}"
     } else {
-      ret = ret sprintf("%s%s", prebr ? "\n" : "", $0)
-      prebr = 1
+      ret = ret extractVar(variables, $0)
+      RS = "{{"
     }
-  }
-  if (prebr) {
-    ret = ret sprintf("\n")
   }
   close(filename)
   return ret
+}
+
+function extractVar(variables, dotConnectedVarname) {
+  idx = index(dotConnectedVarname, ".")
+  if (idx == 0) {
+    return variables[dotConnectedVarname]
+  }
+  return extractVar(variables[substr(dotConnectedVarname, 1, idx - 1)], substr(dotConnectedVarname, idx + 1))
 }
