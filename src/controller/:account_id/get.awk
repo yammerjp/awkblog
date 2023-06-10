@@ -5,6 +5,10 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
   username = splitted[2]
 
   accountId = model::getAccountId(username)
+  if (accountId == "") {
+    notfound()
+    return
+  }
   model::getPosts(result, accountId)
 
   templateVars["username"] = username
