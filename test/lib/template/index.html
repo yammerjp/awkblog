@@ -4,7 +4,8 @@
     <h1>{{posts.title}}</h1>{{## this is comment}}
     <article>{{posts.content}}</article>
     <div>
-{{#include#for test/lib/tag.html tag of posts.tags}}
+{{#include#for test/lib/template/tag.html tag of posts.tags}}
     </div>
+    {{#include test/lib/template/footer.html name is username}}
   </body>
 </html>

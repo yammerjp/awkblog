@@ -10,6 +10,17 @@ function render(filename, variables, original, alias        , ret, result) {
       RS = "}}"
     } else {
       switch($1) {
+      case "#include":
+        # include file
+        # {{#include <filename> <alias> is <original>}}
+        includeFilename = $2
+        aliasItem = $3
+        # $4 is "is"
+        originalItem = $5
+        originalItemExpanded = expandAlias(originalItem, original, alias)
+
+        ret = ret render(includeFilename, variables, originalItemExpanded, aliasItem)
+        break;
       case "#include#for":
         # include file with loop
         # {{#include#for <filename> <item> of <items>}}

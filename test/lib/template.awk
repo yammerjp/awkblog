@@ -3,6 +3,7 @@
 
 {
   variables["helloworld"] = "hello, world!"
+  variables["username"] = "yammerjp"
   variables["posts"]["title"] = "apple"
   variables["posts"]["content"] = "fruit"
   variables["posts"]["tags"][1]["name"] = "food"
@@ -17,7 +18,9 @@
 <div>good</div>\n\
 \n\
     </div>\n\
+    <footer>Copyright (C) 2023 yammerjp. All Rights Reserved.</footer>\n\
+\n\
   </body>\n\
-</html>\n", template::render("test/lib/template.html", variables))
+</html>\n", template::render("test/lib/template/index.html", variables))
 }
 
