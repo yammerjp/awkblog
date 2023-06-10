@@ -1,6 +1,29 @@
 @namespace "template"
 
-function render(filename, variables, alias, original        , ret, includeFilename, aliasItem, originalItem, originalItemExpanded, itemName, itemsName, itemsNameExpanded, result) {
+function render(filename, tree, subTreePath        , ret) {
+  if (subTreePath == "") {
+    return readFile(filename, tree)
+  }
+
+  idx = index(subTreePath, ".")
+  if (idx == 0) {
+    key = subTreePath
+    nextSubtreePath = ""
+  } else {
+    key = substr(subTreePath, 1, idx - 1)
+    nextSubtreePath = substr(subTreePath, idx + 1)
+  }
+
+  if (key == "*") {
+    for (i in tree) {
+      ret = ret render(filename, tree[i], nextSubtreePath)
+    }
+    return ret
+  }
+  return render(filename, tree[key], nextSubtreePath)
+}
+
+function readFile(filename, tree        , ret) {
   RS="{{"
   FS=" "
   while((getline < filename) > 0) {
@@ -12,22 +35,41 @@ function render(filename, variables, alias, original        , ret, includeFilena
       switch($1) {
       case "#include":
         # include file
-        # {{#include <filename> <alias> is <original>}}
-        ret = ret renderInclude(variables, alias, original, $2, $3, $5)
+        # {{#include#for <filename> <subTreePath>}}
+        ret = ret render($2, tree, $3)
         break;
       case "#include#for":
         # include file with loop
-        # {{#include#for <filename> <item> of <items>}}
-        ret = ret renderIncludeFor(variables, alias, original, $2, $3, $5)
+        # {{#include#if <filename> <loopTreePath>}}
+        ret = ret render($2, tree, $3 ".*")
+        break
+      case "#include#if":
+        # include file with if
+        # {{#include#if <filename> <boolTreePath> <subTreePath>}}
+        if (getVar(tree, $3)) {
+          ret = ret render($2, tree)
+        }
+        break
+      case "#include#unless":
+        # include file with if
+        # {{#include#if <filename> <boolTreePath>}}
+        if (!getVar(tree, $3)) {
+          ret = ret render($2, tree)
+        }
         break
       case "##":
         # comment
         # {{## <comment>}}
         break
+      case "#rootvar":
+        # root variable of tree
+        # {{#rootvar}}
+        ret = ret tree
+        break
       default:
         # variable
         # {{<variable>}}
-        ret = ret renderVariable(variables, alias, original, $0)
+        ret = ret getVar(tree, $1)
       }
       RS = "{{"
     }
@@ -36,68 +78,12 @@ function render(filename, variables, alias, original        , ret, includeFilena
   return ret
 }
 
-function renderVariable(variables, alias, original, path        , expandedPath) {
-  expandedPath = expandAlias(path, alias, original)
-  return extractVar(variables, expandedPath)
-}
-
-function renderInclude(variables, alias, original, filename, aliasItem, originalItem      , expandedPath) {
-  expandedPath = expandAlias(originalItem, alias, original)
-  return render(filename, variables, aliasItem, expandedPath)
-}
-
-function renderIncludeFor(variables, alias, original, filename, aliasItem, originalItem        , expandedPath, keys, i, ret) {
-  expandedPath = expandAlias(originalItem, alias, original)
-  extractVarKeys(keys, variables, expandedPath)
-  for (i in keys) {
-    ret = ret render(filename, variables, aliasItem, expandedPath "." i)
-  }
-  return ret
-}
-
-# example:
-#   expandAlias("p.title", "posts.1", "p")
-#     => "posts.1.title"
-function expandAlias(varName, alias, original) {
-  if (varName == alias) {
-    return original
-  }
-  if ( index(varName, alias ".") == 1) {
-    return original substr(varName, length(alias) + 1)
-  }
-  return varName
-}
-
-# example:
-#   variables["post"]["title"] = "foo"
-#
-#   extractVar(variables, "post.title")
-#     => "foo"
-function extractVar(variables, path) {
+function getVar(tree, path) {
   idx = index(path, ".")
   if (idx == 0) {
-    return variables[path]
+    return tree[path]
   }
-  leftone = substr(path, 1, idx - 1)
-  others = substr(path, idx + 1)
-  return extractVar(variables[leftone], others)
-}
-
-# example:
-#   variables["posts"]["first"] = "f"
-#   variables["posts"]["second"] = "s"
-#
-#   extractVarKeys(result, variables, "posts")
-#     => result[1] = "first", result[2] = "second"
-function extractVarKeys(result, variables, path) {
-  idx = index(path, ".")
-  if (idx == 0) {
-    for (i in variables[path]) {
-      result[i] = 1
-    }
-    return
-  }
-  part = substr(path, 1, idx - 1)
-  childParts = substr(path, idx + 1)
-  extractVarKeys(result, variables[part], childParts)
+  key = substr(path, 1, idx - 1)
+  nextSubtreePath = substr(path, idx + 1)
+  return getVar(tree[key], nextSubtreePath)
 }
