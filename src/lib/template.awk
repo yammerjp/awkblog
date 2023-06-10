@@ -1,6 +1,6 @@
 @namespace "template"
 
-function render(filename, variables, original, alias        , ret, result) {
+function render(filename, variables, alias, original        , ret, includeFilename, aliasItem, originalItem, originalItemExpanded, itemName, itemsName, itemsNameExpanded, result) {
   RS="{{"
   FS=" "
   while((getline < filename) > 0) {
@@ -13,28 +13,12 @@ function render(filename, variables, original, alias        , ret, result) {
       case "#include":
         # include file
         # {{#include <filename> <alias> is <original>}}
-        includeFilename = $2
-        aliasItem = $3
-        # $4 is "is"
-        originalItem = $5
-        originalItemExpanded = expandAlias(originalItem, original, alias)
-
-        ret = ret render(includeFilename, variables, originalItemExpanded, aliasItem)
+        ret = ret renderInclude(variables, alias, original, $2, $3, $5)
         break;
       case "#include#for":
         # include file with loop
         # {{#include#for <filename> <item> of <items>}}
-        includeFilename = $2
-        itemName = $3
-        # $4 is "of"
-        itemsName = $5
-        itemsNameExpanded = expandAlias(itemsName, original, alias)
-
-        delete result
-        extractVarKeys(result, variables, itemsNameExpanded)
-        for (i in result) {
-          ret = ret render(includeFilename, variables, itemsNameExpanded "." i, itemName)
-        }
+        ret = ret renderIncludeFor(variables, alias, original, $2, $3, $5)
         break
       case "##":
         # comment
@@ -43,8 +27,7 @@ function render(filename, variables, original, alias        , ret, result) {
       default:
         # variable
         # {{<variable>}}
-        varName = expandAlias($0, original, alias)
-        ret = ret extractVar(variables, varName)
+        ret = ret renderVariable(variables, alias, original, $0)
       }
       RS = "{{"
     }
@@ -53,12 +36,36 @@ function render(filename, variables, original, alias        , ret, result) {
   return ret
 }
 
-function expandAlias(varName, original, alias) {
-  if ( index(varName, alias) == 1) {
+function renderVariable(variables, alias, original, path        , expandedPath) {
+  expandedPath = expandAlias(path, alias, original)
+  return extractVar(variables, expandedPath)
+}
+
+function renderInclude(variables, alias, original, filename, aliasItem, originalItem      , expandedPath) {
+  expandedPath = expandAlias(originalItem, alias, original)
+  return render(filename, variables, aliasItem, expandedPath)
+}
+
+function renderIncludeFor(variables, alias, original, filename, aliasItem, originalItem        , expandedPath, keys, i, ret) {
+  expandedPath = expandAlias(originalItem, alias, original)
+  extractVarKeys(keys, variables, expandedPath)
+  for (i in keys) {
+    ret = ret render(filename, variables, aliasItem, expandedPath "." i)
+  }
+  return ret
+}
+
+# example:
+#   expandAlias("p.title", "posts.1", "p")
+#     => "posts.1.title"
+function expandAlias(varName, alias, original) {
+  if (varName == alias) {
+    return original
+  }
+  if ( index(varName, alias ".") == 1) {
     return original substr(varName, length(alias) + 1)
   }
   return varName
-
 }
 
 # example:
