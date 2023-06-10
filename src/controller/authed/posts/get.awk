@@ -7,9 +7,10 @@ function authed__posts__get(    query, params, html, result, templateVars) {
   model::getPosts(result, accountId)
 
   for(i = 1; i <= length(result); i++) {
-    html = html template::render("src/view/components/post.html", result[i])
+    templateVars["posts"][i]["title"] = result[i]["title"]
+    templateVars["posts"][i]["content"] = result[i]["content"]
+    templateVars["posts"][i]["created_at"] = result[i]["created_at"]
   }
 
-  templateVars["posts_html"] = html
   http::sendHtml(200, template::render("src/view/authed/posts/get.html", templateVars));
 }

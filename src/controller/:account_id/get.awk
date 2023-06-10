@@ -7,11 +7,11 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
   accountId = model::getAccountId(username)
   model::getPosts(result, accountId)
 
+  templateVars["username"] = username
   for(i = 1; i <= length(result); i++) {
-    html = html template::render("src/view/components/post.html", result[i])
+    templateVars["posts"][i]["id"] = result[i]["id"]
+    templateVars["posts"][i]["title"] = result[i]["title"]
   }
 
-  templateVars["posts_html"] = html
-  templateVars["username"] = username
-  http::sendHtml(200, template::render("src/view/_account_id/get.html", templateVars));
+  http::sendHtml(200, template::render("src/view/:account_id/get.html", templateVars));
 }
