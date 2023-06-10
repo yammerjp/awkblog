@@ -179,7 +179,7 @@ function send(statusNum, content) {
 
 function sendHtml(statusNum, content) {
   setHeader("content-type", "text/html; charset=UTF-8")
-  logger::info(statusNum " flyip" getHeader("fly-client-ip") "x44ip" getHeader("x-forwarded-for") " " getMethod() " " getPath() " rf:" getHeader("referer") " ua:" getHeader("user-agent") , "http")
+  logger::info(statusNum " flyip:" getHeader("fly-client-ip") " x44ip:" getHeader("x-forwarded-for") " " getMethod() " " getPath() " rf:" getHeader("referer") " ua:" getHeader("user-agent") , "http")
   return sendRaw(buildResponse(statusNum, content))
 }
 
