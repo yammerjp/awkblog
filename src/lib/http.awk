@@ -69,8 +69,6 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
   awk::RS="\n"
   parseRequest()
   logRequest()
-
-  isRequestRecieived = 1;
 }
 
 function parseRequest() {
@@ -145,7 +143,6 @@ function setCookieMaxAge(key, maxAge) {
 function initializeHttp() {
   INET = "/inet/tcp/" PORT "/0/0";
   FS=""
-  isRequestRecieived = 0;
 }
 
 function buildResponse(statusNum, content,    headerStr, status) {
@@ -167,20 +164,15 @@ function buildResponse(statusNum, content,    headerStr, status) {
   return sprintf("HTTP/1.1 %s\n%s\n%s", status, headerStr, content);
 }
 
-function sendRaw(rawContent) {
-  printf "%s", rawContent |& INET;
-  close(INET);
-  isRequestRecieived = 0;
-}
-
 function send(statusNum, content) {
-  sendRaw(buildResponse(statusNum, content))
+  logger::info(statusNum " flyip:" getHeader("fly-client-ip") " x44ip:" getHeader("x-forwarded-for") " " getMethod() " " getPath() " rf:" getHeader("referer") " ua:" getHeader("user-agent") , "http")
+  printf "%s", buildResponse(statusNum, content) |& INET;
+  close(INET);
 }
 
 function sendHtml(statusNum, content) {
   setHeader("content-type", "text/html; charset=UTF-8")
-  logger::info(statusNum " flyip:" getHeader("fly-client-ip") " x44ip:" getHeader("x-forwarded-for") " " getMethod() " " getPath() " rf:" getHeader("referer") " ua:" getHeader("user-agent") , "http")
-  return sendRaw(buildResponse(statusNum, content))
+  return send(statusNum, content)
 }
 
 function sendRedirect(url) {
