@@ -105,30 +105,26 @@ function buildCookieHeader(        headerStr, maxAge, secure) {
   return headerStr
 }
 
-function logRequest(        body, headers) {
+function logRequest(        params, headers) {
   if (getPath() == "/test") {
-    print "request: /test"
+    logger::debug("request: /test", "http")
     return
   }
-  print "request: ";
-  print "  method:";
-  print "    " getMethod();
-  print "  path:";
-  print "    " getPath();
-  print "  parameter:";
   for (i in HTTP_REQUEST_PARAMETERS) {
-    print "    " i ": " HTTP_REQUEST_PARAMETERS[i];
+    params = params "\n    " i ": " HTTP_REQUEST_PARAMETERS[i]
   }
-  print "  header:";
   for (i in HTTP_REQUEST_HEADERS) {
-    print "    " i ": " HTTP_REQUEST_HEADERS[i]
+    headers = headers "\n    " i ": " HTTP_REQUEST_HEADERS[i]
   }
-  body = getBody()
-  if (body != "") {
-    print "  body:";
-    print "    " body
-  }
-  print "";
+
+  logger::debug(sprintf("\
+request:\n\
+  method:\n     %s\n\
+  path:\n    %s\n\
+  parameter:%s\n\
+  header:%s\n\
+  body:\n    %s\n\
+", getMethod(), getPath(), params, headers, getBody()), "http")
 }
 
 function getCookie(key) {

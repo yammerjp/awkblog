@@ -3,7 +3,7 @@
 function verify(        encrypted, decrypted) {
   encrypted = http::getCookie("login_session")
   if (encrypted == "empty" || encrypted == "") {
-    print "empty"
+    logger::info("login_session is empty", "auth")
     return 0
   }
   decrypted = aes256::decrypt(encrypted)

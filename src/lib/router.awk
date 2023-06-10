@@ -34,7 +34,7 @@ function find(method, path,    key) {
 
 function debug_print() {
   for(i in routing_tables) {
-    printf "routing_tables[\"%s\"] = %s\n", i, routing_tables[i]
+    logger::debug("routing_tables[\"" i "\"] = " routing_tables[i], "router")
   }
 }
 
