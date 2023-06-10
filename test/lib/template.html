@@ -1,7 +1,10 @@
 <html>
   <body>
     <p>{{helloworld}}</p>
-    <h1>{{posts.title}}</h1>
+    <h1>{{posts.title}}</h1>{{## this is comment}}
     <article>{{posts.content}}</article>
+    <div>
+{{#include#for test/lib/tag.html tag of posts.tags}}
+    </div>
   </body>
 </html>
