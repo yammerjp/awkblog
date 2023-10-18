@@ -9,8 +9,8 @@ echo "start.sh: Start Web Application"
 echo '' | gawk \
   $(find src/ -type f | gawk '/\.awk$/{ printf " -f %s", $0 }') \
   -v PORT="${PORT:-8080}" \
-  -v AWKBLOG_OAUTH_CLIENT_KEY="${AWKBLOG_OAUTH_CLIENT_KEY}" \
-  -v AWKBLOG_OAUTH_CLIENT_SECRET="${AWKBLOG_OAUTH_CLIENT_SECRET}" \
+  -v OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID}" \
+  -v OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET}" \
   -v AWKBLOG_HOSTNAME="${AWKBLOG_HOSTNAME}" \
   -v POSTGRES_USER="${POSTGRES_USER}" \
   -v POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \

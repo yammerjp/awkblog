@@ -7,7 +7,7 @@ function oauth_callback__get() {
     http::sendHtml(500, "failed")
   }
   # TODO verify state
-  ret = shell::exec("curl -X POST -H 'Accept: application/json' 'https://github.com/login/oauth/access_token?client_id=" awk::AWKBLOG_OAUTH_CLIENT_KEY "&client_secret=" awk::AWKBLOG_OAUTH_CLIENT_SECRET "&code=" code "'")
+  ret = shell::exec("curl -X POST -H 'Accept: application/json' 'https://github.com/login/oauth/access_token?client_id=" awk::OAUTH_CLIENT_ID "&client_secret=" awk::OAUTH_CLIENT_SECRET "&code=" code "'")
   access_token = json::extractString(ret, "access_token")
   if (access_token == "") {
     http::sendHtml(500, "access token is not found")
