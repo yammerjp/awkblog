@@ -9,13 +9,20 @@ services:
       - "0.0.0.0:4567:4567"
     env_file:
       - .env
-      - .env_postgres
+    environment:
+      - POSTGRES_HOSTNAME=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=passw0rd
+      - POSTGRES_DATABASE=postgres
+      - PORT=4567
+      - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
   db:
     image: postgres:14
     volumes:
       - db-store:/var/lib/postgresql/data
-    env_file:
-      - .env_postgres
+    environment:
+      - POSTGRES_PASSWORD=passw0rd
+      - POSTGRES_USER=postgres
   pgadmin4:
     image: dpage/pgadmin4
     ports:
@@ -27,6 +34,14 @@ services:
         PGADMIN_DEFAULT_PASSWORD: password
     depends_on:
       - db
+  oauth-mock:
+    image: basd4g/github-oauth2-login-mock-server
+    ports:
+      - "0.0.0.0:8080:8080"
+    environment:
+      - PORT=8080
+    env_file:
+      - .env
 volumes:
   db-store:
   pgadmin4_data:
