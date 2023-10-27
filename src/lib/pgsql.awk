@@ -2,14 +2,10 @@
 
 @namespace "pgsql"
 
-function exec(query, params,        response, numberOfFields, col, numberOfRow, row) {
-  if (DEBUG) {
-    print "pgsql::exec() query: " query
-  }
+function exec(query, params,        response, numberOfFields, col, numberOfRow, row, logstr) {
+  logDebug("pgsql::exec() query: " query)
   response = awk::pg_execparams(Connection, query, length(params), params)
-  if (DEBUG) {
-    print "pgsql::exec() response: " response
-  }
+  logDebug("pgsql::exec() response: " response)
   delete RESULT
   RESULT[0] = ""
   delete RESULT[0]
@@ -18,25 +14,26 @@ function exec(query, params,        response, numberOfFields, col, numberOfRow, 
     return 1
   }
   if (response ~ /^TUPLES /) {
-     numberOfFields = awk::pg_nfields(response)
-     for (col = 0; col < numberOfFields; col++) {
-       columns[col] = awk::pg_fname(response, col)
-o    }
-     numberOfRows = awk::pg_ntuples(response)
-     for (row = 0; row < numberOfRows; row++) {
-       for (col = 0; col < numberOfFields; col++) {
-         RESULT[row][columns[col]] = (awk::pg_getisnull(response,row,col) ? "<NULL>" : awk::pg_getvalue(response,row,col))
-       }
-     }
-
-    if (DEBUG) {
-      for(i in RESULT) {
-        printf "  %s:\n", i
-        for (columnName in RESULT[i]) {
-          printf "    %s: %s\n", columnName, RESULT[i][columnName]
-        }
+    numberOfFields = awk::pg_nfields(response)
+    for (col = 0; col < numberOfFields; col++) {
+      columns[col] = awk::pg_fname(response, col)
+o   }
+    numberOfRows = awk::pg_ntuples(response)
+    for (row = 0; row < numberOfRows; row++) {
+      for (col = 0; col < numberOfFields; col++) {
+        RESULT[row][columns[col]] = (awk::pg_getisnull(response,row,col) ? "<NULL>" : awk::pg_getvalue(response,row,col))
       }
     }
+
+    logstr = "\n"
+    for(i in RESULT) {
+      logstr = logstr "  " i ":\n"
+      for (columnName in RESULT[i]) {
+        logstr = logstr "    " columnName ": " RESULT[i][columnName] "\n"
+      }
+    }
+    logDebug(logstr)
+
     awk::pg_clear(response)
     return 1
   }
@@ -53,13 +50,11 @@ function createConnection(  param) {
     param = param " options=" awk::POSTGRES_OPTIONS
   }
   if ((Connection = awk::pg_connect(param)) == "" ) {
-    printf "pg_connectionect failed: %s\n", ERRNO > "/dev/stderr"
+    logError("pgsql::createConnection(): pg_connectionect failed: " ERRNO)
     return 0
   }
-  print "created a postgres connection"
-  if (DEBUG) {
-    print "pgsql::createConnection(): Connection: " Connection
-  }
+  logInfo("created a postgres connection")
+  logError("pgsql::createConnection(): Connection: " Connection)
   return 1
 }
 
@@ -69,4 +64,16 @@ function fetchRows() {
 
 function fetchResult(row, columnName) {
   return RESULT[row][columnName]
+}
+
+function logInfo(message) {
+  logger::info(message, "pgsql")
+}
+
+function logDebug(message) {
+  logger::debug(message, "pgsql")
+}
+
+function logError(message) {
+  logger::error(message, "pgsql")
 }

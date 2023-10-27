@@ -1,0 +1,18 @@
+on:
+  push:
+
+name: Unit Tests
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    container: ghcr.io/yammerjp/gawk-pgsql
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          apt-get update -y && apt-get install -y uuid-runtime curl
+      - name: Run unit tests
+        run: ./test.sh

@@ -1,7 +1,6 @@
 @namespace "url"
 
-function decodeWwwForm(encodedStr,    encodedParts, key, value, equalIndex) {
-  delete url::params
+function decodeWwwForm(result, encodedStr,    encodedParts, key, value, equalIndex) {
   split(encodedStr, encodedParts, "&");
 
   for (i in encodedParts) {
@@ -25,7 +24,7 @@ function decodeWwwForm(encodedStr,    encodedParts, key, value, equalIndex) {
     # utf-8 percent decode
     key = decodeUtf8ParcentEncoding(key)
     value = decodeUtf8ParcentEncoding(value)
-    url::params[key] = value
+    result[key] = value
   }
 }
 

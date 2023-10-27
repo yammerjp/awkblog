@@ -1,6 +1,6 @@
 @namespace "http"
 
-function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace) {
+function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace, result) {
   $0 = "";
 
   delete HTTP_REQUEST
@@ -24,9 +24,9 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
   HTTP_REQUEST["version"] = splitted[4];
 
   if (length(parameters) > 0) {
-    url::decodeWwwForm(parameters)
-    for (i in url::params) {
-      HTTP_REQUEST_PARAMETERS[i] = url::params[i]
+    url::decodeWwwForm(result, parameters)
+    for (i in result) {
+      HTTP_REQUEST_PARAMETERS[i] = result[i]
     }
   }
 
@@ -69,8 +69,6 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
   awk::RS="\n"
   parseRequest()
   logRequest()
-
-  isRequestRecieived = 1;
 }
 
 function parseRequest() {
@@ -105,30 +103,26 @@ function buildCookieHeader(        headerStr, maxAge, secure) {
   return headerStr
 }
 
-function logRequest(        body, headers) {
+function logRequest(        params, headers) {
   if (getPath() == "/test") {
-    print "request: /test"
+    logger::debug("request: /test", "http")
     return
   }
-  print "request: ";
-  print "  method:";
-  print "    " getMethod();
-  print "  path:";
-  print "    " getPath();
-  print "  parameter:";
   for (i in HTTP_REQUEST_PARAMETERS) {
-    print "    " i ": " HTTP_REQUEST_PARAMETERS[i];
+    params = params "\n    " i ": " HTTP_REQUEST_PARAMETERS[i]
   }
-  print "  header:";
   for (i in HTTP_REQUEST_HEADERS) {
-    print "    " i ": " HTTP_REQUEST_HEADERS[i]
+    headers = headers "\n    " i ": " HTTP_REQUEST_HEADERS[i]
   }
-  body = getBody()
-  if (body != "") {
-    print "  body:";
-    print "    " body
-  }
-  print "";
+
+  logger::debug(sprintf("\
+request:\n\
+  method:\n     %s\n\
+  path:\n    %s\n\
+  parameter:%s\n\
+  header:%s\n\
+  body:\n    %s\n\
+", getMethod(), getPath(), params, headers, getBody()), "http")
 }
 
 function getCookie(key) {
@@ -149,7 +143,6 @@ function setCookieMaxAge(key, maxAge) {
 function initializeHttp() {
   INET = "/inet/tcp/" PORT "/0/0";
   FS=""
-  isRequestRecieived = 0;
 }
 
 function buildResponse(statusNum, content,    headerStr, status) {
@@ -171,19 +164,15 @@ function buildResponse(statusNum, content,    headerStr, status) {
   return sprintf("HTTP/1.1 %s\n%s\n%s", status, headerStr, content);
 }
 
-function sendRaw(rawContent) {
-  printf "%s", rawContent |& INET;
-  close(INET);
-  isRequestRecieived = 0;
-}
-
 function send(statusNum, content) {
-  sendRaw(buildResponse(statusNum, content))
+  logger::info(statusNum " flyip:" getHeader("fly-client-ip") " x44ip:" getHeader("x-forwarded-for") " " getMethod() " " getPath() " rf:" getHeader("referer") " ua:" getHeader("user-agent") , "http")
+  printf "%s", buildResponse(statusNum, content) |& INET;
+  close(INET);
 }
 
 function sendHtml(statusNum, content) {
   setHeader("content-type", "text/html; charset=UTF-8")
-  return sendRaw(buildResponse(statusNum, content))
+  return send(statusNum, content)
 }
 
 function sendRedirect(url) {

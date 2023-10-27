@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <p>{{helloworld}}</p>
+    <h1>{{posts.title}}</h1>{{## this is comment}}
+    <article>{{posts.content}}</article>
+    <div>
+{{#include#for test/lib/template/integration/tag.html posts.tags}}
+    </div>
+    {{#include test/lib/template/integration/footer.html}}
+  </body>
+</html>

@@ -19,11 +19,7 @@
     </style>
   </head>
   <body>
-    <h1>posts of 
-AWKBLOG::username
-</h1>
-    
-AWKBLOG::posts_html
-
+    <h1>posts of {{username}}</h1>
+    {{#include#for src/view/components/post_link.html posts}}
   </body>
 </html>
