@@ -13,6 +13,7 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
 
   templateVars["username"] = username
   for(i = 1; i <= length(result); i++) {
+    templateVars["posts"][i]["blogname"] = username
     templateVars["posts"][i]["id"] = result[i]["id"]
     templateVars["posts"][i]["title"] = result[i]["title"]
   }

@@ -15,7 +15,7 @@ BEGIN {
   router::register("GET", "/authed/posts", "controller::authed__posts__get")
   router::register("POST", "/authed/posts", "controller::authed__posts__post")
   router::register("GET", "/*", "controller::_account_id__get")
-  router::register("GET", "/*/posts/*", "controller::_account_id__post__get")
+  router::register("GET", "/*/posts/*", "controller::_accountid__posts___id__get")
   router::register("GET", "/static/*", "controller::static__get")
   router::register_notfound("controller::notfound")
 
