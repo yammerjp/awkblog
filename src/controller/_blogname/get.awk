@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function _account_id__get(        splitted, params, query, rows, id, html, result, templateVars) {
+function _blogname__get(        splitted, params, query, rows, id, html, result, templateVars) {
   split(http::getPath(), splitted, "@")
   username = splitted[2]
 
@@ -18,5 +18,5 @@ function _account_id__get(        splitted, params, query, rows, id, html, resul
     templateVars["posts"][i]["title"] = result[i]["title"]
   }
 
-  http::sendHtml(200, template::render("src/view/:account_id/get.html", templateVars));
+  http::sendHtml(200, template::render("src/view/_blogname/get.html", templateVars));
 }
