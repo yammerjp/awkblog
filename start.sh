@@ -2,6 +2,16 @@
 set -e
 cd /app
 
+function shutdown_trap() {
+  echo "start to graceful shutdown"
+  curl -X POST \
+    -H "Authorization: bearer $PRIVATE_BEARER_TOKEN" \
+    "http://localhost:${PORT:-8080}/private/shutdown"
+  exit 138
+}
+
+trap shutdown_trap TERM
+
 echo "start.sh: Migrate Database Schema"
 /app/psqldef --user="$POSTGRES_USER" --password="$POSTGRES_PASSWORD" --host="$POSTGRES_HOSTNAME" --file=schema.sql "$POSTGRES_DATABASE"
 
@@ -21,4 +31,7 @@ echo '' | gawk \
   -v POSTGRES_DATABASE="${POSTGRES_DATABASE}" \
   -v POSTGRES_SSLMODE="${POSTGRES_SSLMODE}" \
   -v POSTGRES_OPTIONS="${POSTGRES_OPTIONS}" \
-  -v DEBUG=${DEBUG} \
+  -v PRIVATE_BEARER_TOKEN="${PRIVATE_BEARER_TOKEN}" \
+  -v DEBUG="${DEBUG}" &
+
+wait
