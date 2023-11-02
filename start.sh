@@ -32,6 +32,7 @@ echo '' | gawk \
   -v POSTGRES_SSLMODE="${POSTGRES_SSLMODE}" \
   -v POSTGRES_OPTIONS="${POSTGRES_OPTIONS}" \
   -v PRIVATE_BEARER_TOKEN="${PRIVATE_BEARER_TOKEN}" \
-  -v DEBUG="${DEBUG}" &
+  -v DEBUG="${DEBUG}" \
+  &
 
 wait
