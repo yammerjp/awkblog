@@ -23,6 +23,7 @@ BEGIN {
   router::register_notfound("controller::notfound")
 
   logger::info("Start awkblog. listen port " PORT " ...")
+  fflush()
   http::initializeHttp();
   while(1) {
     http::receiveRequest()

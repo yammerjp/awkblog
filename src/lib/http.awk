@@ -1,4 +1,3 @@
-@load "json"
 @namespace "http"
 
 function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace, result) {
@@ -14,6 +13,8 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
   # read first line
   awk::RS="\n"
   INET |& getline line;
+  logger::debug("get first line: " line)
+  fflush()
   if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.1$/) {
     send(400)
     return
@@ -33,9 +34,12 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
 
 
   contentLength = 0
+  leftover = 1
 
   # read HTTP header
   for(i = 1; INET |& getline line > 0; i++) {
+    logger::debug("get next line:" line)
+    fflush()
     if (line == "" || line == "\r") {
       break;
     }
@@ -48,13 +52,21 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
     if (key == "content-length") {
       contentLength = int(substr(line, 17))
     }
+    if (key == "x-body-leftover") {
+      leftover = int(substr(line, 18))
+      if (leftover < 1) {
+        # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
+        leftover = 1
+      }
+    }
   }
+
+  logger::debug("finish to read http header")
+  fflush()
 
   # read HTTP body
   HTTP_REQUEST["body"] = ""
 
-  # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
-  leftover = 1
 
   while(contentLength > leftover) {
     if (contentLength > 1000) {
@@ -62,11 +74,17 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
     } else {
       readcharlen = contentLength - leftover
       logger::debug("readcharlen: " readcharlen)
+      fflush()
     }
     awk::RS = sprintf(".{%d}", readcharlen)
+    logger::debug("updated awk::RS : " awk::RS)
+    fflush()
     INET |& getline
+    logger::debug("get next line")
+    fflush()
     HTTP_REQUEST["body"] = HTTP_REQUEST["body"] awk::RT
     logger::debug("awk::RT: " awk::RT)
+    fflush()
     contentLength -= readcharlen
   }
   awk::RS="\n"
