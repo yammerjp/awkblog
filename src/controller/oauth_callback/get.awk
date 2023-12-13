@@ -23,6 +23,12 @@ function oauth_callback__get() {
     return
   }
 
+  logger::debug("print ret")
+
+  for (key in ret) {
+    logger::debug("ret[" key "]: " ret[key])
+  }
+
   auth::login(ret["id"], ret["loginname"])
   http::sendRedirect(AWKBLOG::HOSTNAME "/authed")
 }

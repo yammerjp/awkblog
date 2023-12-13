@@ -1,3 +1,4 @@
+@load "json"
 @namespace "http"
 
 function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace, result) {
@@ -60,10 +61,12 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
       readcharlen = 1000
     } else {
       readcharlen = contentLength - leftover
+      logger::debug("readcharlen: " readcharlen)
     }
     awk::RS = sprintf(".{%d}", readcharlen)
     INET |& getline
     HTTP_REQUEST["body"] = HTTP_REQUEST["body"] awk::RT
+    logger::debug("awk::RT: " awk::RT)
     contentLength -= readcharlen
   }
   awk::RS="\n"
@@ -148,8 +151,10 @@ function initializeHttp() {
 function buildResponse(statusNum, content,    headerStr, status) {
   switch(statusNum) {
     case 200: status = "200 OK"; break;
+    case 201: status = "201 No Content"; break;
     case 204: status = "204 OK"; break;
     case 302: status = "302 Found"; break;
+    case 400: status = "400 Bad Request"; break;
     case 401: status = "401 Unauthorized"; break;
     case 403: status = "403 Forbidden"; break;
     case 404: status = "404 Not Found"; break;
@@ -167,6 +172,8 @@ function buildResponse(statusNum, content,    headerStr, status) {
 function send(statusNum, content) {
   logger::info(statusNum " flyip:" getHeader("fly-client-ip") " x44ip:" getHeader("x-forwarded-for") " " getMethod() " " getPath() " rf:" getHeader("referer") " ua:" getHeader("user-agent") , "http")
   printf "%s", buildResponse(statusNum, content) |& INET;
+  fflush(INET);
+  fflush("/dev/stdout");
   close(INET);
 }
 

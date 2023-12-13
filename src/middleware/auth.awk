@@ -22,6 +22,13 @@ function redirectIfFailedToVerify() {
   }
 }
 
+function forbiddenIfFailedToVerify() {
+  if (!verify()) {
+    http::send(403)
+  }
+}
+
+
 function getUsername() {
   return MIDDLEWARE_AUTH["username"]
 }
@@ -32,6 +39,7 @@ function getAccountId() {
 
 function login(userid, username,        params) {
   query = "INSERT INTO accounts( id, name ) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;"
+  logger::debug("userid: " userid " username: " username)
   params[1] = userid
   params[2] = username
   pgsql::exec(query, params)
