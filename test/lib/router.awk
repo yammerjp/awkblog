@@ -1,5 +1,5 @@
 @include "src/lib/router.awk"
-@include "testutil.awk"
+@include "test/testutil.awk"
 
 "wildcard_compress" {
   replaced = router::wildcard_compress("/hello/world", 1)

@@ -1,6 +1,6 @@
 @include "src/lib/aes256.awk"
 @include "src/lib/base64.awk"
-@include "testutil.awk"
+@include "test/testutil.awk"
 
 "aes256Encrypt" {
   encrypted = aes256::encrypt("secret information")

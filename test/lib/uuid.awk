@@ -1,5 +1,5 @@
 @include "src/lib/uuid.awk"
-@include "testutil.awk"
+@include "test/testutil.awk"
 
 "uuid" {
   generated1 = uuid::gen()

@@ -1,5 +1,5 @@
 @include "src/lib/template.awk"
-@include "testutil.awk"
+@include "test/testutil.awk"
 
 {
   delete vairables
