@@ -32,6 +32,7 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
 
 
   contentLength = 0
+  leftover = 1
 
   # read HTTP header
   for(i = 1; INET |& getline line > 0; i++) {
@@ -47,13 +48,18 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
     if (key == "content-length") {
       contentLength = int(substr(line, 17))
     }
+    if (key == "x-body-leftover") {
+      leftover = int(substr(line, 18))
+      if (leftover < 1) {
+        # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
+        leftover = 1
+      }
+    }
   }
 
   # read HTTP body
   HTTP_REQUEST["body"] = ""
 
-  # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
-  leftover = 1
 
   while(contentLength > leftover) {
     if (contentLength > 1000) {
