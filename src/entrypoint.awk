@@ -16,6 +16,7 @@ BEGIN {
   router::register("POST", "/authed/posts", "controller::authed__posts__post")
   router::register("GET", "/api/v1/editor/posts", "controller::api__v1__editor__posts__get")
   router::register("POST", "/api/v1/editor/posts", "controller::api__v1__editor__posts__post")
+  router::register("GET", "/api/v1/editor/posts/*", "controller::api__v1__editor__posts___id__get")
   router::register("GET", "/*", "controller::_blogname__get")
   router::register("GET", "/*/posts/*", "controller::_blogname__posts___id__get")
   router::register("GET", "/static/*", "controller::static__get")
