@@ -1,4 +1,2 @@
-.env
-.env_postgres
+.env*
 .git
-.env.org
