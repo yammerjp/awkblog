@@ -1,12 +1,19 @@
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "0.0.0.0:4567:4567"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/var/www/static:ro
+    depends_on:
+      - gawk
   gawk:
     build: ./
     depends_on:
       - db
     volumes:
       - "./:/app"
-    ports:
-      - "0.0.0.0:4567:4567"
     env_file:
       - .env
     environment:
@@ -14,7 +21,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=passw0rd
       - POSTGRES_DATABASE=postgres
-      - PORT=4567
+      - PORT=80
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
       - PRIVATE_BEARER_TOKEN=d02ff6f3cfc03d7ba39ad7eb9044e60676404192
 
