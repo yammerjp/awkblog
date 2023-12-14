@@ -154,8 +154,10 @@ function initializeHttp() {
 function buildResponse(statusNum, content,    headerStr, status) {
   switch(statusNum) {
     case 200: status = "200 OK"; break;
+    case 201: status = "201 No Content"; break;
     case 204: status = "204 OK"; break;
     case 302: status = "302 Found"; break;
+    case 400: status = "400 Bad Request"; break;
     case 401: status = "401 Unauthorized"; break;
     case 403: status = "403 Forbidden"; break;
     case 404: status = "404 Not Found"; break;

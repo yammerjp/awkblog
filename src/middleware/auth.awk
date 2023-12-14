@@ -22,6 +22,13 @@ function redirectIfFailedToVerify() {
   }
 }
 
+function forbiddenIfFailedToVerify() {
+  if (!verify()) {
+    http::send(403)
+  }
+}
+
+
 function getUsername() {
   return MIDDLEWARE_AUTH["username"]
 }
