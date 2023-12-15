@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+      [x-cloak] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div x-cloak x-data="{
+      posts: [],
+      newPostTitle: localStorage.getItem('newPostTitle') || '',
+      newPostContent : localStorage.getItem('newPostContent') || '',
+      async fetchPosts() {
+        this.posts = (await fetch('/api/v1/editor/posts').then(r => r.json())).sort((a, b) => b.id - a.id)
+      },
+      async sendNewPost() {
+        const res = await fetch('/api/v1/editor/posts', {method:'POST',credentials:'same-origin',body:JSON.stringify({title: this.newPostTitle, content: this.newPostContent})})
+        if (res.ok) {
+          this.newPostTitle = ''
+          this.newPostContent = ''
+        }
+        await this.fetchPosts()
+      }
+    }" x-init="fetchPosts(); $watch('newPostTitle', v => localStorage.setItem('newPostTitle', v)); $watch('newPostContent', v => localStorage.setItem('newPostContent', v));">
+    <h1>Posts</h1>
+      <article>
+        <div>
+          title:
+          <input x-model="newPostTitle" style="width:100%;box-sizing:border-box;">
+        </div>
+          content:
+        <textarea x-model="newPostContent" style="width:100%;box-sizing:border-box; height:16em;">
+        </textarea>
+        <button
+          @click="sendNewPost()"
+          :disabled="newPostTitle.length===0 || newPostContent.length===0"
+        ">post</button>
+      </article>
+      <template x-for="post in posts">
+        <article>
+          <hr>
+          <h2 x-text="post.title"></h2>
+          <div>created at: <span x-text="post.created_at"></span></div>
+          <p x-text="post.content"></p>
+          <hr>
+        </article>
+      </template>
+    </div>
+  </body>
+</html>
