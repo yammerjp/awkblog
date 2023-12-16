@@ -12,8 +12,12 @@
   <body>
     <div x-cloak x-data="{
       posts: [],
+      editor: null,
       newPostTitle: localStorage.getItem('newPostTitle') || '',
       newPostContent : localStorage.getItem('newPostContent') || '',
+      async fetchEditor() {
+        this.editor = await fetch('/api/v1/editor').then(r => r.json())
+      },
       async fetchPosts() {
         this.posts = (await fetch('/api/v1/editor/posts').then(r => r.json())).sort((a, b) => b.id - a.id)
       },
@@ -25,7 +29,7 @@
         }
         await this.fetchPosts()
       }
-    }" x-init="fetchPosts(); $watch('newPostTitle', v => localStorage.setItem('newPostTitle', v)); $watch('newPostContent', v => localStorage.setItem('newPostContent', v));">
+    }" x-init="fetchEditor().then(() => fetchPosts()).catch(() => window.location.href = '/'); $watch('newPostTitle', v => localStorage.setItem('newPostTitle', v)); $watch('newPostContent', v => localStorage.setItem('newPostContent', v));">
     <h1>Posts</h1>
       <article>
         <div>
