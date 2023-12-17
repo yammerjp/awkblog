@@ -37,7 +37,5 @@ function login(userid, username,        params) {
 }
 
 function logout() {
-  http::setHeader("clear-site-data" , "\"cache\", \"cookies\", \"storage\", \"executionContexts\"")
   http::setCookie("login_session", "empty")
-  http::setCookieMaxAge("login_session", 1)
 }

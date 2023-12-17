@@ -9,6 +9,7 @@ BEGIN {
   router::register("GET", "/", "controller::get")
   router::register("GET", "/test", "controller::test__get")
   router::register("GET", "/login", "controller::login__get")
+  router::register("POST", "/logout", "controller::logout__post")
   router::register("GET", "/oauth-callback", "controller::oauth_callback__get")
   router::register("GET", "/authed", "controller::authed__get")
   router::register("GET", "/authed/posts/new", "controller::authed__posts__new__get")
