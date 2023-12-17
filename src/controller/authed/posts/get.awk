@@ -1,7 +1,10 @@
 @namespace "controller"
 
 function authed__posts__get(    query, params, html, result, templateVars) {
-  auth::redirectIfFailedToVerify()
+  if (!auth::verify()) {
+    http::sendRedirect(awk::AWKBLOG_HOSTNAME "/")
+    return
+  }
 
   accountId = auth::getAccountId()
   model::getPosts(result, accountId)

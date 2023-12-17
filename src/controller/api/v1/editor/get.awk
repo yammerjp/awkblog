@@ -2,7 +2,11 @@
 @namespace "controller"
 
 function api__v1__editor__get(    result) {
-  auth::forbiddenIfFailedToVerify()
+  if (!auth::verify()) {
+    http::send(403)
+    return
+  }
+
   accountId = auth::getAccountId()
 
   model::getAccount(result, accountId)
