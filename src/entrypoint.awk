@@ -27,8 +27,9 @@ BEGIN {
 
   logger::info("Start awkblog. listen port " PORT " ...")
   http::initializeHttp();
-  while(1) {
-    http::receiveRequest()
-    router::call(http::getMethod(), http::getPath())
-  }
+}
+
+{
+  http::receiveRequest()
+  router::call(http::getMethod(), http::getPath())
 }

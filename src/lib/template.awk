@@ -75,6 +75,7 @@ function readFile(filename, tree        , ret) {
     }
   }
   close(filename)
+  RS="\n"
   return ret
 }
 

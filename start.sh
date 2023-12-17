@@ -16,7 +16,7 @@ echo "start.sh: Migrate Database Schema"
 /app/psqldef --user="$POSTGRES_USER" --password="$POSTGRES_PASSWORD" --host="$POSTGRES_HOSTNAME" --file=schema.sql "$POSTGRES_DATABASE"
 
 echo "start.sh: Start Web Application"
-echo '' | gawk \
+cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | gawk \
   $(find src/ -type f | gawk '/\.awk$/{ printf " -f %s", $0 }') \
   -v PORT="${PORT:-8080}" \
   -v OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID}" \
