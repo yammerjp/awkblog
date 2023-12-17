@@ -204,52 +204,6 @@ function sendRedirect(url) {
   send(302, "")
 }
 
-function sendFile(filePath,     contents) {
-  contents = getFile(filePath)
-  if (!contents) {
-    send(404, "")
-    return
-  }
-  setHeader("Cache-Control", "no-cache")
-  setHeader("Content-Type", guessContentType(filePath))
-  send(200, contents)
-}
-
-function guessContentType(filePath) {
-  switch(filePath) {
-    case /\.html$/:
-      return "text/html; charset=utf-8"
-    case /\.css$/:
-      return "text/css"
-    case /\.js$/:
-      return "application/javascript"
-    case /\.jpg$/:
-    case /\.jpeg$/:
-      return "image/jpeg"
-    case /\.png$/:
-      return "image/png"
-      break
-    case /\.gif$/:
-      return "image/gif"
-    case /\.ico$/:
-      return "image/x-icon"
-    default:
-      return "text/plain"
-  }
-}
-
-function getFile(filePath,        contents) {
-  contents = ""
-  while (getline line < filePath > 0) {
-    if (contents) {
-      contents = contents ORS
-    }
-    contents = contents line
-  }
-  close(filePath)
-  return contents
-}
-
 function setHeader(key, value) {
   HTTP_RESPONSE_HEADERS[key] = value
 }

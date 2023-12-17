@@ -21,7 +21,6 @@ BEGIN {
   router::register("GET", "/api/v1/editor", "controller::api__v1__editor__get")
   router::register("GET", "/*", "controller::_blogname__get")
   router::register("GET", "/*/posts/*", "controller::_blogname__posts___id__get")
-  router::register("GET", "/static/*", "controller::static__get")
   router::register("POST", "/private/shutdown", "controller::private__shutdown__post")
   router::register_notfound("controller::notfound")
 
