@@ -12,8 +12,8 @@ function receiveRequest() {
   HTTP_REQUEST["body"] = ""
 
   readFirstLine()
-  readHttpHeader()
-  readHttpBody()
+  readHeader()
+  readBody()
 
   parseCookie()
   logRequest()
@@ -41,7 +41,7 @@ function readFirstLine(    line, splitted, parameters, result) {
   }
 }
 
-function readHttpHeader(    line, colonSpace) {
+function readHeader(    line, colonSpace) {
   for(i = 1; INET |& getline line > 0; i++) {
     if (line == "" || line == "\r") {
       break;
@@ -54,7 +54,7 @@ function readHttpHeader(    line, colonSpace) {
   }
 }
 
-function readHttpBody(    contentLength, unread, leftover, reading) {
+function readBody(    contentLength, unread, leftover, reading) {
   contentLength = getHeader("content-length")
   if (contentLength !~ /^[0-9]+$/) {
     send(411)
