@@ -41,11 +41,7 @@ function readFirstLine(    line, splitted, parameters, result) {
   }
 }
 
-function readHttpHeader(    line, contentLength, leftover, colonSpace) {
-  contentLength = 0
-  leftover = 1
-
-  # read HTTP header
+function readHttpHeader(    line, colonSpace) {
   for(i = 1; INET |& getline line > 0; i++) {
     if (line == "" || line == "\r") {
       break;
@@ -55,38 +51,38 @@ function readHttpHeader(    line, contentLength, leftover, colonSpace) {
     key = tolower(substr(line, 1, colonSpace-1))
     value = substr(line, colonSpace+2)
     HTTP_REQUEST_HEADERS[key] = value
-
-    if (key == "content-length") {
-      contentLength = int(substr(line, 17))
-    }
-    if (key == "x-body-leftover") {
-      leftover = int(substr(line, 18))
-      if (leftover < 1) {
-        # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
-        leftover = 1
-      }
-    }
   }
-  HTTP_REQUEST["contentLength"] = contentLength
-  HTTP_REQUEST["leftover"] = leftover
 }
 
-function readHttpBody(    contentLength, leftover, readcharlen) {
-  contentLength = HTTP_REQUEST["contentLength"]
-  leftover = HTTP_REQUEST["leftover"]
+function readHttpBody(    contentLength, unread, leftover, reading) {
+  contentLength = getHeader("content-length")
+  if (contentLength !~ /^[0-9]+$/) {
+    send(411)
+  }
+  if (contentLength == 0) {
+    # body is nothing
+    return
+  }
 
-  while(contentLength > leftover) {
-    if (contentLength > 1000) {
-      readcharlen = 1000
+  # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
+  leftover = getHeader("x-body-leftover") + 0
+  if (leftover < 1) {
+    setHeader("content-type", "text/plain")
+    send(400, "the HTTP Header 'X-Body-Leftover' must be greater than 0")
+  }
+  unread = contentLength - leftover
+  while(unread > 0) {
+    if (unread > 1000) {
+      reading = 1000
     } else {
-      readcharlen = contentLength - leftover
+      reading = unread
     }
-    awk::RS = sprintf(".{%d}", readcharlen)
+    awk::RS = sprintf(".{%d}", reading)
     INET |& getline
     HTTP_REQUEST["body"] = HTTP_REQUEST["body"] awk::RT
-    contentLength -= readcharlen
+    unread -= reading
   }
-  awk::RS="\n"
+  awk::RS = "\n"
 }
 
 function parseCookie(    splitted, i, idx, key, value) {
@@ -174,6 +170,7 @@ function buildResponse(statusNum, content,    headerStr, status) {
     case 401: status = "401 Unauthorized"; break;
     case 403: status = "403 Forbidden"; break;
     case 404: status = "404 Not Found"; break;
+    case 411: status = "411 Length Required"; break;
     default:  status = "500 Not Handled";break;
   }
 
