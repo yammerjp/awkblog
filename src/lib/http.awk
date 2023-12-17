@@ -1,6 +1,6 @@
 @namespace "http"
 
-function receiveRequest(    line, splitted, contentLength, readcharlen, leftover, parameters, colonSpace, result) {
+function receiveRequest() {
   $0 = "";
 
   delete HTTP_REQUEST
@@ -9,7 +9,17 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
   delete RESPONSE_COOKIES
   delete HTTP_RESPONSE_HEADERS
   delete HTTP_REQUEST_HEADERS
+  HTTP_REQUEST["body"] = ""
 
+  readFirstLine()
+  readHttpHeader()
+  readHttpBody()
+
+  parseCookie()
+  logRequest()
+}
+
+function readFirstLine(    line, splitted, parameters, result) {
   # read first line
   awk::RS="\n"
   INET |& getline line;
@@ -29,8 +39,9 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
       HTTP_REQUEST_PARAMETERS[i] = result[i]
     }
   }
+}
 
-
+function readHttpHeader(    line, contentLength, leftover, colonSpace) {
   contentLength = 0
   leftover = 1
 
@@ -56,10 +67,13 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
       }
     }
   }
+  HTTP_REQUEST["contentLength"] = contentLength
+  HTTP_REQUEST["leftover"] = leftover
+}
 
-  # read HTTP body
-  HTTP_REQUEST["body"] = ""
-
+function readHttpBody(    contentLength, leftover, readcharlen) {
+  contentLength = HTTP_REQUEST["contentLength"]
+  leftover = HTTP_REQUEST["leftover"]
 
   while(contentLength > leftover) {
     if (contentLength > 1000) {
@@ -73,11 +87,9 @@ function receiveRequest(    line, splitted, contentLength, readcharlen, leftover
     contentLength -= readcharlen
   }
   awk::RS="\n"
-  parseRequest()
-  logRequest()
 }
 
-function parseRequest() {
+function parseCookie(    splitted, i, idx, key, value) {
   split(getHeader("cookie"), splitted, "; ")
   for(i in splitted) {
     idx = index(splitted[i], "=")
