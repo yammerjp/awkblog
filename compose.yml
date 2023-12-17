@@ -33,7 +33,8 @@ services:
       - POSTGRES_PASSWORD=passw0rd
       - POSTGRES_USER=postgres
   oauth-mock:
-    image: basd4g/github-oauth2-login-mock-server
+    # https://github.com/yammerjp/github-oauth2-login-mock-server
+    image: ghcr.io/yammerjp/github-oauth2-login-mock-server:latest
     ports:
       - "0.0.0.0:8080:8080"
     environment:
