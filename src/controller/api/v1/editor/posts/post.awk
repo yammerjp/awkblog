@@ -2,11 +2,7 @@
 @namespace "controller"
 
 function api__v1__editor__posts__post(    req) {
-  if (!auth::verify()) {
-    http::send(403)
-    return
-  }
-
+  auth::forbiddenIfFailedToVerify()
   accountId = auth::getAccountId()
 
   json::from_json(http::HTTP_REQUEST["body"], req)

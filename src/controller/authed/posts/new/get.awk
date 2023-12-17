@@ -1,10 +1,7 @@
 @namespace "controller"
 
 function authed__posts__new__get() {
-  if (!auth::verify()) {
-    http::sendRedirect(awk::AWKBLOG_HOSTNAME "/")
-    return
-  }
+  auth::redirectIfFailedToVerify()
 
   encrypted_username = http::getCookie("username")
   if (encrypted_username != "") {

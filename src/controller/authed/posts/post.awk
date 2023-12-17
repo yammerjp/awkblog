@@ -2,10 +2,7 @@
 
 function authed__posts__post(        title, content, account_id, query, params, result) {
   http::guardCSRF()
-  if (!auth::verify()) {
-    http::sendRedirect(awk::AWKBLOG_HOSTNAME "/")
-    return
-  }
+  auth::redirectIfFailedToVerify()
 
   url::decodeWwwForm(result, http::HTTP_REQUEST["body"])
 

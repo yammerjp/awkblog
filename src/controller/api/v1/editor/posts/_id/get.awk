@@ -2,11 +2,8 @@
 @namespace "controller"
 
 function api__v1__editor__posts___id__get(    result, accountId, postId) {
-  if (!auth::verify()) {
-    http::send(403)
-    return
-  }
 
+  auth::forbiddenIfFailedToVerify()
   accountId = auth::getAccountId()
 
   split(http::getPath(), splitted, "/")

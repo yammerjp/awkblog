@@ -16,6 +16,19 @@ function verify(        encrypted, decrypted) {
   return length(MIDDLEWARE_AUTH["userid"]) > 0 && length(MIDDLEWARE_AUTH["username"]) > 0
 }
 
+function redirectIfFailedToVerify() {
+  if (!verify()) {
+    http::sendRedirect("/")
+  }
+}
+
+function forbiddenIfFailedToVerify() {
+  if (!verify()) {
+    http::send(403)
+  }
+}
+
+
 function getUsername() {
   return MIDDLEWARE_AUTH["username"]
 }
