@@ -24,3 +24,13 @@ function getAccount(ret, id    , params, query) {
   }
   return
 }
+
+function getAccounts(result    , i, query, rows) {
+  query = "SELECT id, name FROM accounts"
+  pgsql::exec(query)
+  rows = pgsql::fetchRows()
+  for(i = 1; i <= rows; i++) {
+    result[i]["id"] = pgsql::fetchResult(i-1, "id")
+    result[i]["name"] = pgsql::fetchResult(i-1, "name")
+  }
+}

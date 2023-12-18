@@ -1,25 +1,29 @@
 <html>
   <head>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-      html {
-        max-width: 70ch;
-        padding: 3em 1em;
-        margin: auto;
-        line-height: 1.75;
-        font-size: 1.25em;
-      }
-      h1,h2,h3,h4,h5,h6 {
-        margin: 3em 0 1em;
-      }
-      p,ul,ol {
-        margin-bottom: 2em;
-        color: #1d1d1d;
-        font-family: sans-serif;
+      [x-cloak] {
+        display: none;
       }
     </style>
   </head>
   <body>
     <h1>hello, awkblog!</h1>
     <div><form action="/login" method="POST"><input type="submit" value="login"></form></div>
+    <div x-cloak x-data="{
+      accounts: [],
+      async fetchAccounts() {
+        this.accounts = (await fetch('/api/v1/accounts').then(r => r.json())).sort((a, b) => b.id - a.id)
+      },
+    }" x-init="fetchAccounts()">
+    <h1>Accounts</h1>
+      <template x-for="account in accounts">
+        <div>
+          <a :href="'/@' + account.name">
+            @<span x-text="account.name"></span>
+          </a>
+        </div>
+      </template>
+    </div>
   </body>
 </html>
