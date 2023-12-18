@@ -5,7 +5,7 @@ services:
       - "0.0.0.0:4567:4567"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./static:/var/www/static:ro
+      - ./static:/var/www/html:ro
     depends_on:
       - gawk
   gawk:

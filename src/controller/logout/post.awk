@@ -4,5 +4,5 @@ function logout__post() {
   http::guardCSRF()
 
   auth::logout()
-  http::sendRedirect(awk::AWKBLOG_HOSTNAME "/static")
+  http::sendRedirect(awk::AWKBLOG_HOSTNAME)
 }

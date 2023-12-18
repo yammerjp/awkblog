@@ -34,7 +34,7 @@
         }
         await this.fetchPosts()
       }
-    }" x-init="fetchEditor().then(() => fetchPosts()).catch(() => window.location.href = '/static'); $watch('newPostTitle', v => localStorage.setItem('newPostTitle', v)); $watch('newPostContent', v => localStorage.setItem('newPostContent', v));">
+    }" x-init="fetchEditor().then(() => fetchPosts()).catch(() => window.location.href = '/'); $watch('newPostTitle', v => localStorage.setItem('newPostTitle', v)); $watch('newPostContent', v => localStorage.setItem('newPostContent', v));">
     <h1>Posts</h1>
       <article>
         <div>
