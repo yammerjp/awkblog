@@ -1,63 +1,93 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="utf-8">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-      [x-cloak] {
-        display: none;
-      }
-    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>console - awkblog</title>
+    <style>[x-cloak]{display:none}</style>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
     <div>
-      <form method="POST" action="/logout">
-        <input type="submit" value="logout">
-      </form>
-    </div>
-    <div x-cloak x-data="{
-      posts: [],
-      editor: null,
-      newPostTitle: localStorage.getItem('newPostTitle') || '',
-      newPostContent : localStorage.getItem('newPostContent') || '',
-      async fetchEditor() {
-        this.editor = await fetch('/api/v1/editor').then(r => r.json())
-      },
-      async fetchPosts() {
-        this.posts = (await fetch('/api/v1/editor/posts').then(r => r.json())).sort((a, b) => b.id - a.id)
-      },
-      async sendNewPost() {
-        const res = await fetch('/api/v1/editor/posts', {method:'POST',credentials:'same-origin',body:JSON.stringify({title: this.newPostTitle, content: this.newPostContent})})
-        if (res.ok) {
+      <div x-cloak x-data="{
+        posts: [],
+        editor: null,
+        newPostTitle: localStorage.getItem('newPostTitle') || '',
+        newPostContent : localStorage.getItem('newPostContent') || '',
+        async fetchEditor() {
+          this.editor = await fetch('/api/v1/editor').then(r => r.json())
+        },
+        async fetchPosts() {
+          this.posts = (await fetch('/api/v1/editor/posts').then(r => r.json())).sort((a, b) => b.id - a.id)
+        },
+        async sendNewPost() {
+          const res = await fetch('/api/v1/editor/posts', {method:'POST',credentials:'same-origin',body:JSON.stringify({title: this.newPostTitle, content: this.newPostContent})})
+          if (!res.ok) {
+            return
+          }
           this.newPostTitle = ''
           this.newPostContent = ''
+          await this.fetchPosts()
         }
-        await this.fetchPosts()
-      }
-    }" x-init="fetchEditor().then(() => fetchPosts()).catch(() => window.location.href = '/'); $watch('newPostTitle', v => localStorage.setItem('newPostTitle', v)); $watch('newPostContent', v => localStorage.setItem('newPostContent', v));">
-    <h1>Posts</h1>
-      <article>
-        <div>
-          title:
-          <input x-model="newPostTitle" style="width:100%;box-sizing:border-box;">
-        </div>
-          content:
-        <textarea x-model="newPostContent" style="width:100%;box-sizing:border-box; height:16em;">
-        </textarea>
-        <button
-          @click="sendNewPost()"
-          :disabled="newPostTitle.length===0 || newPostContent.length===0"
-        ">post</button>
-      </article>
-      <template x-for="post in posts">
-        <article>
-          <hr>
-          <h2 x-text="post.title"></h2>
-          <div>created at: <span x-text="post.created_at"></span></div>
-          <p x-text="post.content"></p>
-          <hr>
-        </article>
-      </template>
+      }" x-init="
+        fetchEditor().then(() => fetchPosts()).catch(() => window.location.href = '/');
+        $watch('newPostTitle', v => localStorage.setItem('newPostTitle', v));
+        $watch('newPostContent', v => localStorage.setItem('newPostContent', v));
+      ">
+        <section class="w-full px-6 pb-12 antialiased bg-white">
+          <div class="mx-auto max-w-7xl">
+            <div class="container mx-auto mt-px text-left sm:max-w-md md:max-w-lg sm:px-4 md:max-w-none py-2">
+              <div class="bg-white border rounded-lg shadow-sm p-7 border-neutral-200/60">
+                <article>
+                  <input
+                  x-model="newPostTitle"
+                  type="text"
+                  placeholder="Title"
+                  class="flex w-full h-10 px-3 py-2 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                  <div class="my-1">
+                    <textarea
+                      x-model="newPostContent"
+                      x-data="{
+                        resize() {
+                          $el.style.height = '0px'
+                          $el.style.height = $el.scrollHeight + 'px'
+                        }
+                      }"
+                      x-init="resize()"
+                      @input="resize()"
+                      type="text"
+                      class="flex w-full h-auto min-h-[80px] px-3 py-2 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-400 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Type your article content here."
+                    ></textarea>
+                  </div>
+                  <div>
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-neutral-950 hover:bg-neutral-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+                      @click="sendNewPost()"
+                      :disabled="newPostTitle.length===0 || newPostContent.length===0"
+                    >Post</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <template x-for="post in posts">
+              <div class="container mx-auto mt-px text-left sm:max-w-md md:max-w-lg sm:px-4 md:max-w-none py-2">
+                <div class="bg-white border rounded-lg shadow-sm p-7 border-neutral-200/60">
+                  <article>
+                    <h2 class="text-xl font-bold leading-none tracking-tight text-neutral-900" x-text="post.title"></h2>
+                    <div class="my-1 text-neutral-500" x-text="post.content"></div>
+                    <div class="text-neutral-400">created at: <span x-text="post.created_at"></span></div>
+                  </article>
+                </div>
+              </div>
+            </template>
+          </div>
+        </section>
+      </div>
     </div>
   </body>
 </html>
