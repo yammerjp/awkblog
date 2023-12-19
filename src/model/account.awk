@@ -22,6 +22,8 @@ function getAccount(ret, id    , params, query) {
     ret["error"] = "account not found"
     return
   }
+  ret["id"] = pgsql::fetchResult(0, "id")
+  ret["name"] = pgsql::fetchResult(0, "name")
   return
 }
 
