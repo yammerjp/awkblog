@@ -35,12 +35,12 @@ function readFile(filename, tree        , ret) {
       switch($1) {
       case "#include":
         # include file
-        # {{#include#for <filename> <subTreePath>}}
+        # {{#include <filename> <loopTreePath>}}
         ret = ret render($2, tree, $3)
         break;
       case "#include#for":
         # include file with loop
-        # {{#include#if <filename> <loopTreePath>}}
+        # {{#include#for <filename> <subTreePath>}}
         ret = ret render($2, tree, $3 ".*")
         break
       case "#include#if":
