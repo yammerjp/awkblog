@@ -24,5 +24,5 @@ function oauth_callback__get() {
   }
 
   auth::login(ret["id"], ret["loginname"])
-  http::sendRedirect(AWKBLOG::HOSTNAME "/console")
+  http::sendRedirect(AWKBLOG::HOSTNAME "/authed")
 }

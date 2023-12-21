@@ -20,9 +20,13 @@
   </head>
   <body>
     <h1>hello, awkblog!</h1>
+    <div>Hi! {{username}}, Welcome to awkblog!</div>
     <div><a href="/authed">/authed</a></div>
-    <div><a href="/login">/login</a></div>
     <div><a href="/authed/posts">/authed/posts</a></div>
+    <div><a href="/authed/posts/new">/authed/posts/new</a></div>
     <div><a href="/">/</a></div>
+    <form method="POST" action="/logout">
+      <input type="submit" value="logout">
+    </form>
   </body>
 </html>
