@@ -8,5 +8,5 @@ function authed__posts__new__get() {
       username = aes256::decrypt(encrypted_username)
   }
   variables["username"] = username
-  http::sendHtml(200, template::render("src/view/authed/posts/new/get.html", variables))
+  template::sendHtml("authed/posts/new/get.html", variables)
 }

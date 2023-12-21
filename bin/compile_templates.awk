@@ -6,7 +6,7 @@ function compile_and_print(file_in    , funcname, filename) {
   funcname = "render_" funcname
   filename = BASE_DIR file_in
 
-  print "function " funcname "(v) {"
+  print "function " funcname "(v    , ret) {"
 
   while(1) {
     # out of {{ }}
@@ -17,7 +17,7 @@ function compile_and_print(file_in    , funcname, filename) {
 
     gsub("\"", "\\\"", $0)
     gsub("\n", "\\n", $0)
-    print "  printf \"%s\", \""  $0 "\";"
+    print "  ret = ret sprintf(\"%s\", \""  $0 "\");"
 
     # in {{ }}
     RS = "}}"
@@ -34,13 +34,19 @@ function compile_and_print(file_in    , funcname, filename) {
       case "#include":
         # TODO
         break
+      case "#exec":
+        $1 = ""
+        print $0
+        break
       case "##":
+        break
       default:
-        print "  printf \"%s\", " $0 ";"
+        print "  ret = ret sprintf(\"%s\", " $0 ");"
         break
     }
   }
 
+  print "  return ret"
   print "}"
   RS="\n"
 }
@@ -50,10 +56,12 @@ BEGIN {
 \n\
 function render(path, v) {\n\
   gsub(\"/\", \"SLASH\", path)\n\
-  gsub(\"\\\\.\", \"DOT\", $0)\n\
-  gsub(\"\\n\", \"\", $0)\n\
-  funcname = \"render_\" $0\n\
-  @funcname(v)\n\
+  gsub(\"\\\\.\", \"DOT\", path)\n\
+  gsub(\"\\n\", \"\", path)\n\
+  funcname = \"compiled_templates::render_\" path\n\
+  logger::debug(\"path : \" path)\n\
+  logger::debug(\"funcname : \" funcname)\n\
+  return @funcname(v)\n\
 }"
 
 }

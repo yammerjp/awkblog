@@ -20,7 +20,13 @@
   </head>
   <body>
     <h1>posts</h1>
-    {{#include#for src/view/components/post.html posts}}
+      {{#exec for(i in v["posts"]) { }}
+        <article>
+          <h2>{{v["posts"][i]["title"]}}</h2>
+          <div class="date">{{v["posts"][i]["created_at"]}}</div>
+          <p>{{v["posts"][i]["content"]}}</p>
+        </article>
+      {{#exec } }}
     <a href="/authed">/authed</a>
   </body>
 </html>

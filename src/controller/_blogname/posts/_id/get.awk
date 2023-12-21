@@ -23,5 +23,5 @@ function _blogname__posts___id__get(        splitted, params, query, rows, id, h
   templateVars["content"] = result["content"]
   templateVars["created_at"] = result["created_at"]
 
-  http::sendHtml(200, template::render("src/view/_blogname/posts/_id/get.html", templateVars));
+  template::sendHtml("_blogname/posts/_id/get.html", templateVars);
 }

@@ -19,7 +19,11 @@
     </style>
   </head>
   <body>
-    <h1>posts of {{username}}</h1>
-    {{#include#for src/view/components/post_link.html posts}}
+    <h1>posts of {{v["username"]}}</h1>
+      {{#exec for(i in v["posts"]) { }}
+        <div>
+          <a href="/@{{v["posts"][i]["blogname"]}}/posts/{{v["posts"][i]["id"]}}">{{v["posts"][i]["title"]}}</a>
+        </div>
+      {{#exec } }}
   </body>
 </html>

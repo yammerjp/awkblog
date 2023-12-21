@@ -1,5 +1,5 @@
 @namespace "controller"
 
 function notfound() {
-  http::sendHtml(404, template::render("src/view/404.html"));
+  http::sendHtml(404, compiled_templates::render("404.html"));
 }
