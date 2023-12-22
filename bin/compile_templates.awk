@@ -9,8 +9,8 @@ function compile_and_print(file_in    , funcname, filename) {
   print "function " funcname "(v    , ret) {"
 
   while(1) {
-    # out of {{ }}
-    RS = "{{"
+    # out of <% %>
+    RS = "<%"
     if ((getline < filename) == 0) {
       break
     }
@@ -19,8 +19,8 @@ function compile_and_print(file_in    , funcname, filename) {
     gsub("\n", "\\n", $0)
     print "  ret = ret sprintf(\"%s\", \""  $0 "\");"
 
-    # in {{ }}
-    RS = "}}"
+    # in <% %>
+    RS = "%>"
     if ((getline < filename) == 0) {
       break
     }
@@ -34,14 +34,14 @@ function compile_and_print(file_in    , funcname, filename) {
       case "#include":
         # TODO
         break
-      case "#exec":
-        $1 = ""
-        print $0
-        break
       case "##":
         break
-      default:
+      case "=":
+        $1 = ""
         print "  ret = ret sprintf(\"%s\", " $0 ");"
+        break
+      default:
+        print $0
         break
     }
   }

@@ -1,11 +1,11 @@
 <html>
   <body>
-    <p>{{helloworld}}</p>
-    <h1>{{posts.title}}</h1>{{## this is comment}}
-    <article>{{posts.content}}</article>
+    <p><%= v["helloworld"] %></p>
+    <h1><%= v["posts"]["title"] %></h1><%## this is comment%>
+    <article><%= v["posts"]["content"] %></article>
     <div>
-{{#include#for test/lib/template/tag.html posts.tags}}
+<%#include#for test/lib/template/tag.html posts.tags%>
     </div>
-    {{#include test/lib/template/footer.html}}
+    <%#include test/lib/template/footer.html%>
   </body>
 </html>

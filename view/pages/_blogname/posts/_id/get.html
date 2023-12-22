@@ -19,10 +19,10 @@
     </style>
   </head>
   <body>
-    <h1>{{v["title"]}}</h1>
-    <div>posted: {{v["created_at"]}}</div>
+    <h1><%= v["title"] %></h1>
+    <div>posted: <%= v["created_at"] %></div>
     <main>
-      {{v["content"]}}
+      <%= v["content"] %>
     </main>
   </body>
 </html>

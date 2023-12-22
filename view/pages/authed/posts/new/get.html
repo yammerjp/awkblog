@@ -20,7 +20,7 @@
   </head>
   <body>
     <h1>hello, awkblog!</h1>
-    <div>username: {{v["username"]}}</div>
+    <div>username: <%= v["username"] %></div>
     <form action="/authed/posts" method="post">
       <div><label>title:<br><input type="text" name="title"></label></div>
       <div><label>content:<br><textarea name="content"></textarea></label></div>
