@@ -16,3 +16,5 @@ jobs:
           apt-get update -y && apt-get install -y uuid-runtime curl
       - name: Run unit tests
         run: ./test/unittest.sh
+      - name: Run template tests
+        run: ./test/templatetest.sh

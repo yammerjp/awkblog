@@ -1,13 +1,4 @@
-function compile_and_print(file_in    , funcname, filename) {
-  funcname = file_in
-  gsub("/", "SLASH", funcname)
-  gsub("\\.", "DOT", funcname)
-  gsub("\n", "", funcname)
-  funcname = "render_" funcname
-  filename = BASE_DIR file_in
-
-  print "function " funcname "(v    , ret) {"
-
+function compile_page(filename) {
   while(1) {
     # out of <% %>
     RS = "<%"
@@ -17,7 +8,7 @@ function compile_and_print(file_in    , funcname, filename) {
 
     gsub("\"", "\\\"", $0)
     gsub("\n", "\\n", $0)
-    print "  ret = ret sprintf(\"%s\", \""  $0 "\");"
+    print "      ret = ret sprintf(\"%s\", \""  $0 "\");"
 
     # in <% %>
     RS = "%>"
@@ -25,47 +16,44 @@ function compile_and_print(file_in    , funcname, filename) {
       break
     }
     switch ($1) {
-      case "#include#for":
-        # TODO
-        break
-      case "#include#if":
-        # TODO
-        break
       case "#include":
         # TODO
+        print "need to implement #include" > "/dev/stderr"
+        exit 1
         break
       case "##":
         break
       case "=":
         $1 = ""
-        print "  ret = ret sprintf(\"%s\", " $0 ");"
+        print "      ret = ret sprintf(\"%s\", " $0 ");"
         break
       default:
         print $0
         break
     }
   }
-
-  print "  return ret"
-  print "}"
   RS="\n"
 }
 
 BEGIN {
   print "@namespace \"compiled_templates\"\n\
 \n\
-function render(path, v) {\n\
-  gsub(\"/\", \"SLASH\", path)\n\
-  gsub(\"\\\\.\", \"DOT\", path)\n\
-  gsub(\"\\n\", \"\", path)\n\
-  funcname = \"compiled_templates::render_\" path\n\
-  logger::debug(\"path : \" path)\n\
-  logger::debug(\"funcname : \" funcname)\n\
-  return @funcname(v)\n\
-}"
+function render(path, v    , ret) {\n\
+  switch(path) {"
+}
 
+END {
+  print "\n\
+    default:\n\
+      print \"unknown path\" > \"/dev/stderr\"\n\
+      exit 1\n\
+  }\n\
+  return ret\n\
+}"
 }
 
 {
-  compile_and_print($0)
+  print "    case \"" $0 "\":"
+  compile_page(BASE_DIR "/" $0)
+  print "      break"
 }

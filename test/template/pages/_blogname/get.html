@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <style>
+      h1,h2,h3,h4,h5,h6 {
+        margin: 3em 0 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>posts of <%= v["username"] %></h1>
+      <% for(i in v["posts"]) { %>
+        <div>
+          <a href="/@<%= v["posts"][i]["blogname"] %>/posts/<%= v["posts"][i]["id"] %>"><%= v["posts"][i]["title"] %></a>
+        </div>
+      <% } %>
+  </body>
+</html>
