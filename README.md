@@ -6,11 +6,12 @@ weblog implimentation by awk
 
 ```shell
 cp .env.example .env
-# GitHub Oauth App Setup
-#   https://github.com/settings/applications/new
-#   Authorization callback URL: http://localhost:4567/oauth-callback
+# By default, login uses a mock server.
+# If you want to use a real GitHub account, set up the GitHub OAuth App and configure your confidential information.
+# https://github.com/settings/applications/new
+# Authorization callback URL: http://localhost:4567/oauth-callback
 # Write OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET
-vim .env
+# vim .env
 docker compose up -d
 # open browser localhost:4567
 ```
