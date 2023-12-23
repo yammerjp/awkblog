@@ -191,11 +191,6 @@ function send(statusNum, content) {
   next
 }
 
-function sendHtml(statusNum, content) {
-  setHeader("content-type", "text/html; charset=UTF-8")
-  return send(statusNum, content)
-}
-
 function sendRedirect(url) {
   HTTP_RESPONSE_HEADERS["Location"] = url
   send(302, "")

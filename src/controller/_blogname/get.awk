@@ -18,5 +18,5 @@ function _blogname__get(        splitted, params, query, rows, id, html, result,
     templateVars["posts"][i]["title"] = result[i]["title"]
   }
 
-  template::sendHtml("_blogname/get.html", templateVars);
+  template::render("_blogname/get.html", templateVars);
 }

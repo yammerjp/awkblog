@@ -4,14 +4,14 @@ function oauth_callback__get() {
   code = http::getParameter("code")
   error = http::getParameter("error")
   if (code == "" || error != "") {
-    http::sendHtml(400, "failed to login")
+    http::send(400, "failed to login")
     print "faild to login. code:" code " error:" error
     return
   }
   stateOnQuery = http::getParameter("state")
   stateOnCookie = http::getCookie("state")
   if (stateOnQuery == "" || stateOnQuery != stateOnCookie) {
-    http::sendHtml(400, "invalid state")
+    http::send(400, "invalid state")
     return
   }
 
@@ -19,7 +19,7 @@ function oauth_callback__get() {
   github::verify(ret, code)
 
   if (ret["error"] != "") {
-    http::sendHtml(400, ret["error"])
+    http::send(400, ret["error"])
     return
   }
 

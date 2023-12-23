@@ -12,5 +12,5 @@ function authed__posts__get(    query, params, html, result, templateVars) {
     templateVars["posts"][i]["created_at"] = result[i]["created_at"]
   }
 
-  template::sendHtml("authed/posts/get.html", templateVars)
+  template::render("authed/posts/get.html", templateVars)
 }
