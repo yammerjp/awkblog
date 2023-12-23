@@ -26,7 +26,7 @@ BEGIN {
   router::register_notfound("controller::notfound")
 
   logger::info("Start awkblog. listen port " PORT " ...")
-  http::initializeHttp();
+  http::initialize();
 }
 
 {
