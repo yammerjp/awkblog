@@ -42,12 +42,28 @@ o   }
 }
 
 function createConnection(  param) {
-  param = "host=" awk::POSTGRES_HOSTNAME " dbname=" awk::POSTGRES_DATABASE " user=" awk::POSTGRES_USER" password=" awk::POSTGRES_PASSWORD
-  if (awk::POSTGRES_SSLMODE) {
-    param = param " sslmode=" awk::POSTGRES_SSLMODE
+  if (!("POSTGRES_HOSTNAME" in ENVIRON)) {
+    print "need environment variable: POSTGRES_HOSTNAME" > "/dev/stderr"
+    exit 1
   }
-  if (awk::POSTGRES_OPTIONS) {
-    param = param " options=" awk::POSTGRES_OPTIONS
+  if (!("POSTGRES_DATABASE" in ENVIRON)) {
+    print "need environment variable: POSTGRES_DATABASE" > "/dev/stderr"
+    exit 1
+  }
+  if (!("POSTGRES_USER" in ENVIRON)) {
+    print "need environment variable: POSTGRES_USER" > "/dev/stderr"
+    exit 1
+  }
+  if (!("POSTGRES_PASSWORD" in ENVIRON)) {
+    print "need environment variable: POSTGRES_PASSWORD" > "/dev/stderr"
+    exit 1
+  }
+  param = "host=" ENVIRON["POSTGRES_HOSTNAME"] " dbname=" ENVIRON["POSTGRES_DATABASE"] " user=" ENVIRON["POSTGRES_USER"] " password=" ENVIRON["POSTGRES_PASSWORD"]
+  if ("POSTGRES_SSLMODE" in ENVIRON) {
+    param = param " sslmode=" ENVIRON["POSTGRES_SSLMODE"]
+  }
+  if ("POSTGRES_OPTIONS" in ENVIRON) {
+    param = param " options=" ENVIRON["POSTGRES_OPTIONS"]
   }
   if ((Connection = awk::pg_connect(param)) == "" ) {
     logError("pgsql::createConnection(): pg_connectionect failed: " ERRNO)

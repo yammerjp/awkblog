@@ -12,5 +12,5 @@ function authed__posts__post(        title, content, account_id, query, params, 
 
   model::createPost(title, content, accountId)
 
-  http::sendRedirect(AWKBLOG::HOST_NAME "/authed/posts")
+  http::sendRedirect("/authed/posts")
 }

@@ -107,7 +107,7 @@ function buildCookieHeader(        headerStr, maxAge, secure) {
     } else {
       maxAge = ""
     }
-    if (awk::AWKBLOG_HOSTNAME ~ /^https:\/\//) {
+    if (getHostName() ~ /^https:\/\//) {
       secure = sprintf("; Secure")
     } else {
       secure = ""
@@ -154,8 +154,13 @@ function setCookieMaxAge(key, maxAge) {
   RESPONSE_COOKIES[key]["Max-Age"] = maxAge
 }
 
-function initializeHttp() {
-  INET = "/inet/tcp/" PORT "/0/0";
+function initialize(    port) {
+  port = ENVIRON["PORT"] 
+  if (port == "") {
+    print "Need PORT env" > "/dev/stderr"
+    exit 1
+  }
+  INET = "/inet/tcp/" port "/0/0";
   FS=""
   RS = "\n"
 }
@@ -228,5 +233,9 @@ function guardCSRF() {
 }
 
 function isCrossSiteRequest() {
-  return getHeader("origin") != awk::AWKBLOG_HOSTNAME
+  return getHeader("origin") != getHostName()
+}
+
+function getHostName() {
+  return ENVIRON["AWKBLOG_HOSTNAME"]
 }

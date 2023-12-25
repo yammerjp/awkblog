@@ -17,7 +17,7 @@ function error(message, tag) {
 }
 
 function output(level, message, tag) {
-    if (!awk::DEBUG && level == "DEBUG") {
+    if (!ENVIRON["DEBUG"] && level == "DEBUG") {
         return
     }
     if (tag == "") {
