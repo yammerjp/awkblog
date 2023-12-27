@@ -5,6 +5,8 @@ weblog implimentation by awk
 ## Getting Started
 
 ```shell
+
+./bin/setup.sh
 cp .env.example .env
 # By default, login uses a mock server.
 # If you want to use a real GitHub account, set up the GitHub OAuth App and configure your confidential information.

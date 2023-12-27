@@ -10,7 +10,7 @@ function authed__posts__post(        title, content, account_id, query, params, 
   content = html::escape(result["content"])
   accountId = auth::getAccountId()
 
-  model::createPost(title, content, accountId)
+  model::createPost(title, markdown::parseMultipleLines(content), accountId)
 
   http::sendRedirect("/authed/posts")
 }
