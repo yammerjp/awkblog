@@ -25,7 +25,9 @@
           <h2><%= v["posts"][i]["title"] %></h2>
           <div class="date"><%= v["posts"][i]["created_at"] %></div>
           <p><%= v["posts"][i]["content"] %></p>
+          <a href="/authed/posts/edit?post_id=<%= v["posts"][i]["id"] %>">edit</a>
         </article>
+        <hr>
       <% } %>
     <a href="/authed">/authed</a>
   </body>

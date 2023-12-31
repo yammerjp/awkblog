@@ -20,7 +20,7 @@ function _blogname__posts___id__get(        splitted, params, query, rows, id, h
   }
   templateVars["id"] = result["id"]
   templateVars["title"] = result["title"]
-  templateVars["content"] = result["content"]
+  templateVars["content"] = markdown::parseMultipleLines(result["content"])
   templateVars["created_at"] = result["created_at"]
 
   template::render("_blogname/posts/_id/get.html", templateVars);
