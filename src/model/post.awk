@@ -64,3 +64,11 @@ function updatePost(title, content, id, accountId      , params, query) {
   params[4] = accountId
   pgsql::exec(query, params)
 }
+
+function deletePost(id, accountId    , params, query) {
+  logger::info("deletePost(" id  ", " accountId ")")
+  query = "DELETE FROM posts WHERE id = $1 AND account_id = $2;"
+  params[1] = id
+  params[2] = accountId
+  pgsql::exec(query, params)
+}
