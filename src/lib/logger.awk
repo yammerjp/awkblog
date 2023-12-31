@@ -17,7 +17,7 @@ function error(message, tag) {
 }
 
 function output(level, message, tag) {
-    if (!ENVIRON["DEBUG"] && level == "DEBUG") {
+    if (level == "DEBUG" && ! ENVIRON["DEBUG"]) {
         return
     }
     if (tag == "") {
