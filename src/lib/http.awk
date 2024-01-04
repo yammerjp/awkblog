@@ -1,8 +1,6 @@
 @namespace "http"
 
 function receiveRequest() {
-  $0 = "";
-
   delete HTTP_REQUEST
   delete HTTP_REQUEST_PARAMETERS
   delete REQUEST_COOKIES
@@ -10,6 +8,8 @@ function receiveRequest() {
   delete HTTP_RESPONSE_HEADERS
   delete HTTP_REQUEST_HEADERS
   HTTP_REQUEST["body"] = ""
+  HTTP_REQUEST["id"] = $0
+  $0 = "";
 
   readFirstLine()
   readHeader()
@@ -223,6 +223,10 @@ function getHeader(key) {
 
 function getParameter(key) {
   return HTTP_REQUEST_PARAMETERS[key]
+}
+
+function getRequestId() {
+  return HTTP_REQUEST["id"]
 }
 
 function guardCSRF() {
