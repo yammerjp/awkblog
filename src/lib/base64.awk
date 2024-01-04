@@ -23,7 +23,7 @@ function urlunsafe(str) {
 }
 
 function encode(str) {
-  return shell::exec("openssl enc -e -base64", str)
+  return shell::exec("openssl enc -e -base64 -A", str)
 }
 
 function decode(str) {
