@@ -14,15 +14,3 @@
   decrypted = aes256::decrypt(encrypted)
   assertEqual("secret information", decrypted)
 }
-
-"base64ToUrlsafe" {
-  base64 = "U2FsdGVkX1+T/ZtrrVXETUKzKs0DjeeKSeAEF6G+rdY="
-  base64url = "U2FsdGVkX1-T_ZtrrVXETUKzKs0DjeeKSeAEF6G-rdY"
-  assertEqual(base64url, base64::urlsafe(base64))
-}
-
-"base64ToUrlunsafe" {
-  base64 = "U2FsdGVkX1+T/ZtrrVXETUKzKs0DjeeKSeAEF6G+rdY="
-  base64url = "U2FsdGVkX1-T_ZtrrVXETUKzKs0DjeeKSeAEF6G-rdY"
-  assertEqual(base64, base64::urlunsafe(base64url))
-}

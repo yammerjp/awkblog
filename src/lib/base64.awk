@@ -27,5 +27,5 @@ function encode(str) {
 }
 
 function decode(str) {
-  return shell::exec("openssl enc -d -base64", str)
+  return shell::exec("openssl enc -d -base64", str "\n")
 }
