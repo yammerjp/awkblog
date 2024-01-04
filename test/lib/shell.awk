@@ -3,5 +3,5 @@
 @include "test/testutil.awk"
 
 {
-  assertEqual("hoge\nfuga\n", shell::exec("echo \"hoge\nfuga\""))
+  assertEqual("hoge\nfuga", shell::exec("echo \"hoge\nfuga\""))
 }

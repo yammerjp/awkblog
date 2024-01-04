@@ -1,16 +1,27 @@
 @namespace "shell"
 
-function exec(cmd ,stdinStr    , ret) {
+function exec(cmd ,stdinStr    , ret, isFirstLine) {
+  isFirstLine = 1
   logger::debug("shell::exec(\"" cmd "\", \"" stdinStr "\")")
   if (stdinStr == "") {
     while((cmd | getline) > 0) {
-      ret = ret $0 "\n"
+      if (isFirstLine) {
+        isFirstLine = 0
+        ret = $0
+      } else {
+        ret = ret "\n" $0
+      }
     }
   } else {
-    print stdinStr |& cmd
+    printf "%s", stdinStr |& cmd
     close(cmd, "to")
     while((cmd |& getline) > 0) {
-      ret = ret $0 "\n"
+      if (isFirstLine) {
+        isFirstLine = 0
+        ret = $0
+      } else {
+        ret = ret "\n" $0
+      }
     }
   }
   close(cmd)
