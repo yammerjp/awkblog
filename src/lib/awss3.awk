@@ -12,6 +12,13 @@ function getRegion() {
 function getAccessSecret() {
   return ENVIRON["AWS_SECRET_ACCESS_KEY"]
 }
+function getBucketEndpoint() {
+  return ENVIRON["S3_BUCKET_ENDPOINT"]
+}
+function getAssetHost() {
+  return ENVIRON["S3_ASSET_HOST"]
+}
+
 function buildPolicyToUpload(now, key, type, sizeMin, sizeMax    , policy) {
   policy["expiration"] = datetime::gmdate("%Y-%m-%dT%H:%M:%S.000Z", now + 60)
   policy["conditions"][1]["bucket"] = getBucket()
@@ -49,8 +56,8 @@ function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret) {
   stringToSign = base64::encode(buildPolicyToUpload(now, key, type, sizeMin, sizeMax))
   gsub("\n", "", stringToSign)
 
-  ret["upload_url"] = "https://" getBucket() ".s3.amazonaws.com"
-  ret["public_url"] = "https://" getBucket() ".s3.amazonaws.com/" key
+  ret["upload_url"] = getBucketEndpoint() # "https://" getBucket() ".s3.amazonaws.com"
+  ret["public_url"] = getAssetHost() "/" key # "https://" getBucket() ".s3.amazonaws.com/" key
   ret["data"]["bucket"] = getBucket()
   ret["data"]["key"] = key
   ret["data"]["acl"] = "public-read"
