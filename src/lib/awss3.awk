@@ -28,3 +28,38 @@ function buildPolicyToUpload(now, key, type, sizeMin, sizeMax    , policy) {
 
   return json::to_json(policy, 1)
 }
+
+function buildEncodedPolicyToUpload(now, key, type, sizeMin, sizeMax    , policy) {
+  return base64::encode(buildPolicyToUpload(now, key, type, sizeMin, sizeMax))
+}
+
+function buildDateRegionKey(now) {
+  return hmac::sha256(getRegion(), "hexkey:" hmac::sha256(datetime::gmdate("%Y%m%d", now), "key:AWS4" getAccessSecret()))
+}
+
+function sign(signee, now) {
+  dateRegionKey = buildDateRegionKey(now)
+  dateRegionServiceKey = hmac::sha256("s3", "hexkey:" dateRegionKey)
+  signingKey = hmac::sha256("aws4_request", "hexkey:" dateRegionServiceKey)
+
+  return hmac::sha256(signee, "hexkey:" signingKey)
+}
+
+function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret) {
+  stringToSign = base64::encode(buildPolicyToUpload(now, key, type, sizeMin, sizeMax))
+  gsub("\n", "", stringToSign)
+
+  ret["upload_url"] = "https://" getBucket() ".s3.amazonaws.com"
+  ret["public_url"] = "https://" getBucket() ".s3.amazonaws.com/" key
+  ret["data"]["bucket"] = getBucket()
+  ret["data"]["key"] = key
+  ret["data"]["acl"] = "public-read"
+  ret["data"]["success_action_status"] = "201"
+  ret["data"]["policy"] = stringToSign
+  ret["data"]["x-amz-credential"] = getAccessKey() "/" datetime::gmdate("%Y%m%d", now) "/" getRegion() "/s3/aws4_request"
+  ret["data"]["x-amz-signature"] = sign(stringToSign, now)
+  ret["data"]["x-amz-algorithm"] = "AWS4-HMAC-SHA256"
+  ret["data"]["x-amz-date"] = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
+  ret["data"]["Content-Type"] = type
+  return json::to_json(ret)
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>Upload image file with S3 pre-signed URL</h1>
+    <h2>Select Image</h2>
+    <form id="form">
+      <input name="file" type="file" accept="image/jpeg, image/png, image/gif">
+      <button type="submit">submit</button>
+    </form>
+    <h2>log</h2>
+    <textarea id="log" readonly style="width: 100%; height:20em;">
+    </textarea>
+    <h2>uploaded image</h2>
+    <img id="image-space" style=" object-fit: contain; max-width: 50%; max-height: 50%;" src="/not-exist">
+
+    <script>
+      function printLog(message) {
+        log.textContent += message + "\n"
+      }
+
+      async function fetchPresignedUploadUrl(file) {
+        const res = await (
+          await fetch("/api/v1/images/uploading-sign", {
+            headers: {
+              "Content-Type": "application/json;"
+            },
+            body: JSON.stringify({
+              name: file.name,
+              size: file.size,
+              type: file.type,
+            }),
+            method: 'POST',
+          })
+        ).json()
+        return res
+      }
+
+      async function logSubmit(event) {
+        event.preventDefault()
+
+        const file = form.file.files[0]
+        printLog(`Form Submitted! Timestamp: ${event.timeStamp} (file name:${file.name}, size: ${file.size}, type: ${file.type})`);
+
+        try {
+          printLog("start to fetch presigned upload url")
+          const res = await fetchPresignedUploadUrl(file)
+          printLog("success to fetch presigned upload url")
+          printLog(`response: ${JSON.stringify(res)}`);
+
+          const postData = new FormData()
+          for(const key in res.data) { 
+            postData.append(key, res.data[key]);
+          }
+          postData.append('file', file);
+
+          printLog("start to post to S3")
+          const resAws = await fetch(res.upload_url, {
+            method: 'POST',
+            body: postData,
+          })
+
+          printLog("success to post to S3")
+          printLog(`response: ${await resAws.text()}`)
+          printLog(`uploaded_url: ${res.public_url}`)
+          imageSpace.src = res.public_url
+
+        } catch (e) {
+          console.log(`catched ${e}`)
+        }
+
+        event.preventDefault()
+      }
+
+      const form = document.getElementById("form");
+      const log = document.getElementById("log");
+      const imageSpace = document.getElementById("image-space")
+      form.addEventListener("submit", logSubmit);
+    </script>
+
+  </body>
+</html
+

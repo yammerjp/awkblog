@@ -1,4 +1,4 @@
-function add_controllers() {
+function add_controllers(    cmd) {
   cmd = "find src/controller -type f"
     while((cmd | getline) > 0) {
       add_controller($0, "src/controller/")

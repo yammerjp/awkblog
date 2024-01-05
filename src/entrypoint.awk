@@ -22,6 +22,7 @@ BEGIN {
   router::register("POST", "/api/v1/editor/posts", "controller::api__v1__editor__posts__post")
   router::register("GET", "/api/v1/editor/posts/*", "controller::api__v1__editor__posts___id__get")
   router::register("GET", "/api/v1/editor", "controller::api__v1__editor__get")
+  router::register("POST", "/api/v1/images/uploading-sign", "controller::api__v1__images__uploading_sign__post")
   router::register("GET", "/api/v1/accounts", "controller::api__v1__accounts__get")
   router::register("GET", "/*", "controller::_blogname__get")
   router::register("GET", "/*/posts/*", "controller::_blogname__posts___id__get")
