@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.js"></script>
   </head>
   <body>
     <h1>Upload image file with S3 pre-signed URL</h1>
@@ -40,7 +41,7 @@
       async function logSubmit(event) {
         event.preventDefault()
 
-        const file = form.file.files[0]
+        const file = await imageCompression(form.file.files[0], {maxSizeMB: 1, maxWidthOrHeight: 1920})
         printLog(`Form Submitted! Timestamp: ${event.timeStamp} (file name:${file.name}, size: ${file.size}, type: ${file.type})`);
 
         try {
