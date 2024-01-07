@@ -2,7 +2,9 @@
   <body>
     <h1>hello, awkblog!</h1>
     <div>username: <%= v["username"] %></div>
-    <%#include components/article_editor.html %>
+    <form action="/authed/posts/new" method="post">
+      <%#include components/article_editor.html %>
+    </form>
   </body>
 </html>
 

@@ -1,11 +1,9 @@
-<form action="/authed/posts/new" method="post">
-  <div><label>title:<br><input type="text" name="title"></label></div>
-  <div><label>content:<br><textarea name="content" id="textarea-of-article"></textarea></label></div>
-  <button type="button" id="button-to-add-image">click to add a image</button>
-  <input type="file" id="input-image" accept="image/jpeg,image/png,image/gif,image/webp">
-  <input type="hidden" name="zpadding" value="0">
-  <div><input type="submit" value="投稿する"></div>
-</form>
+<div><label>title:<br><input type="text" name="title" value="<%= v["title"] %>"></label></div>
+<div><label>content:<br><textarea name="content" id="textarea-of-article"><%= v["content"] %></textarea></label></div>
+<button type="button" id="button-to-add-image">click to add a image</button>
+<input type="file" id="input-image" accept="image/jpeg,image/png,image/gif,image/webp">
+<input type="hidden" name="zpadding" value="0">
+<div><input type="submit" value="投稿する"></div>
 
 <style>
   #input-image {
@@ -72,7 +70,7 @@
       textareaOfArticle.setRangeText(
         `![image](${imageUrl})`,
         textareaOfArticle.selectionStart,
-        textareaOfArticle.selectionStart,
+        textareaOfArticle.selectionEnd,
         'end'
       )
     }).catch(e => {

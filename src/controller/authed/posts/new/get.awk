@@ -8,5 +8,8 @@ function authed__posts__new__get() {
       username = aes256::decrypt(encrypted_username)
   }
   variables["username"] = username
+  variables["title"] = "" # default title
+  variables["content"] = "" # default content
+
   template::render("authed/posts/new/get.html", variables)
 }
