@@ -8,7 +8,7 @@ function compile_page(filename) {
 
     gsub("\"", "\\\"", $0)
     gsub("\n", "\\n", $0)
-    print "      ret = ret sprintf(\"%s\", \""  $0 "\");"
+    print "      ret = ret sprintf(\"%s\", \""  $0 "\")"
 
     # in <% %>
     RS = "%>"
@@ -17,15 +17,14 @@ function compile_page(filename) {
     }
     switch ($1) {
       case "#include":
-        # TODO
-        print "need to implement #include" > "/dev/stderr"
-        exit 1
+        addPage($2)
+        print "      ret = ret render(\"" $2 "\", v)"
         break
       case "##":
         break
       case "=":
         $1 = ""
-        print "      ret = ret sprintf(\"%s\", " $0 ");"
+        print "      ret = ret sprintf(\"%s\", " $0 ")"
         break
       default:
         print $0
@@ -35,14 +34,33 @@ function compile_page(filename) {
   RS="\n"
 }
 
+function addPage(filename) {
+  Pages[length(Pages) + 1] = filename
+}
+
 BEGIN {
+  Pages["arraydefinition"] = 1
+  delete Pages["arraydefinition"]
+}
+
+{
+  addPage($0)
+}
+
+END {
   print "@namespace \"compiled_templates\"\n\
 \n\
 function render(path, v    , ret) {\n\
   switch(path) {"
-}
 
-END {
+  for(i=1; i <= length(Pages); i++ ) {
+    print "    case \"" Pages[i] "\":"
+    compile_page(Pages[i])
+    print "      break"
+  }
+  for (page in Pages) {
+  }
+
   print "\n\
     default:\n\
       print \"unknown path\" > \"/dev/stderr\"\n\
@@ -52,8 +70,3 @@ END {
 }"
 }
 
-{
-  print "    case \"" $0 "\":"
-  compile_page(BASE_DIR "/" $0)
-  print "      break"
-}

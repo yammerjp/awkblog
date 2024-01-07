@@ -5,6 +5,6 @@ function render(path, v, statusCode) {
   if (statusCode == "") {
     statusCode = 200
   }
-  http::send(statusCode, compiled_templates::render(path, v));
+  http::send(statusCode, compiled_templates::render("pages/" path, v));
 }
 
