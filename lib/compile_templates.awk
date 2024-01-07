@@ -1,18 +1,19 @@
-function compile_page(filename) {
+function compile_template_file(filename) {
   while(1) {
     # out of <% %>
     RS = "<%"
-    if ((getline < filename) == 0) {
+    if (!((getline < filename) > 0)) {
       break
     }
 
     gsub("\"", "\\\"", $0)
     gsub("\n", "\\n", $0)
+
     print "      ret = ret sprintf(\"%s\", \""  $0 "\")"
 
     # in <% %>
     RS = "%>"
-    if ((getline < filename) == 0) {
+    if (!((getline < filename) > 0)) {
       break
     }
     switch ($1) {
@@ -31,16 +32,24 @@ function compile_page(filename) {
         break
     }
   }
+  close(filename)
   RS="\n"
 }
 
 function addPage(filename) {
-  Pages[length(Pages) + 1] = filename
+  if (filename in TemplateFileMap) {
+    # detect duplication
+    return
+  }
+  TemplateFileMap[filename] = 1
+  TemplateFiles[length(TemplateFiles) + 1] = filename
 }
 
 BEGIN {
-  Pages["arraydefinition"] = 1
-  delete Pages["arraydefinition"]
+  TemplateFiles["arraydefinition"] = 1
+  delete TemplateFiles["arraydefinition"]
+  TemplateFileMap["arraydefinition"] = 1
+  delete TemplateFilesKeys["arraydefinition"]
 }
 
 {
@@ -53,12 +62,12 @@ END {
 function render(path, v    , ret) {\n\
   switch(path) {"
 
-  for(i=1; i <= length(Pages); i++ ) {
-    print "    case \"" Pages[i] "\":"
-    compile_page(Pages[i])
+  for(i=1; i <= length(TemplateFiles); i++ ) {
+    print "    case \"" TemplateFiles[i] "\":"
+
+    compile_template_file(TemplateFiles[i])
+
     print "      break"
-  }
-  for (page in Pages) {
   }
 
   print "\n\
