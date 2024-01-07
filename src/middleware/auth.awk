@@ -22,6 +22,12 @@ function redirectIfFailedToVerify() {
   }
 }
 
+function redirectIfSuccessToVerify() {
+  if (verify()) {
+    http::sendRedirect("/authed")
+  }
+}
+
 function forbiddenIfFailedToVerify() {
   if (!verify()) {
     http::send(403)

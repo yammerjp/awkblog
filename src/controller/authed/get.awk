@@ -3,6 +3,6 @@
 function authed__get() {
   auth::redirectIfFailedToVerify()
 
-  variables["username"] = auth::getUsername()
+  variables["account_name"] = auth::getUsername()
   template::render("authed/get.html", variables)
 }

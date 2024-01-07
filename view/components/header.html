@@ -1,0 +1,131 @@
+  <header>
+    <a href="/" class="no-style-link">
+      <div class="title-container">
+        <img src="/assets/awkblog-icon.png" class="title-img">
+        <div class="title-text">
+          AWKBLOG
+        </div>
+      </div>
+    </a>
+    <% if ("account_name" in v) { %>
+    <div>
+      <details class="account-menu">
+        <summary><img src="https://github.com/yammerjp.png" class="icon-img"></summary>
+        <div class="popup-menu">
+          <ul>
+            <li><a href="javascript:document.getElementById('logout-form').submit()">ログアウト</a></li>
+            <form action="/logout" method="post" id="logout-form"></form>
+            <li><a href="#">ブログを確認</a></li>
+            <li><a href="#">項目3</a></li>
+          </ul>
+        </div>
+      </details>
+    </div>
+    <% } else { %>
+      <a href="/login" class="no-style-link">
+        <div class="account-container">
+          <img src="/assets/github-mark.svg" class="icon-login">
+          <div class="login-label">
+            Sign in With GitHub
+          </div>
+        </div>
+      </a>
+    <% } %>
+  </header>
+
+  <style>
+    .title-img {
+      height: 32px;
+      border-radius: 8px;
+      margin-right: 4px;
+    }
+    .title-container {
+      display: flex;
+      font-size: 26px;
+      margin: 16px 0;
+    }
+    .title-text {
+      font-family: 'Rajdhani', serif;
+      text-decoration: none;
+      color: rgb(104, 104, 104);
+    }
+    .icon-img {
+      height: 2em;
+      margin: 16px 0;
+      border-radius: 50%;
+      border: solid 1px #dddddd;
+    }
+    .icon-login {
+      height: 24em;
+    }
+
+      .account-container {
+        font-size: 16px;
+        margin: 16px 0;
+        display: flex;
+        border: 1px solid #a6a6a6;
+        padding: 3px;
+        border-radius: 4px;
+      }
+      .icon-img {
+        height: 2em;
+        margin: 16px 0;
+        border-radius: 50%;
+        border: solid 1px #dddddd;
+      }
+      .icon-login {
+        height: 24px;
+      }
+      .login-label {
+        margin-left: 4px;
+        font-size: 14px;
+        color: #6e6e6e;
+      }
+      .no-style-link {
+        color: #363636;
+        text-decoration: none;
+      }
+      .no-style-link:visited {
+        text-decoration: none;
+        color: #363636;
+      }
+      .no-style-link:active {
+        text-decoration: none;
+        color: #363636;
+      }
+
+
+    details.account-menu {
+      width: 8em;
+      text-align: right;
+    }
+
+    details.account-menu > summary {
+      list-style: none;
+      margin: 0;
+    }
+
+    details.account-menu[open] .popup-menu {
+      display: block;
+    }
+
+    details.account-menu .popup-menu {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+      width: 8em;
+      text-align: left;
+    }
+    details.account-menu .popup-menu > ul {
+      margin: 1em;
+      padding: 0px;
+    }
+    details.account-menu .popup-menu > ul > li {
+      list-style: none;
+    }
+  </style>
+
