@@ -62,6 +62,8 @@
   ENVIRON["AWS_BUCKET"] = "bucketname"
   ENVIRON["AWS_REGION"] = "ap-northeast-1"
   ENVIRON["AWS_SECRET_ACCESS_KEY"] = "secretkey"
+  ENVIRON["S3_BUCKET_ENDPOINT"] = "https://bucketname.s3.amazonaws.com"
+  ENVIRON["S3_ASSET_HOST"] = "https://bucketname.s3.amazonaws.com"
 
   result = awss3::buildPreSignedUploadParams(1704377552, "path/to/image.jpg", "image/jpeg", 1234, 1234)
   assertEqual("{\"public_url\":\"https://bucketname.s3.amazonaws.com/path/to/image.jpg\",\"data\":{\"x-amz-algorithm\":\"AWS4-HMAC-SHA256\",\"acl\":\"public-read\",\"key\":\"path/to/image.jpg\",\"Content-Type\":\"image/jpeg\",\"x-amz-credential\":\"accesskeyid/20240104/ap-northeast-1/s3/aws4_request\",\"bucket\":\"bucketname\",\"policy\":\"eyJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJidWNrZXRuYW1lIn0seyJrZXkiOiJwYXRoL3RvL2ltYWdlLmpwZyJ9LHsiQ29udGVudC1UeXBlIjoiaW1hZ2UvanBlZyJ9LFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLDEyMzQsMTIzNF0seyJhY2wiOiJwdWJsaWMtcmVhZCJ9LHsic3VjY2Vzc19hY3Rpb25fc3RhdHVzIjoiMjAxIn0seyJ4LWFtei1hbGdvcml0aG0iOiJBV1M0LUhNQUMtU0hBMjU2In0seyJ4LWFtei1jcmVkZW50aWFsIjoiYWNjZXNza2V5aWQvMjAyNDAxMDQvYXAtbm9ydGhlYXN0LTEvczMvYXdzNF9yZXF1ZXN0In0seyJ4LWFtei1kYXRlIjoiMjAyNDAxMDRUMTQxMjMyWiJ9XSwiZXhwaXJhdGlvbiI6IjIwMjQtMDEtMDRUMTQ6MTM6MzIuMDAwWiJ9\",\"x-amz-signature\":\"025c2c3800b438b4e8633b0a925f260b5c4b1a3d48fd8c6b18965a902a32d414\",\"x-amz-date\":\"20240104T141232Z\",\"success_action_status\":\"201\"},\"upload_url\":\"https://bucketname.s3.amazonaws.com\"}", result)
