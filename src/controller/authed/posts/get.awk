@@ -3,6 +3,8 @@
 function authed__posts__get(    query, params, html, result, templateVars) {
   auth::redirectIfFailedToVerify()
 
+  templateVars["account_name"] = auth::getUsername()
+
   accountId = auth::getAccountId()
   model::getPosts(result, accountId)
 

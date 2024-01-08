@@ -3,15 +3,10 @@
 function authed__posts__edit__get(    postId, result, accountId, variables) {
   auth::redirectIfFailedToVerify()
 
-  encrypted_username = http::getCookie("username")
-  if (encrypted_username != "") {
-      username = aes256::decrypt(encrypted_username)
-  }
+  variables["account_name"] = auth::getUsername()
 
   postId = http::getParameter("post_id") + 0
   accountId = auth::getAccountId() + 0
-  logger::debug("postId: " postId)
-  logger::debug("accountId: " accountId)
 
   model::getPostWithAccountId(result, postId, accountId)
   if ("error" in result) {
@@ -22,6 +17,5 @@ function authed__posts__edit__get(    postId, result, accountId, variables) {
   variables["title"] = result["title"]
   variables["content"] = result["content"]
 
-  variables["username"] = username
   template::render("authed/posts/edit/get.html", variables)
 }

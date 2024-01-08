@@ -3,7 +3,9 @@
     <%#include components/console_head.html %>
   </head>
   <body>
-    <h1>posts</h1>
+    <%#include components/header.html %>
+    <main>
+      <h1>posts</h1>
       <% for(i in v["posts"]) { %>
         <article>
           <h2><%= v["posts"][i]["title"] %></h2>
@@ -17,6 +19,8 @@
         </article>
         <hr>
       <% } %>
-    <a href="/authed">/authed</a>
+  </main>
+    <footer>
+    </footer>
   </body>
 </html>

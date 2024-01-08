@@ -3,11 +3,14 @@
     <%#include components/console_head.html %>
   </head>
   <body>
-    <h1>hello, awkblog!</h1>
-    <div>username: <%= v["username"] %></div>
-    <form action="/authed/posts/new" method="post">
-      <%#include components/article_editor.html %>
-    </form>
+    <%#include components/header.html %>
+    <main>
+      <form action="/authed/posts/new" method="post">
+        <%#include components/article_editor.html %>
+      </form>
+    </main>
+    <footer>
+    </footer>
   </body>
 </html>
 
