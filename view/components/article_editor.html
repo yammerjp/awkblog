@@ -1,13 +1,49 @@
-<div><label>title:<br><input type="text" name="title" value="<%= v["title"] %>"></label></div>
-<div><label>content:<br><textarea name="content" id="textarea-of-article"><%= v["content"] %></textarea></label></div>
-<button type="button" id="button-to-add-image">click to add a image</button>
+<div><input type="text" name="title" placeholder="Title" value="<%= v["title"] %>" class="title-input"></div>
+<div>
+  <div class="editor-controller">
+    <button type="button" id="button-to-add-image">
+      <img src="/assets/photo-up.svg" alt="upload a photo">
+    </button>
+  </div>
+  <div class="content-container">
+    <div id="content-dummy"></div>
+    <textarea name="content" id="textarea-of-article" placeholder="Write in Markdown" class="content-textarea"><%= v["content"] %></textarea></div>
+</div>
+
 <input type="file" id="input-image" accept="image/jpeg,image/png,image/gif,image/webp">
 <input type="hidden" name="zpadding" value="0">
-<div><input type="submit" value="投稿する"></div>
+<div class="publish-bar">
+  <input type="submit" value="Publish" class="publish-button">
+</div>
 
 <style>
+  .publish-button {
+    border: none;
+    background-color: #3ea8ff;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 16px;
+    margin-top: 16px;
+  }
+  .publish-button:hover, .publish-button:focus {
+    background-color: #219afe;
+  }
+  .publish-button:active {
+    background-color: #008cff;
+  }
+  #button-to-add-image {
+    border: none;
+    width: 32px;
+    height: 32px;
+    background: none;
+  }
+
   #input-image {
     display: none;
+  }
+  .publish-bar {
+    text-align: right;
   }
   textarea:not(.dragover) {
     padding: 2px;
@@ -17,14 +53,81 @@
     border: dashed 3px #ccc;
     padding: 0px;
   }
+  .title-input {
+    width: 100%;
+    font-size: 1rem;
+    line-height: 1.8;
+    box-sizing: border-box;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #b6c3c6;
+    background-color: #ffffff;
+    margin-bottom: 32px;
+  }
+  .editor-controller {
+    text-align: right;
+  }
+  .content-container {
+    width: 100%;
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+  #content-dummy {
+    overflow: hidden;
+    visibility: hidden;
+    box-sizing: border-box;
+    padding: 16px;
+    min-height: min(50vh, 10em);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    border: 1px solid;
+  }
+
+  #textarea-of-article {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: 1px solid #b6c3c6;
+    border-radius: 8px;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    resize: none;
+    background-color:  #ffffff;
+  }
+  #textarea-of-article:focus {
+    outline: 0;
+  }
+  .title-input:focus {
+    outline: 0;
+  }
+
+
 </style>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.js"></script>
 <script type="text/javascript" src="/assets/uploadImage.js"></script>
 <script>
   const buttonToAddImage = document.getElementById("button-to-add-image")
   const inputImage = document.getElementById("input-image")
   const textareaOfArticle = document.getElementById("textarea-of-article")
+  const contentDummy = document.getElementById("content-dummy")
 
+  // expand height of textarea
+  textareaOfArticle.addEventListener('input', e => {
+      contentDummy.textContent = e.target.value + '\u200b'
+  })
+
+  // upload image on click
   buttonToAddImage.addEventListener("click", () => {
     inputImage.click()
   })
@@ -33,6 +136,7 @@
     upload(event.target.files[0])
   })
 
+  // modify style on drag over
   const startDragOver = (event) => {
     event.preventDefault()
     event.target.classList.add('dragover')
@@ -47,7 +151,9 @@
   textareaOfArticle.addEventListener('dragend', endDragOver)
   textareaOfArticle.addEventListener('drop', function(event) {
     endDragOver(event)
-    const files = event?.dataTransfer?.files; // FileList object.
+
+    // upload file on drop
+    const files = event?.dataTransfer?.files;
     if (files === undefined) {
       alert("only support to drop files")
       return
