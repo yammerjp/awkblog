@@ -10,4 +10,6 @@ RUN apt-get update -y && apt-get install -y \
 WORKDIR /app
 COPY ./ /app
 
+RUN /app/bin/setup.sh
+
 ENTRYPOINT [ "/app/bin/start.sh" ]

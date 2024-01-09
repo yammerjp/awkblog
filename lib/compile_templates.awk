@@ -6,6 +6,7 @@ function compile_template_file(filename) {
       break
     }
 
+    gsub("\\\\", "\\\\", $0)
     gsub("\"", "\\\"", $0)
     gsub("\n", "\\n", $0)
 

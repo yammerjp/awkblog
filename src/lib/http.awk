@@ -155,7 +155,10 @@ function setCookieMaxAge(key, maxAge) {
 }
 
 function initialize(    port) {
-  port = ENVIRON["PORT"] 
+  port = ENVIRON["AWKBLOG_PORT"]
+  if (port == "") {
+    port = ENVIRON["PORT"] 
+  }
   if (port == "") {
     print "Need PORT env" > "/dev/stderr"
     exit 1
