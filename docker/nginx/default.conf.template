@@ -16,6 +16,10 @@ server {
     alias /var/www/html/assets;
   }
 
+  location /favicon.ico {
+    alias /var/www/html/favicon.ico;
+  }
+
   location / {
     proxy_pass http://${AWKBLOG_INTERNAL_HOSTNAME}:${AWKBLOG_PORT};
     proxy_set_header Host $host;
