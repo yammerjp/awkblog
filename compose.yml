@@ -30,7 +30,6 @@ services:
       - POSTGRES_DATABASE=postgres
       - PORT=80
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
-      - PRIVATE_BEARER_TOKEN=d02ff6f3cfc03d7ba39ad7eb9044e60676404192
   db:
     image: postgres:14
     volumes:

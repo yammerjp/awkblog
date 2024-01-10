@@ -18,7 +18,6 @@ services:
       - AWKBLOG_PORT=4568
       - AWKBLOG_INTERNAL_HOSTNAME=127.0.0.1
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
-      - PRIVATE_BEARER_TOKEN=d02ff6f3cfc03d7ba39ad7eb9044e60676404192
   db:
     image: postgres:14
     volumes:

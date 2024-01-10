@@ -4,13 +4,13 @@ set -e
 REPOSITORY_ROOT="$(dirname "$0")/.."
 cd "$REPOSITORY_ROOT"
 
-export PORT="${PORT:-8080}"
+export PRIVATE_BEARER_TOKEN="$(echo "$(date +%s%N)$POSTGRES_PASSWORD" | sha256sum | awk '{print $1}')"
 
 function shutdown_trap() {
   echo "start to graceful shutdown"
   curl -X POST \
     -H "Authorization: bearer $PRIVATE_BEARER_TOKEN" \
-    "http://localhost:${PORT}/private/shutdown"
+    "http://localhost:${AWKBLOG_PORT:$PORT}/private/shutdown"
   exit 138
 }
 
