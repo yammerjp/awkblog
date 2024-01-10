@@ -157,12 +157,9 @@ function setCookieMaxAge(key, maxAge) {
 function initialize(    port) {
   error::registerErrorHandler("http::internalServerError")
 
-  port = ENVIRON["AWKBLOG_PORT"]
+  port = environ::get("AWKBLOG_PORT")
   if (port == "") {
-    port = ENVIRON["PORT"] 
-  }
-  if (port == "") {
-    error::panic("Need PORT env")
+    port = environ::getOrPanic("PORT")
   }
   INET = "/inet/tcp/" port "/0/0";
   FS=""
@@ -259,5 +256,9 @@ function isCrossSiteRequest() {
 }
 
 function getHostName() {
-  return ENVIRON["AWKBLOG_HOSTNAME"]
+  return AWKBLOG_HOSTNAME
+}
+
+BEGIN {
+  AWKBLOG_HOSTNAME = environ::getOrPanic("AWKBLOG_HOSTNAME")
 }

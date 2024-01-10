@@ -2,6 +2,7 @@
 @include "src/lib/shell.awk"
 @include "src/lib/base64.awk"
 @include "test/testutil.awk"
+@include "src/lib/environ.awk"
 
 "base64Encode" {
   encoded = base64::encode("hello, world!")

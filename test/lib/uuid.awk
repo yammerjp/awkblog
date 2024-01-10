@@ -2,6 +2,7 @@
 @include "src/lib/shell.awk"
 @include "src/lib/logger.awk"
 @include "test/testutil.awk"
+@include "src/lib/environ.awk"
 
 "uuid" {
   generated1 = uuid::gen()

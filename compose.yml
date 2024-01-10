@@ -30,6 +30,7 @@ services:
       - POSTGRES_DATABASE=postgres
       - PORT=80
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
+      - DEBUG=1
   db:
     image: postgres:14
     volumes:

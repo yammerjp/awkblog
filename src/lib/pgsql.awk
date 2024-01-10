@@ -44,24 +44,17 @@ o   }
 }
 
 function createConnection(  param) {
-  if (!("POSTGRES_HOSTNAME" in ENVIRON)) {
-    error::panic("need environment variable: POSTGRES_HOSTNAME")
+  POSTGRES_HOSTNAME = environ::getOrPanic("POSTGRES_HOSTNAME")
+  POSTGRES_DATABASE = environ::getOrPanic("POSTGRES_DATABASE")
+  POSTGRES_USER = environ::getOrPanic("POSTGRES_USER")
+  POSTGRES_PASSWORD = environ::getOrPanic("POSTGRES_PASSWORD")
+
+  param = "host=" POSTGRES_HOSTNAME " dbname=" POSTGRES_DATABASE " user=" POSTGRES_USER " password=" POSTGRES_PASSWORD
+  if (environ::has("POSTGRES_SSLMODE")) {
+    param = param " sslmode=" environ::get("POSTGRES_SSLMODE")
   }
-  if (!("POSTGRES_DATABASE" in ENVIRON)) {
-    error::panic("need environment variable: POSTGRES_DATABASE")
-  }
-  if (!("POSTGRES_USER" in ENVIRON)) {
-    error::panic("need environment variable: POSTGRES_USER")
-  }
-  if (!("POSTGRES_PASSWORD" in ENVIRON)) {
-    error::panic("need environment variable: POSTGRES_PASSWORD")
-  }
-  param = "host=" ENVIRON["POSTGRES_HOSTNAME"] " dbname=" ENVIRON["POSTGRES_DATABASE"] " user=" ENVIRON["POSTGRES_USER"] " password=" ENVIRON["POSTGRES_PASSWORD"]
-  if ("POSTGRES_SSLMODE" in ENVIRON) {
-    param = param " sslmode=" ENVIRON["POSTGRES_SSLMODE"]
-  }
-  if ("POSTGRES_OPTIONS" in ENVIRON) {
-    param = param " options=" ENVIRON["POSTGRES_OPTIONS"]
+  if (environ::has("POSTGRES_OPTIONS")) {
+    param = param " options=" environ::get("POSTGRES_OPTIONS")
   }
   if ((Connection = awk::pg_connect(param)) == "" ) {
     logger::error(message, "pgsql")

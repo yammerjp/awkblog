@@ -6,7 +6,7 @@ function defaultErrorHandler(message) {
 
 function defaultPanicHandler(message) {
   print message > "/dev/stderr"
-  exit(1)
+  exit 1
 }
 
 function registerErrorHandler(funcname) {
