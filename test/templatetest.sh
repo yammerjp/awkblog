@@ -8,7 +8,7 @@ cd "$TEMPLATE_DIR/template"
 
 COMPILED_TEMPLATE="/tmp/compiled_templates.awk"
 
-find pages -type f | awk -f ../../lib/compile_templates.awk -v BASE_DIR="" > "$COMPILED_TEMPLATE"
+find ./ -type f | sed 's#^./##g'| awk -f ../../lib/compile_templates.awk > "$COMPILED_TEMPLATE"
 
 diff <(echo '' | awk -f "$COMPILED_TEMPLATE" -f <(echo '{
   v["posts"][1]["title"] = "タイトル 空白が 入っていても 大丈夫";
