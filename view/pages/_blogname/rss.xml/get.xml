@@ -6,25 +6,8 @@
     <copyright><%= v["copyright"] %></copyright>
     <docs>https://www.rssboard.org/rss-specification</docs>
     <generator>awkblog <%= awk::getAwkblogVersion() %></generator>
-    <%##
-      # TODO: image
-      # <image>
-      #  <link><%= v["account_url"] %></link>
-      #  <title><%= v["blog_title"] %></title>
-      #   <url><%= v["account_url"] %>/coverimage</url>
-      #   <description><%= v["blog_description"] %></description>
-      #   <height>32</height>
-      #   <width>96</width>
-      # </image>
-    %>
     <language>ja</language>
     <lastBuildDate><%= awk::strftime() %></lastBuildDate>
-    <%##
-      # <managingEditor>jlehrer@dallas.example.com (Jim Lehrer)</managingEditor>
-      # <pubDate>Sun, 29 Jan 2006 05:00:00 GMT</pubDate>
-      # <ttl>60</ttl>
-      # <webMaster>bob.brock@dallas.example.com (Bob Brock)</webMaster>
-    %>
     <% for(key in v["posts"]) { %>
     <item>
       <title><%= v["posts"][key]["title"] %></title>
