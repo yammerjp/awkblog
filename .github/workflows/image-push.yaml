@@ -23,6 +23,7 @@ jobs:
         run: |
           docker build --tag ghcr.io/$GITHUB_ACTOR/awkblog:latest \
           --tag ghcr.io/$GITHUB_ACTOR/awkblog:$(echo $GITHUB_SHA | head -c7) \
+           --build-arg VERSION="0.0.1+$(echo $GITHUB_SHA | head -c7)" \
           -f docker/default/Dockerfile \
           .
       - name: Push Docker Image
@@ -34,6 +35,7 @@ jobs:
         run: |
           docker build --tag ghcr.io/$GITHUB_ACTOR/awkblog-with-nginx:latest \
           --tag ghcr.io/$GITHUB_ACTOR/awkblog-with-nginx:$(echo $GITHUB_SHA | head -c7) \
+           --build-arg VERSION="0.0.1+$(echo $GITHUB_SHA | head -c7).with-nginx" \
           -f docker/with-nginx/Dockerfile \
           .
       - name: Push Docker Image (includes nginx)

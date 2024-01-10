@@ -1,0 +1,1 @@
+function getAwkblogVersion() { return "unknown" }

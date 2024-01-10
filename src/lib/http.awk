@@ -191,6 +191,7 @@ function buildResponse(statusNum, content,    headerStr, status) {
 }
 
 function send(statusNum, content) {
+  setHeader("x-awkblog-version", awk::getAwkblogVersion())
   logger::info(statusNum " flyip:" getHeader("fly-client-ip") " x44ip:" getHeader("x-forwarded-for") " " getMethod() " " getPath() " rf:" getHeader("referer") " ua:" getHeader("user-agent") , "http")
   printf "%s", buildResponse(statusNum, content) |& INET;
   close(INET);

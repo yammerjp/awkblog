@@ -1,7 +1,3 @@
-function getAwkblogVersion() {
-  return "v0.0.1-dev"
-}
-
 BEGIN {
   pgsql::createConnection()
 
