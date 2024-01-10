@@ -18,6 +18,8 @@ BEGIN {
   router::register("POST", "/authed/posts/edit", "controller::authed__posts__edit__post")
   router::register("POST", "/authed/posts/delete", "controller::authed__posts__delete__post")
   router::register("GET", "/authed/posts", "controller::authed__posts__get")
+  router::register("GET", "/authed/blog", "controller::authed__blog__get")
+  router::register("GET", "/authed/blog/new", "controller::authed__blog__new__get")
   router::register("GET", "/api/v1/editor/posts", "controller::api__v1__editor__posts__get")
   router::register("POST", "/api/v1/editor/posts", "controller::api__v1__editor__posts__post")
   router::register("GET", "/api/v1/editor/posts/*", "controller::api__v1__editor__posts___id__get")

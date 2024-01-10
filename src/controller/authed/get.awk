@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function authed__get() {
+function authed__get(variables) {
   auth::redirectIfFailedToVerify()
 
   variables["account_name"] = auth::getUsername()
