@@ -1,3 +1,7 @@
+function getAwkblogVersion() {
+  return "v0.0.1-dev"
+}
+
 BEGIN {
   pgsql::createConnection()
 
@@ -25,9 +29,12 @@ BEGIN {
   router::register("POST", "/api/v1/images/uploading-sign", "controller::api__v1__images__uploading_sign__post")
   router::register("GET", "/api/v1/accounts", "controller::api__v1__accounts__get")
   router::register("GET", "/*", "controller::_blogname__get")
+  router::register("GET", "/*/rss.xml", "controller::_blogname__rss_xml__get")
   router::register("GET", "/*/posts/*", "controller::_blogname__posts___id__get")
   router::register("POST", "/private/shutdown", "controller::private__shutdown__post")
   router::register_notfound("controller::notfound")
+
+  router::debug_print()
 
   logger::info("Start awkblog. listen port " PORT " ...")
   http::initialize();
