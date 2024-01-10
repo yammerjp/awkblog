@@ -32,7 +32,6 @@ BEGIN {
 
   router::debug_print()
 
-  logger::info("Start awkblog. listen port " PORT " ...")
   http::initialize();
 }
 

@@ -3,8 +3,7 @@
 function gmdate(format, timestamp    , tzstr, operator, diffH, diffM, diffS, offset) {
   tzstr = awk::strftime("%z")
   if (tzstr !~ /^[-+][0-9]{4}$/) {
-    print "failure"
-    exit
+    error::raise("failure. strftime(\"%z\") is invalid format:" tzstr, "datetime")
   }
   operator = substr(tzstr,1,1)
   diffH = substr(tzstr, 2,2)

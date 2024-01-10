@@ -155,17 +155,31 @@ function setCookieMaxAge(key, maxAge) {
 }
 
 function initialize(    port) {
+  error::registerErrorHandler("http::internalServerError")
+
   port = ENVIRON["AWKBLOG_PORT"]
   if (port == "") {
     port = ENVIRON["PORT"] 
   }
   if (port == "") {
-    print "Need PORT env" > "/dev/stderr"
-    exit 1
+    error::panic("Need PORT env")
   }
   INET = "/inet/tcp/" port "/0/0";
   FS=""
   RS = "\n"
+
+  logger::info("Start awkblog. listen port " PORT " ...")
+}
+
+function internalServerError(message, kind) {
+  if (kind == "") {
+    kind = "http_internal_server_error"
+    logger::error("internal server error has occured", "http_internal_server_error")
+  }
+  logger::error(message, kind)
+
+  http::setHeader("content-type", "text/html; charset=UTF-8")
+  http::send(500, "An error has occured. Please return to the <a href=\"javascript:history.back()\">previous page</a>.")
 }
 
 function buildResponse(statusNum, content,    headerStr, status) {

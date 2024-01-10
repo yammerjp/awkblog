@@ -24,7 +24,9 @@ function exec(cmd ,stdinStr    , ret, isFirstLine) {
       }
     }
   }
-  close(cmd)
+  if (close(cmd) != 0) {
+    error::raise("shell::exec() failed", "shell")
+  }
   logger::debug("shell::exec ret: " ret)
   return ret
 }

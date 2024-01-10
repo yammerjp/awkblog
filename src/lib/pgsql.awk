@@ -2,10 +2,10 @@
 
 @namespace "pgsql"
 
-function exec(query, params,        response, numberOfFields, col, numberOfRow, row, logstr) {
-  logDebug("pgsql::exec() query: " query)
+function exec(query, params,        response, numberOfFields, col, numberOfRow, row, logstr, extraMessage) {
+  logger::debug("pgsql::exec() query: " query, "pgsql")
   response = awk::pg_execparams(Connection, query, length(params), params)
-  logDebug("pgsql::exec() response: " response)
+  logger::debug("pgsql::exec() response: " response, "pgsql")
   delete RESULT
   RESULT[0] = ""
   delete RESULT[0]
@@ -32,31 +32,29 @@ o   }
         logstr = logstr "    " columnName ": " RESULT[i][columnName] "\n"
       }
     }
-    logDebug(logstr)
+    logger::debug(logstr, "pgsql")
 
     awk::pg_clear(response)
     return 1
   }
+  extraMessage = awk::pg_errormessage(Connection)
   awk::pg_clear(response)
+  error::raise("failed to pgsql::exec(): " response ", extraMessage: " extraMessage, "pgsql")
   return 0
 }
 
 function createConnection(  param) {
   if (!("POSTGRES_HOSTNAME" in ENVIRON)) {
-    print "need environment variable: POSTGRES_HOSTNAME" > "/dev/stderr"
-    exit 1
+    error::panic("need environment variable: POSTGRES_HOSTNAME")
   }
   if (!("POSTGRES_DATABASE" in ENVIRON)) {
-    print "need environment variable: POSTGRES_DATABASE" > "/dev/stderr"
-    exit 1
+    error::panic("need environment variable: POSTGRES_DATABASE")
   }
   if (!("POSTGRES_USER" in ENVIRON)) {
-    print "need environment variable: POSTGRES_USER" > "/dev/stderr"
-    exit 1
+    error::panic("need environment variable: POSTGRES_USER")
   }
   if (!("POSTGRES_PASSWORD" in ENVIRON)) {
-    print "need environment variable: POSTGRES_PASSWORD" > "/dev/stderr"
-    exit 1
+    error::panic("need environment variable: POSTGRES_PASSWORD")
   }
   param = "host=" ENVIRON["POSTGRES_HOSTNAME"] " dbname=" ENVIRON["POSTGRES_DATABASE"] " user=" ENVIRON["POSTGRES_USER"] " password=" ENVIRON["POSTGRES_PASSWORD"]
   if ("POSTGRES_SSLMODE" in ENVIRON) {
@@ -66,12 +64,11 @@ function createConnection(  param) {
     param = param " options=" ENVIRON["POSTGRES_OPTIONS"]
   }
   if ((Connection = awk::pg_connect(param)) == "" ) {
-    logError("pgsql::createConnection(): pg_connectionect failed: " ERRNO)
-    return 0
+    logger::error(message, "pgsql")
+    error::panic("pgsql::createConnection(): pg_connectionect failed: " ERRNO)
   }
-  logInfo("created a postgres connection")
-  logError("pgsql::createConnection(): Connection: " Connection)
-  return 1
+  logger::info("created a postgres connection", "pgsql")
+  logger::info("pgsql::createConnection(): Connection: " Connection, "pgsql")
 }
 
 function fetchRows() {
@@ -80,16 +77,4 @@ function fetchRows() {
 
 function fetchResult(row, columnName) {
   return RESULT[row][columnName]
-}
-
-function logInfo(message) {
-  logger::info(message, "pgsql")
-}
-
-function logDebug(message) {
-  logger::debug(message, "pgsql")
-}
-
-function logError(message) {
-  logger::error(message, "pgsql")
 }

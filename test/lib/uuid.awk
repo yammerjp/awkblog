@@ -1,4 +1,6 @@
 @include "src/lib/uuid.awk"
+@include "src/lib/shell.awk"
+@include "src/lib/logger.awk"
 @include "test/testutil.awk"
 
 "uuid" {

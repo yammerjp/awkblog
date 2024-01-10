@@ -58,8 +58,7 @@ function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, L, N, num, 
       decodedStr = sprintf("%s%c%c%c%c", decodedStr, awk::strtonum("0x" chars[N+1] chars[N+2]), awk::strtonum("0x" chars[N+4] chars[N+5]), awk::strtonum("0x" chars[N+7] chars[N+8]), awk::strtonum("0x" chars[N+10] chars[N+11]))
       N+=12
     } else {
-      print "failed"
-      exit
+      error::raise("failed to decode UTF-8 parcent encoded string", "url")
     }
   }
   return decodedStr
