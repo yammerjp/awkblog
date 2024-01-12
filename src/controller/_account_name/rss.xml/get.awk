@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function _blogname__rss_xml__get(        path_parts, splitted, params, query, rows, id, html, result, templateVars) {
+function _account_name__rss_xml__get(        path_parts, splitted, params, query, rows, id, html, result, templateVars) {
   split(http::getPath(), path_parts, "/")
   split(path_parts[2], splitted, "@")
   account_name = splitted[2]
@@ -28,5 +28,5 @@ function _blogname__rss_xml__get(        path_parts, splitted, params, query, ro
     templateVars["posts"][i]["created_at"] = result[i]["created_at"] # TODO: fix format
   }
 
-  template::render("_blogname/rss.xml/get.xml", templateVars, 200, "xml");
+  template::render("_account_name/rss.xml/get.xml", templateVars, 200, "xml");
 }

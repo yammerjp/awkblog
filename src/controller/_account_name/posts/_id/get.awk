@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function _blogname__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars) {
+function _account_name__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars) {
   split(http::getPath(), splitted, "/")
   at_account_name = splitted[2]
   post_id = splitted[4]
@@ -27,5 +27,5 @@ function _blogname__posts___id__get(        splitted, params, query, rows, id, h
   templateVars["content"] = markdown::parseMultipleLines(post["content"])
   templateVars["created_at"] = post["created_at"]
 
-  template::render("_blogname/posts/_id/get.html", templateVars);
+  template::render("_account_name/posts/_id/get.html", templateVars);
 }
