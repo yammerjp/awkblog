@@ -34,5 +34,6 @@ function getAccounts(result    , i, query, rows) {
   for(i = 1; i <= rows; i++) {
     result[i]["id"] = pgsql::fetchResult(i-1, "id")
     result[i]["name"] = pgsql::fetchResult(i-1, "name")
+    # TODO: add description
   }
 }

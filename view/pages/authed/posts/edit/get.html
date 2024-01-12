@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%#include components/console_head.html %>
+    <%#include components/authed/console_head.html %>
   </head>
   <body>
-    <%#include components/header.html %>
+    <%#include components/authed/header.html %>
     <main>
       <form action="/authed/posts/edit" method="post">
         <input type="hidden" name="post_id" value="<%= v["post_id"] %>">
-        <%#include components/article_editor.html %>
+        <%#include components/authed/article_editor.html %>
       </form>
     </main>
     <footer>

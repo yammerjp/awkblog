@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%#include components/console_head.html %>
+    <%#include components/authed/console_head.html %>
   </head>
   <body>
-    <%#include components/header.html %>
+    <%#include components/authed/header.html %>
     <main>
       <form action="/authed/posts/new" method="post">
-        <%#include components/article_editor.html %>
+        <%#include components/authed/article_editor.html %>
       </form>
     </main>
     <footer>

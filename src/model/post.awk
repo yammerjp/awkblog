@@ -45,6 +45,7 @@ function getPost(result, id    , params) {
   result["content"] = pgsql::fetchResult(0, "content")
   result["account_id"] = pgsql::fetchResult(0, "account_id")
   result["created_at"] = pgsql::fetchResult(0, "created_at")
+  # TODO: add coverimage
 }
 
 function createPost(title, content, accountId      , params, query) {

@@ -1,35 +1,23 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="alternate" type="application/rss+xml" title="RSS Feed for <%= v["account_name"] %>" href="/@<%= v["account_name"] %>/rss.xml" />
-    <style>
-      html {
-        max-width: 70ch;
-        padding: 3em 1em;
-        margin: auto;
-        line-height: 1.75;
-        font-size: 1.25em;
-      }
-      h1,h2,h3,h4,h5,h6 {
-        margin: 3em 0 1em;
-      }
-      p,ul,ol {
-        margin-bottom: 2em;
-        color: #1d1d1d;
-        font-family: sans-serif;
-      }
-    </style>
-  </head>
+  <%#include components/_account_name/head.html %>
   <body>
-    <h1><%= v["blog_title"] %></h1>
-    <div><%= v["blog_description"] %></div>
-    <hr>
-    <div>posts of <%= v["account_name"] %></div>
-    <hr>
-      <% for(i in v["posts"]) { %>
-        <div>
-          <a href="/@<%= v["posts"][i]["account_name"] %>/posts/<%= v["posts"][i]["id"] %>"><%= v["posts"][i]["title"] %></a>
-        </div>
-      <% } %>
+    <div class="blog-page-top">
+      <%#include components/_account_name/header.html %>
+      <main>
+        <% for(i in v["posts"]) { %>
+          <div class="post">
+            <a class="post-link" href="/@<%= v["account_name"] %>/posts/<%= v["posts"][i]["id"] %>">
+              <article>
+                <div class="post-cover"><img src="<%= v["posts"][i]["coverimg"] %>"></div>
+                <div class="post-title"><%= v["posts"][i]["title"] %></div>
+                <div class="post-description"><%= v["posts"][i]["description"] %></div>
+              </article>
+            </a>
+          </div>
+        <% } %>
+      </main>
+      <%#include components/_account_name/footer.html %>
+    </div>
   </body>
 </html>

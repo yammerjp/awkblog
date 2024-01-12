@@ -17,9 +17,10 @@ function _account_name__get(        splitted, params, query, rows, id, html, blo
   templateVars["blog_description"] = blog["description"]
 
   for(i = 1; i <= length(posts); i++) {
-    templateVars["posts"][i]["account_name"] = account_name
     templateVars["posts"][i]["id"] = posts[i]["id"]
     templateVars["posts"][i]["title"] = posts[i]["title"]
+    templateVars["posts"][i]["description"] = posts[i]["description"]
+    templateVars["posts"][i]["coverimg"] = posts[i]["coverimg"]
   }
 
   template::render("_account_name/get.html", templateVars);
