@@ -9,7 +9,7 @@ function authed__blog__new__get(accountId, blog) {
 
   model::getBlog(blog, accountId)
   if (!("error" in blog)) {
-    http::sendRedirect("/authed/blog")
+    http::sendRedirect("/authed/blog/edit")
   }
 
   template::render("authed/blog/new/get.html", variables)
