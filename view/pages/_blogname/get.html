@@ -21,7 +21,11 @@
     </style>
   </head>
   <body>
-    <h1>posts of <%= v["username"] %></h1>
+    <h1><%= v["blog_title"] %></h1>
+    <div><%= v["blog_description"] %></div>
+    <hr>
+    <div>posts of <%= v["username"] %></div>
+    <hr>
       <% for(i in v["posts"]) { %>
         <div>
           <a href="/@<%= v["posts"][i]["blogname"] %>/posts/<%= v["posts"][i]["id"] %>"><%= v["posts"][i]["title"] %></a>

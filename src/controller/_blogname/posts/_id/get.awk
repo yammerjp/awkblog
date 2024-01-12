@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function _blogname__posts___id__get(        splitted, params, query, rows, id, html, result, templateVars) {
+function _blogname__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars) {
   split(http::getPath(), splitted, "/")
   at_username = splitted[2]
   post_id = splitted[4]
@@ -13,15 +13,19 @@ function _blogname__posts___id__get(        splitted, params, query, rows, id, h
     return
   }
 
-  model::getPost(result, post_id)
-  if ("error" in result) {
+  model::getBlog(blog, accountId)
+  templateVars["blog_title"] = blog["title"]
+  templateVars["blog_description"] = blog["description"]
+
+  model::getPost(post, post_id)
+  if ("error" in post) {
     notfound()
     return
   }
-  templateVars["id"] = result["id"]
-  templateVars["title"] = result["title"]
-  templateVars["content"] = markdown::parseMultipleLines(result["content"])
-  templateVars["created_at"] = result["created_at"]
+  templateVars["id"] = post["id"]
+  templateVars["title"] = post["title"]
+  templateVars["content"] = markdown::parseMultipleLines(post["content"])
+  templateVars["created_at"] = post["created_at"]
 
   template::render("_blogname/posts/_id/get.html", templateVars);
 }
