@@ -2,12 +2,12 @@
 
 function _blogname__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars) {
   split(http::getPath(), splitted, "/")
-  at_username = splitted[2]
+  at_account_name = splitted[2]
   post_id = splitted[4]
   # TODO: check to start from @
-  username = substr(at_username, 2)
+  account_name = substr(at_account_name, 2)
 
-  accountId = model::getAccountId(username)
+  accountId = model::getAccountId(account_name)
   if (accountId == "") {
     notfound()
     return

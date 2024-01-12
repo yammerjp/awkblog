@@ -8,7 +8,7 @@
     </style>
   </head>
   <body>
-    <h1>posts of <%= v["username"] %></h1>
+    <h1>posts of <%= v["account_name"] %></h1>
       <% for(i in v["posts"]) { %>
         <div>
           <a href="/@<%= v["posts"][i]["blogname"] %>/posts/<%= v["posts"][i]["id"] %>"><%= v["posts"][i]["title"] %></a>

@@ -3,21 +3,21 @@
 function _blogname__rss_xml__get(        path_parts, splitted, params, query, rows, id, html, result, templateVars) {
   split(http::getPath(), path_parts, "/")
   split(path_parts[2], splitted, "@")
-  username = splitted[2]
+  account_name = splitted[2]
 
 
-  accountId = model::getAccountId(username)
+  accountId = model::getAccountId(account_name)
   if (accountId == "") {
     notfound()
     return
   }
 
-  templateVars["author_account_name"] = username
+  templateVars["author_account_name"] = account_name
   templateVars["blog_title"] = "this is blog title" # TODO: get from database
   templateVars["blog_description"] = "this is blog description" # TODO: get from database
-  templateVars["copyright"] = "Copyright 2024 " username
+  templateVars["copyright"] = "Copyright 2024 " account_name
 
-  templateVars["account_url"] = http::getHostName() "/@" username
+  templateVars["account_url"] = http::getHostName() "/@" account_name
 
   model::getPosts(result, accountId)
 

@@ -2,9 +2,9 @@
 
 function _blogname__get(        splitted, params, query, rows, id, html, blog, posts, templateVars) {
   split(http::getPath(), splitted, "@")
-  username = splitted[2]
+  account_name = splitted[2]
 
-  accountId = model::getAccountId(username)
+  accountId = model::getAccountId(account_name)
   if (accountId == "") {
     notfound()
     return
@@ -12,12 +12,12 @@ function _blogname__get(        splitted, params, query, rows, id, html, blog, p
   model::getBlog(blog, accountId)
   model::getPosts(posts, accountId)
 
-  templateVars["username"] = username
+  templateVars["account_name"] = account_name
   templateVars["blog_title"] = blog["title"]
   templateVars["blog_description"] = blog["description"]
 
   for(i = 1; i <= length(posts); i++) {
-    templateVars["posts"][i]["blogname"] = username
+    templateVars["posts"][i]["blogname"] = account_name
     templateVars["posts"][i]["id"] = posts[i]["id"]
     templateVars["posts"][i]["title"] = posts[i]["title"]
   }

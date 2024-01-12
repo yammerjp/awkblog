@@ -12,8 +12,8 @@ function verify(        encrypted, decrypted) {
     return 0
   }
   MIDDLEWARE_AUTH["userid"] = splitted[2]
-  MIDDLEWARE_AUTH["username"] = splitted[3]
-  return length(MIDDLEWARE_AUTH["userid"]) > 0 && length(MIDDLEWARE_AUTH["username"]) > 0
+  MIDDLEWARE_AUTH["account_name"] = splitted[3]
+  return length(MIDDLEWARE_AUTH["userid"]) > 0 && length(MIDDLEWARE_AUTH["account_name"]) > 0
 }
 
 function redirectIfFailedToVerify() {
@@ -36,21 +36,21 @@ function forbiddenIfFailedToVerify() {
 
 
 function getUsername() {
-  return MIDDLEWARE_AUTH["username"]
+  return MIDDLEWARE_AUTH["account_name"]
 }
 
 function getAccountId() {
   return MIDDLEWARE_AUTH["userid"]
 }
 
-function login(userid, username,        params) {
+function login(userid, account_name,        params) {
   query = "INSERT INTO accounts( id, name ) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;"
   params[1] = userid
-  params[2] = username
+  params[2] = account_name
   pgsql::exec(query, params)
   query = "SELECT id, name FROM accounts WHERE id = $1 AND name = $2;"
   pgsql::exec(query, params)
-  login_session_str = sprintf("AWKBLOG_LOGIN_SESSION %d %s", userid, username)
+  login_session_str = sprintf("AWKBLOG_LOGIN_SESSION %d %s", userid, account_name)
   encrypted = aes256::encrypt(login_session_str)
   http::setCookie("login_session", encrypted)
 }

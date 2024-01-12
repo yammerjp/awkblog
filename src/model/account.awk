@@ -1,7 +1,7 @@
 @namespace "model"
 
-function getAccountId(username     , params, query, rows) {
-  params[1] = username
+function getAccountId(account_name     , params, query, rows) {
+  params[1] = account_name
   query = "SELECT id, name FROM accounts WHERE name = $1;"
   pgsql::exec(query, params)
 
