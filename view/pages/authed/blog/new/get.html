@@ -1,5 +1,19 @@
-<form action="/authed/blog/new" method="post">
-  <div><input type="text" name="title" placeholder="name"></div>
-  <div><input type="text" name="description" placeholder="description"></div>
-  <div><input type="submit" value="submit"></div>
-</form>
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <%#include components/console_head.html %>
+  </head>
+  <body>
+    <%#include components/header.html %>
+    <main>
+      <h1>Please register blog title and description</h1>
+      <form action="/authed/blog/new" method="post">
+        <div><input type="text" name="title" placeholder="name"></div>
+        <div><input type="text" name="description" placeholder="description"></div>
+        <div><input type="submit" value="submit"></div>
+      </form>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>
