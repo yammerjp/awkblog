@@ -1,2 +1,3 @@
 .env*
 src/_compiled_templates.awk
+supervisord.pid
