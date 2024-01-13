@@ -2,7 +2,7 @@ access_log  /dev/stdout;
 error_log   /dev/stderr;
 
 map $request_body $modified_body {
-  default "$request_body     ";
+  default "$request_body                                                                                                                             ";
     ''      $request_body;
 }
 
@@ -26,7 +26,7 @@ server {
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Body-Leftover "5";
+    proxy_set_header X-Body-Leftover "100";
 
     proxy_set_body $modified_body;
   }
