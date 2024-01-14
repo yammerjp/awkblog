@@ -10,4 +10,6 @@ COPY ./docker/nginx/default.conf.template /etc/nginx/conf.d/default.conf.templat
 
 STOPSIGNAL SIGQUIT
 
+RUN mkdir /var/tmp/nginx;
+
 ENTRYPOINT /start-nginx.sh

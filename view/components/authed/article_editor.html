@@ -11,7 +11,7 @@
 </div>
 
 <input type="file" id="input-image" accept="image/jpeg,image/png,image/gif,image/webp">
-<input type="hidden" name="zpadding" value="0">
+<input type="hidden" name="zpadding" value="<%= http::defaultLeftOverPadding() %>">
 <div class="publish-bar">
   <input type="submit" value="Publish" class="publish-button">
 </div>

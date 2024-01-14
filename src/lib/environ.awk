@@ -22,3 +22,7 @@ function get(name) {
 function has(name) {
   return name in ENVIRON
 }
+
+function is(name) {
+  return has(name) && get(name)
+}

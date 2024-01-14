@@ -1,6 +1,9 @@
 access_log  /dev/stdout;
 error_log   /dev/stderr;
 
+client_body_temp_path /var/tmp/nginx;
+client_body_buffer_size 1M;
+
 map $request_body $modified_body {
   default "$request_body     ";
     ''      $request_body;
@@ -21,6 +24,7 @@ server {
   }
 
   location / {
+    proxy_http_version 1.0;
     proxy_pass http://${AWKBLOG_INTERNAL_HOSTNAME}:${AWKBLOG_PORT};
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;

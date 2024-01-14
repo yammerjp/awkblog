@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      dockerfile: ./docker/with-nginx/Dockerfile
+      dockerfile: ./docker/default/Dockerfile
       context: ./
     depends_on:
       - db
@@ -17,10 +17,10 @@ services:
       - POSTGRES_PASSWORD=passw0rd
       - POSTGRES_DATABASE=postgres
       - PORT=4567
-      - AWKBLOG_PORT=4568
       - AWKBLOG_INTERNAL_HOSTNAME=127.0.0.1
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
       - DEBUG=1
+      - AWKBLOG_NO_PROXY=1
   db:
     image: postgres:14
     volumes:

@@ -23,13 +23,20 @@ function readFirstLine(    line, splitted, parameters, result) {
   # read first line
   awk::RS="\n"
   INET |& getline line;
-  if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.1$/) {
+  logger::debug("readFirstLine: " line, "http")
+  if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.[01]$/) {
     send(400)
     return
   }
   split(line, splitted,"[ ?]");
   HTTP_REQUEST["method"] = splitted[1];
   HTTP_REQUEST["path"] = splitted[2];
+
+  if (splitted[4] == "") {
+    HTTP_REQUEST["version"] = splitted[3];
+    return
+  }
+
   parameters = splitted[3];
   HTTP_REQUEST["version"] = splitted[4];
 
@@ -43,6 +50,7 @@ function readFirstLine(    line, splitted, parameters, result) {
 
 function readHeader(    line, colonSpace) {
   for(i = 1; INET |& getline line > 0; i++) {
+    logger::debug("readHeader(): " line, "http")
     if (line == "" || line == "\r") {
       break;
     }
@@ -56,6 +64,9 @@ function readHeader(    line, colonSpace) {
 
 function readBody(    contentLength, unread, leftover, reading) {
   contentLength = getHeader("content-length")
+  if (getMethod() == "GET" || getMethod() == "HEAD") {
+    return
+  }
   if (contentLength !~ /^[0-9]+$/) {
     send(411)
   }
@@ -64,8 +75,12 @@ function readBody(    contentLength, unread, leftover, reading) {
     return
   }
 
-  # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
-  leftover = getHeader("x-body-leftover") + 0
+  if (environ::is("AWKBLOG_NO_PROXY") && !hasHeader("x-body-leftover")) {
+    leftover = length(defaultLeftOverPadding())
+  } else {
+    # The end of the body is not read;\if the entire body is tried to be read, the operation is stalled due to waiting for the next input after the last character.
+    leftover = getHeader("x-body-leftover") + 0
+  }
   if (leftover < 1) {
     setHeader("content-type", "text/plain")
     send(400, "the HTTP Header 'X-Body-Leftover' must be greater than 0")
@@ -81,6 +96,7 @@ function readBody(    contentLength, unread, leftover, reading) {
     INET |& getline
     HTTP_REQUEST["body"] = HTTP_REQUEST["body"] awk::RT
     unread -= reading
+    logger::debug("readBody(): " awk::RT, "http")
   }
   awk::RS = "\n"
 }
@@ -232,12 +248,26 @@ function getBody() {
   return HTTP_REQUEST["body"]
 }
 
+function hasHeader(key) {
+  return key in HTTP_REQUEST_HEADERS
+}
+
 function getHeader(key) {
-  return HTTP_REQUEST_HEADERS[key]
+  if (hasHeader(key)) {
+    return HTTP_REQUEST_HEADERS[key]
+  }
+  return ""
+}
+
+function hasParameter(key) {
+  return key in HTTP_REQUEST_PARAMETERS
 }
 
 function getParameter(key) {
-  return HTTP_REQUEST_PARAMETERS[key]
+  if (hasParameter(key)) {
+    return HTTP_REQUEST_PARAMETERS[key]
+  }
+  return ""
 }
 
 function getRequestId() {
@@ -257,6 +287,10 @@ function isCrossSiteRequest() {
 
 function getHostName() {
   return AWKBLOG_HOSTNAME
+}
+
+function defaultLeftOverPadding() {
+  return "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 }
 
 BEGIN {
