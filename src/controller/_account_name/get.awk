@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function _account_name__get(        splitted, params, query, rows, id, html, blog, posts, templateVars) {
+function _account_name__get(        splitted, params, query, rows, id, html, blog, posts, templateVars, description) {
   split(http::getPath(), splitted, "@")
   account_name = splitted[2]
 
@@ -19,8 +19,7 @@ function _account_name__get(        splitted, params, query, rows, id, html, blo
   for(i = 1; i <= length(posts); i++) {
     templateVars["posts"][i]["id"] = posts[i]["id"]
     templateVars["posts"][i]["title"] = posts[i]["title"]
-    templateVars["posts"][i]["description"] = posts[i]["description"]
-    templateVars["posts"][i]["coverimg"] = posts[i]["coverimg"]
+    templateVars["posts"][i]["description"] = text::headAbout500(html::toText(markdown::parseMultipleLines(posts[i]["content"]))) "..."
   }
 
   template::render("_account_name/get.html", templateVars);
