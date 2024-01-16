@@ -1,0 +1,27 @@
+.blog-page-top {
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 0 16px;
+}
+
+.post {
+}
+
+.post-link {
+  text-decoration: none;
+  color: #333333;
+}
+.post-link:hover {
+  text-decoration: none;
+  color: #666666;
+}
+.post-link:visited {
+  text-decoration: none;
+  color: #999999;
+}
+
+.post-link .post-title {
+  font-size: 2em;
+  text-decoration: underline;
+  color: #111111;
+}
