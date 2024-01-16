@@ -4,14 +4,38 @@
   padding: 0 16px;
 }
 
+header {
+  text-align: center;
+}
+
+main > h1 {
+  color: #111111;
+}
+
+.blog-header-link, .blog-header-link:visited {
+  text-decoration: none;
+  color: #111111;
+}
+
+
+.blog-header-link:hover, .blog-header-link:focus {
+  text-decoration: none;
+  color: #222222;
+}
+
+main {
+  margin: 24px 0;
+}
+
 .post {
+  margin: 24px 0;
 }
 
 .post-link {
   text-decoration: none;
   color: #333333;
 }
-.post-link:hover {
+.post-link:hover, .post-link:focus {
   text-decoration: none;
   color: #666666;
 }
@@ -24,4 +48,47 @@
   font-size: 2em;
   text-decoration: underline;
   color: #111111;
+}
+
+footer {
+  margin-top: 72px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+footer .account-name {
+  font-size: 1.5em;
+}
+
+.github-link, .github-link:visited {
+  text-decoration: none;
+  color: #111111;
+}
+.github-link:focus, .github-link:hover {
+  text-decoration: none;
+  color: #222222;
+}
+
+footer .account-name::before {
+  content: "@"
+}
+
+footer .powered-by {
+  margin: 24px;
+}
+
+footer img {
+  max-width: 120px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+a {
+  color: #FFAC1C;
+}
+a:hover, a:focus {
+  color: 	#FFBF00;
+}
+a:visited {
+  color: #CC7722;
 }

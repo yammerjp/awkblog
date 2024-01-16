@@ -13,6 +13,7 @@ function _account_name__posts___id__get(        splitted, params, query, rows, i
     return
   }
 
+  templateVars["account_name"] = account_name
   model::getBlog(blog, accountId)
   templateVars["blog_title"] = blog["title"]
   templateVars["blog_description"] = blog["description"]

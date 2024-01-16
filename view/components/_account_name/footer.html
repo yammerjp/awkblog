@@ -1,6 +1,8 @@
 <footer>
   <div class="account-image"><img src="https://github.com/<%= v["account_name"] %>.png" alt="profile image"></div>
-  <div class="account-name"><%= v["account_name"] %></div>
-  <div class="account-description"><%= v["account_description"] %>
+  <div class="account-name"><a href="https://github.com/<%= v["account_name"] %>" class="github-link"><%= v["account_name"] %></a></div>
+  <div class="account-description"><%= v["account_description"] %></div>
+
+  <div class="powered-by">Powerd by <a href="/">awkblog</a></div>
 </footer>
 
