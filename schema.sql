@@ -17,6 +17,7 @@ CREATE TABLE blogs (
   account_id bigint NOT NULL REFERENCES accounts(id),
   title text,
   description text,
+  author_profile text,
   coverimage VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
