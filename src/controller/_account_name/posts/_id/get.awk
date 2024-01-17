@@ -16,7 +16,8 @@ function _account_name__posts___id__get(        splitted, params, query, rows, i
   templateVars["account_name"] = account_name
   model::getBlog(blog, accountId)
   templateVars["blog_title"] = blog["title"]
-  templateVars["blog_description"] = blog["description"]
+  templateVars["blog_description"] = markdown::parseMultipleLines(blog["description"])
+  templateVars["blog_author_profile"] = markdown::parseMultipleLines(blog["author_profile"])
 
   model::getPost(post, post_id)
   if ("error" in post) {

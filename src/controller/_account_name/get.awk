@@ -14,7 +14,8 @@ function _account_name__get(        splitted, params, query, rows, id, html, blo
 
   templateVars["account_name"] = account_name
   templateVars["blog_title"] = blog["title"]
-  templateVars["blog_description"] = blog["description"]
+  templateVars["blog_description"] = markdown::parseMultipleLines(blog["description"])
+  templateVars["blog_author_profile"] = markdown::parseMultipleLines(blog["author_profile"])
 
   for(i = 1; i <= length(posts); i++) {
     templateVars["posts"][i]["id"] = posts[i]["id"]

@@ -2,14 +2,19 @@
 <html lang="ja">
   <head>
     <%#include components/authed/console_head.html %>
+    <style>
+      textarea {
+        width: 100%;
+        min-height: 40vh;
+      }
+    </style>
   </head>
   <body>
     <%#include components/authed/header.html %>
     <main>
-      <h1>Please register blog title and description</h1>
-      <form action="/authed/blog/new" method="post">
-        <div><input type="text" name="title" placeholder="name"></div>
-        <div><input type="text" name="description" placeholder="description"></div>
+      <h1>Blog Stylesheet Settings</h1>
+      <form action="/authed/styles" method="post">
+        <div><textarea name="style"><%= v["style"] %></textarea></div>
         <div><input type="submit" value="submit"></div>
       </form>
     </main>

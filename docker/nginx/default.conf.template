@@ -5,7 +5,7 @@ client_body_temp_path /var/tmp/nginx;
 client_body_buffer_size 1M;
 
 map $request_body $modified_body {
-  default "$request_body                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ";
+  default "$request_body                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ";
     ''      $request_body;
 }
 
