@@ -13,21 +13,21 @@ function _account_name__posts___id__get(        splitted, params, query, rows, i
     return
   }
 
-  templateVars["account_name"] = account_name
+  templateVars["account_name"] = html::escape(account_name)
   model::getBlog(blog, accountId)
-  templateVars["blog_title"] = blog["title"]
-  templateVars["blog_description"] = markdown::parseMultipleLines(blog["description"])
-  templateVars["blog_author_profile"] = markdown::parseMultipleLines(blog["author_profile"])
+  templateVars["blog_title"] = html::escape(blog["title"])
+  templateVars["blog_description"] = markdown::parseMultipleLines(html::escape(blog["description"]))
+  templateVars["blog_author_profile"] = markdown::parseMultipleLines(html::escape(blog["author_profile"]))
 
   model::getPost(post, post_id)
   if ("error" in post) {
     notfound()
     return
   }
-  templateVars["id"] = post["id"]
-  templateVars["title"] = post["title"]
-  templateVars["content"] = markdown::parseMultipleLines(post["content"])
-  templateVars["created_at"] = post["created_at"]
+  templateVars["id"] = html::escape(post["id"])
+  templateVars["title"] = html::escape(post["title"])
+  templateVars["content"] = markdown::parseMultipleLines(html::escape(post["content"]))
+  templateVars["created_at"] = html::escape(post["created_at"])
 
   template::render("_account_name/posts/_id/get.html", templateVars);
 }

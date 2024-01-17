@@ -6,8 +6,8 @@ function authed__posts__new__post(        title, content, account_id, query, par
 
   url::decodeWwwForm(result, http::HTTP_REQUEST["body"])
 
-  title = html::escape(result["title"])
-  content = html::escape(result["content"])
+  title = result["title"]
+  content = result["content"]
   accountId = auth::getAccountId()
 
   model::createPost(title, content, accountId)

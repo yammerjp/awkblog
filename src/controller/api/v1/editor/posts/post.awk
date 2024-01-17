@@ -7,8 +7,8 @@ function api__v1__editor__posts__post(    req) {
 
   json::from_json(http::HTTP_REQUEST["body"], req)
 
-  title = html::escape(req["title"])
-  content = html::escape(req["content"])
+  title = req["title"]
+  content = req["content"]
 
   if (title == "") {
     http::send(400)

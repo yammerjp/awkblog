@@ -3,7 +3,7 @@
 function authed__posts__edit__get(    postId, result, accountId, variables) {
   auth::redirectIfFailedToVerify()
 
-  variables["account_name"] = auth::getUsername()
+  variables["account_name"] = html::escape(auth::getUsername())
 
   postId = http::getParameter("post_id") + 0
   accountId = auth::getAccountId() + 0
@@ -13,9 +13,9 @@ function authed__posts__edit__get(    postId, result, accountId, variables) {
     http::send(403)
     return
   }
-  variables["post_id"] = result["id"]
-  variables["title"] = result["title"]
-  variables["content"] = result["content"]
+  variables["post_id"] = html::escape(result["id"])
+  variables["title"] = html::escape(result["title"])
+  variables["content"] = html::escape(result["content"])
 
   template::render("authed/posts/edit/get.html", variables)
 }

@@ -1,10 +1,10 @@
 @namespace "controller"
 
-function _account_name__get(        splitted, params, query, rows, id, html, blog, posts, templateVars, description) {
+function _account_name__get(        splitted, params, query, rows, id, html, blog, posts, templateVars, description, accountName) {
   split(http::getPath(), splitted, "@")
-  account_name = splitted[2]
+  accountName = splitted[2]
 
-  accountId = model::getAccountId(account_name)
+  accountId = model::getAccountId(accountName)
   if (accountId == "") {
     notfound()
     return
@@ -12,15 +12,15 @@ function _account_name__get(        splitted, params, query, rows, id, html, blo
   model::getBlog(blog, accountId)
   model::getPosts(posts, accountId)
 
-  templateVars["account_name"] = account_name
-  templateVars["blog_title"] = blog["title"]
-  templateVars["blog_description"] = markdown::parseMultipleLines(blog["description"])
-  templateVars["blog_author_profile"] = markdown::parseMultipleLines(blog["author_profile"])
+  templateVars["account_name"] = html::escape(accountName)
+  templateVars["blog_title"] = html::escape(blog["title"])
+  templateVars["blog_description"] = markdown::parseMultipleLines(html::escape(blog["description"]))
+  templateVars["blog_author_profile"] = markdown::parseMultipleLines(html::escape(blog["author_profile"]))
 
   for(i = 1; i <= length(posts); i++) {
-    templateVars["posts"][i]["id"] = posts[i]["id"]
-    templateVars["posts"][i]["title"] = posts[i]["title"]
-    templateVars["posts"][i]["description"] = text::headAbout500(html::toText(markdown::parseMultipleLines(posts[i]["content"]))) "..."
+    templateVars["posts"][i]["id"] = html::escape(posts[i]["id"])
+    templateVars["posts"][i]["title"] = html::escape(posts[i]["title"])
+    templateVars["posts"][i]["description"] = text::headAbout500(html::toText(markdown::parseMultipleLines(html::escape(posts[i]["content"])))) "..."
   }
 
   template::render("_account_name/get.html", templateVars);
