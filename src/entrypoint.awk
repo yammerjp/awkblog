@@ -41,6 +41,7 @@ BEGIN {
 }
 
 {
+  pgsql::renewConnection()
   http::receiveRequest()
   router::call(http::getMethod(), http::getPath())
 }

@@ -64,6 +64,17 @@ function createConnection(  param) {
   logger::info("pgsql::createConnection(): Connection: " Connection, "pgsql")
 }
 
+function destroyConnection() {
+  pg_disconnect(Connection)
+}
+
+function renewConnection() {
+  if (Connection) {
+    destroyConnection()
+  }
+  createConnection()
+}
+
 function fetchRows() {
   return length(RESULT)
 }
