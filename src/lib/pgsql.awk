@@ -65,7 +65,7 @@ function createConnection(  param) {
 }
 
 function destroyConnection() {
-  pg_disconnect(Connection)
+  awk::pg_disconnect(Connection)
 }
 
 function renewConnection() {
