@@ -4,21 +4,18 @@ set -e
 REPOSITORY_ROOT="$(dirname "$0")/.."
 cd "$REPOSITORY_ROOT"
 
-export PRIVATE_BEARER_TOKEN="$(echo "$(date +%s%N)$POSTGRES_PASSWORD" | sha256sum | awk '{print $1}')"
+if [ "$WORKERS" == "" ]; then
+  WORKERS=1
+fi
 
-function shutdown_trap() {
-  echo "start to graceful shutdown"
-  for AWKBLOG_PORT in $(seq 40001 40040); do
-    curl -X POST \
-      -H "Authorization: bearer $PRIVATE_BEARER_TOKEN" \
-      "http://localhost:${AWKBLOG_PORT}/private/shutdown"
-    echo "stopped gawk process, port: $AWKBLOG_PORT"
-  done
+# function shutdown_trap() {
+#   echo "start.sh: shutdown_trap()"
+#   exit 100
+# }
+# 
+# trap shutdown_trap SIGTERM
 
-  exit 138
-}
 
-trap shutdown_trap TERM
 
 echo "start.sh: Build templates to src/_compiled_templates.awk"
 bin/compile_templates.sh
@@ -28,14 +25,16 @@ echo "start.sh: Migrate Database Schema"
 
 echo "start.sh: Start Web Application"
 
-for AWKBLOG_PORT in $(seq 40001 40040); do
+for AWKBLOG_PORT in $(seq 40001 $((40000 + WORKERS))); do
   cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 128 | AWKBLOG_PORT=$AWKBLOG_PORT gawk \
     $(find src/ -type f | gawk '/\.awk$/{ printf " -f %s", $0 }') \
     &
-    echo "started gawk process, port: $AWKBLOG_PORT"
+    echo "start.sh: started gawk process, port: $AWKBLOG_PORT"
 done
 
-mv nginx.default.conf.template /etc/nginx/conf.d/default.conf
-nginx -g 'daemon off;' &
+./bin/build_nginx_conf.sh  > /etc/nginx/conf.d/default.conf
+echo "start.sh: built /etc/nginx/conf.d/default.conf"
 
-wait
+exec nginx -g "daemon off;"
+
+# pwait

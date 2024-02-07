@@ -1,0 +1,42 @@
+access_log  /dev/stdout;
+error_log   /dev/stderr;
+
+client_body_temp_path /var/tmp/nginx;
+client_body_buffer_size 1M;
+
+map $request_body $modified_body {
+  default "$request_body                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ";
+    ''      $request_body;
+}
+
+root /var/www/html;
+
+upstream awkblog {
+  <% for(i=40001; i<= 40000 + ENVIRON["WORKERS"]; i++) { %>
+  server 127.0.0.1:<%= i %> max_conns=1;
+  <% } %>
+}
+
+server {
+  listen 8080;
+
+  location /assets {
+    alias /var/www/html/assets;
+  }
+
+  location /favicon.ico {
+    alias /var/www/html/favicon.ico;
+  }
+
+  location / {
+    proxy_http_version 1.0;
+    proxy_pass http://awkblog;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Body-Leftover "512";
+
+    proxy_set_body $modified_body;
+  }
+}

@@ -16,8 +16,8 @@ services:
       - POSTGRES_PASSWORD=passw0rd
       - POSTGRES_DATABASE=postgres
       - PORT=8080
+      - WORKERS=40
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
-      - DEBUG=1
   db:
     image: postgres:14
     volumes:

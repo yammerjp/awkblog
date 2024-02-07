@@ -21,4 +21,6 @@ RUN /app/bin/setup.sh
 
 RUN echo "function getAwkblogVersion() { return \""${VERSION}"\" }" > /app/src/version.awk
 
+STOPSIGNAL SIGQUIT
+
 ENTRYPOINT "/app/bin/start.sh"

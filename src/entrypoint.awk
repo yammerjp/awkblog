@@ -32,7 +32,6 @@ BEGIN {
   router::register("GET", "/*/rss.xml", "controller::_account_name__rss_xml__get")
   router::register("GET", "/*/style.css", "controller::_account_name__style_css__get")
   router::register("GET", "/*/posts/*", "controller::_account_name__posts___id__get")
-  router::register("POST", "/private/shutdown", "controller::private__shutdown__post")
   router::register_notfound("controller::notfound")
 
   router::debug_print()
