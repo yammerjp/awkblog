@@ -170,14 +170,18 @@ function setCookieMaxAge(key, maxAge) {
   RESPONSE_COOKIES[key]["Max-Age"] = maxAge
 }
 
-function initialize(    port) {
-  error::registerErrorHandler("http::internalServerError")
-
+function getPort(    port) {
   port = environ::get("AWKBLOG_PORT")
   if (port == "") {
     port = environ::getOrPanic("PORT")
   }
-  INET = "/inet/tcp/" port "/0/0";
+  return port
+}
+
+function initialize() {
+  error::registerErrorHandler("http::internalServerError")
+
+  INET = "/inet/tcp/" getPort() "/0/0";
   FS=""
   RS = "\n"
 

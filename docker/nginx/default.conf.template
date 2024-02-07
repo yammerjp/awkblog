@@ -11,6 +11,48 @@ map $request_body $modified_body {
 
 root /var/www/html;
 
+upstream awkblog {
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40001 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40002 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40003 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40004 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40005 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40006 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40007 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40008 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40009 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40010 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40011 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40012 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40013 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40014 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40015 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40016 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40017 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40018 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40019 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40020 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40021 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40022 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40023 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40024 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40025 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40026 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40027 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40028 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40029 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40030 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40031 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40032 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40033 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40034 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40035 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40036 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40037 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40038 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40039 max_conns=1;
+  server ${AWKBLOG_INTERNAL_HOSTNAME}:40040 max_conns=1;
+}
 
 server {
   listen ${PORT};
@@ -25,7 +67,7 @@ server {
 
   location / {
     proxy_http_version 1.0;
-    proxy_pass http://${AWKBLOG_INTERNAL_HOSTNAME}:${AWKBLOG_PORT};
+    proxy_pass http://awkblog;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

@@ -24,7 +24,8 @@ function output(level, message, tag) {
         tag = "default"
     }
 
-    printf "%s %s [%s] %s\n", nowISO8601(), level, tag, message
+    printf "%s %s %s [%s] %s\n", nowISO8601(), level, http::getPort(), tag, message
+    fflush()
 }
 
 function nowISO8601() {
