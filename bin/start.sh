@@ -11,7 +11,7 @@ function shutdown_trap() {
   for AWKBLOG_PORT in $(seq 40001 40040); do
     curl -X POST \
       -H "Authorization: bearer $PRIVATE_BEARER_TOKEN" \
-      "http://localhost:${AWKBLOG_PORT:$PORT}/private/shutdown"
+      "http://localhost:${AWKBLOG_PORT}/private/shutdown"
     echo "stopped gawk process, port: $AWKBLOG_PORT"
   done
 
@@ -34,5 +34,8 @@ for AWKBLOG_PORT in $(seq 40001 40040); do
     &
     echo "started gawk process, port: $AWKBLOG_PORT"
 done
+
+mv nginx.default.conf.template /etc/nginx/conf.d/default.conf
+nginx -g 'daemon off;' &
 
 wait

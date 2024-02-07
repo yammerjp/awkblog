@@ -171,11 +171,7 @@ function setCookieMaxAge(key, maxAge) {
 }
 
 function getPort(    port) {
-  port = environ::get("AWKBLOG_PORT")
-  if (port == "") {
-    port = environ::getOrPanic("PORT")
-  }
-  return port
+  return environ::get("AWKBLOG_PORT")
 }
 
 function initialize() {

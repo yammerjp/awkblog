@@ -17,11 +17,8 @@ COPY ./ /app
 RUN rm -r /var/www/html
 RUN ln -sf /app/static /var/www/html
 
-COPY ./docker/nginx/default.conf.template /etc/nginx/conf.d/default.conf.template
-COPY ./docker/with-nginx/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
-
 RUN /app/bin/setup.sh
 
 RUN echo "function getAwkblogVersion() { return \""${VERSION}"\" }" > /app/src/version.awk
 
-ENTRYPOINT [ "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
+ENTRYPOINT "/app/bin/start.sh"

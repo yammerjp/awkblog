@@ -20,8 +20,7 @@ export AWS_ACCESS_KEY_ID=xxxx
 export AWS_SECRET_ACCESS_KEY=xxxx
 export S3_BUCKET_ENDPOINT="https://bucketname.s3.amazonaws.com"
 export S3_ASSET_HOST="https://bucketname.s3.amazonaws.com"
-export PORT="4567"
-export AWKBLOG_PORT="4568"
+export PORT="8080"
 export AWKBLOG_INTERNAL_HOSTNAME="127.0.0.1"
 
 

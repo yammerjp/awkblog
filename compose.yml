@@ -1,26 +1,13 @@
 services:
-  nginx:
+  app:
     build:
-      dockerfile: ./docker/nginx/Dockerfile
-      context: ./
-    ports:
-      - "0.0.0.0:4567:4567"
-    volumes:
-      - ./static:/var/www/html:ro
-    depends_on:
-      - gawk
-    environment:
-      - AWKBLOG_PORT=80
-      - PORT=4567
-      - AWKBLOG_INTERNAL_HOSTNAME=gawk
-  gawk:
-    build:
-      dockerfile: ./docker/default/Dockerfile
-      context: ./
+      context: .
     depends_on:
       - db
     volumes:
-      - "./:/app"
+      - ./:/app
+    ports:
+      - "0.0.0.0:4567:8080"
     env_file:
       - .env
     environment:
@@ -28,7 +15,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=passw0rd
       - POSTGRES_DATABASE=postgres
-      - PORT=80
+      - PORT=8080
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
       - DEBUG=1
   db:
