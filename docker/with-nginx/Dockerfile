@@ -17,7 +17,6 @@ COPY ./ /app
 RUN rm -r /var/www/html
 RUN ln -sf /app/static /var/www/html
 
-COPY ./docker/with-nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/nginx/default.conf.template /etc/nginx/conf.d/default.conf.template
 COPY ./docker/with-nginx/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 
