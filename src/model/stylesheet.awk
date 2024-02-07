@@ -15,7 +15,7 @@ function getStylesheet(accountId     , params, query, rows) {
 
 function insertStylesheet(accountId    , params, query, rows, content) {
   content = ""
-  while (("lib/default.css" | getline) > 0) {
+  while (("misc/default.css" | getline) > 0) {
     content = content $0 "\n"
   }
   params[1] = accountId

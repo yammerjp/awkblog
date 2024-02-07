@@ -9,7 +9,7 @@ function signin(accountId, accountName    , query, params) {
   delete params
   query = "INSERT INTO stylesheets (account_id, content) SELECT $1, $2 WHERE NOT EXISTS (SELECT account_id FROM stylesheets WHERE account_id = $3);"
   params[1] = accountId
-  params[2] = shell::exec("cat lib/default.css")
+  params[2] = shell::exec("cat misc/default.css")
   params[3] = accountId
   pgsql::exec(query, params)
 
