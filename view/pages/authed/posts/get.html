@@ -12,11 +12,16 @@
           <h2><%= v["posts"][i]["title"] %></h2>
           <div class="date"><%= v["posts"][i]["created_at"] %></div>
           <p><%= v["posts"][i]["content"] %></p>
-          <a href="/authed/posts/edit?post_id=<%= v["posts"][i]["id"] %>">edit</a>
-          <form action="/authed/posts/delete" method="POST" onSubmit="return confirm('記事を削除しても良いですか？この操作は取り消せません')">
-            <input type="hidden" name="post_id" value="<%= v["posts"][i]["id"] %>">
-            <input type="submit" value="delete">
-          </form>
+          <div style="display:flex">
+            <form action="/authed/posts/edit" method="GET" style="padding: 4px">
+              <input type="hidden" name="post_id" value="<%= v["posts"][i]["id"] %>">
+              <input type="submit" value="edit">
+            </form>
+            <form action="/authed/posts/delete" method="POST" onSubmit="return confirm('記事を削除しても良いですか？この操作は取り消せません')" style="padding: 4px">
+              <input type="hidden" name="post_id" value="<%= v["posts"][i]["id"] %>">
+              <input type="submit" value="delete">
+            </form>
+          </div>
         </article>
         <hr>
       <% } %>
