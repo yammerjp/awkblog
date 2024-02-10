@@ -6,7 +6,10 @@
   <body>
     <%#include components/authed/header.html %>
     <main>
-      <h1>Blog Settings</h1>
+      <h1>ブログ設定</h1>
+      <p>
+        公開ページの上部に表示されるタイトルや説明、公開ページの下部に紹介される著者の自己紹介の内容
+      </p>
       <form action="/authed/settings" method="post">
         <div><input type="text" name="title" placeholder="Blog Title" value="<%= v["title"] %>"></div>
         <div><input type="text" name="description" placeholder="Blog Description" value="<%= v["description"] %>"></div>
