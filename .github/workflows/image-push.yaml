@@ -23,7 +23,7 @@ jobs:
         run: |
           docker build --tag ghcr.io/$GITHUB_ACTOR/awkblog:latest \
             --tag ghcr.io/$GITHUB_ACTOR/awkblog:$(echo $GITHUB_SHA | head -c7) \
-            --build-arg VERSION="0.0.1+$(echo $GITHUB_SHA | head -c7)" \
+            --build-arg VERSION="0.0.2+$(echo $GITHUB_SHA | head -c7)" \
             .
       - name: Push Docker Image
         run: |

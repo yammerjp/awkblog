@@ -1,6 +1,6 @@
 FROM ghcr.io/yammerjp/gawk-pgsql
 # https://github.com/yammerjp/gawk-pgsql-docker
-ARG VERSION="0.0.1-dev+with-nginx"
+ARG VERSION="0.0.2-dev+with-nginx"
 
 RUN apt-get update -y && apt-get install -y \
   uuid-runtime \

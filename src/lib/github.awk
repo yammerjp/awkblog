@@ -15,6 +15,10 @@ function redirectUrl(state) {
 }
 
 function verify(ret, code    , response, res_json) {
+  if (!(code ~ /^[a-zA-Z0-9_ -]+$/)) {
+    error::raise("github::verify", "invalid code")
+  }
+
   response = shell::exec("curl -X POST -H 'Accept: application/json' '" GITHUB_LOGIN_SERVER "/login/oauth/access_token?client_id=" OAUTH_CLIENT_ID "&client_secret=" OAUTH_CLIENT_SECRET "&code=" code "'")
   json::from_json(response, res_json)
   access_token = res_json["access_token"]
@@ -22,6 +26,11 @@ function verify(ret, code    , response, res_json) {
     ret["error"] = "access token is not found"
     return
   }
+
+  if (!(access_token ~ /^[a-zA-Z0-9_ -]+$/)) {
+    error::raise("github::verify", "invalid access token")
+  }
+
   response = shell::exec("curl -H 'Authorization: Bearer " access_token "' -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' " GITHUB_API_SERVER "/user")
   json::from_json(response, res_json)
   ret["loginname"] = res_json["login"]
