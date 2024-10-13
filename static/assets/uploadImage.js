@@ -37,5 +37,3 @@
       }
       return res.public_url
   }
-
-
