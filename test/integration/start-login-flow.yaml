@@ -1,0 +1,13 @@
+desc: Redirect to host.docker.internal:8080 for login
+runners:
+  req:
+    endpoint: http://localhost:4567
+    notFollowRedirect: true
+steps:
+  login:
+    req:
+      /login:
+        get:
+          body: null
+    test: |
+      current.res.body == null && current.res.status == 302 && current.res.headers["Location"][0] matches "^http://host.docker.internal:8080/login/oauth/authorize\\?client_id=clientkey&redirect_uri=http://localhost:4567/oauth-callback&state=[0-9a-f-]+$"

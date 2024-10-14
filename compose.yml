@@ -4,6 +4,7 @@ services:
       context: .
     depends_on:
       - db
+      - oauth-mock
     volumes:
       - ./:/app
     ports:
