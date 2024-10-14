@@ -1,4 +1,5 @@
 BEGIN {
+  logger::setProcessIdentifier(http::getPort())
   pgsql::createConnection()
 
   query = "SELECT count(id) as ids FROM posts;"

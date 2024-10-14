@@ -7,6 +7,7 @@
 @include "src/lib/base64.awk"
 @include "src/lib/hmac.awk"
 @include "src/lib/environ.awk"
+@include "src/lib/error.awk"
 
 "buildPolicyJson" {
   ENVIRON["AWS_ACCESS_KEY_ID"] = "accesskeyid"

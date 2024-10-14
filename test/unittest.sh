@@ -22,6 +22,7 @@ export S3_BUCKET_ENDPOINT="https://bucketname.s3.amazonaws.com"
 export S3_ASSET_HOST="https://bucketname.s3.amazonaws.com"
 export PORT="8080"
 export AWKBLOG_INTERNAL_HOSTNAME="127.0.0.1"
+unset NOT_USE_AWS_S3
 
 
 find test/lib -type f | grep -e '\.awk$' | while read awkfile
