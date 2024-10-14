@@ -1,8 +1,8 @@
 function codegen_header() {
-  print "@namespace \"compiled_templates\"\n\
-\n\
-function render(path, v    , ret) {\n\
-  switch(path) {"
+  print "@namespace \"compiled_templates\""
+  print ""
+  print "function render(path, v    , ret) {"
+  print "  switch(path) {"
 }
 
 function codegen_by_file(filename) {
@@ -50,12 +50,12 @@ function codegen_by_file(filename) {
 }
 
 function codegen_footer() {
-  print "    default:\n\
-      print \"unknown path\" > \"/dev/stderr\"\n\
-      exit 1\n\
-  }\n\
-  return ret\n\
-}"
+  print "    default:"
+  print "      print \"unknown path\" > \"/dev/stderr\""
+  print "      exit 1"
+  print "  }"
+  print "  return ret"
+  print "}"
 }
 
 {
