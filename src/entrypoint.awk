@@ -29,9 +29,11 @@ BEGIN {
   router::register("GET", "/api/v1/editor", "controller::api__v1__editor__get")
   router::register("POST", "/api/v1/images/uploading-sign", "controller::api__v1__images__uploading_sign__post")
   router::register("GET", "/api/v1/accounts", "controller::api__v1__accounts__get")
+  router::register("GET", "/.well-known/webfinger", "controller::well_known_webfinger_get")
   router::register("GET", "/*", "controller::_account_name__get")
   router::register("GET", "/*/rss.xml", "controller::_account_name__rss_xml__get")
   router::register("GET", "/*/style.css", "controller::_account_name__style_css__get")
+  router::register("GET", "/*/actor.json", "controller::_account_name__actor_json__get")
   router::register("GET", "/*/posts/*", "controller::_account_name__posts___id__get")
   router::register_notfound("controller::notfound")
 

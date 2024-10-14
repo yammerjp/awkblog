@@ -18,6 +18,7 @@ services:
       - POSTGRES_DATABASE=postgres
       - PORT=8080
       - ENCRYPTION_KEY=fvrcWCKkyxsmOkvmaxFLsrEXgrWqGrsh
+    stop_signal: SIGKILL
   db:
     image: postgres:14
     volumes:
