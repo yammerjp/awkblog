@@ -18,7 +18,7 @@ upstream awkblog {
 }
 
 server {
-  listen 8080;
+  listen <%= ENVIRON["PORT"] %>;
 
   location /assets {
     alias /var/www/html/assets;

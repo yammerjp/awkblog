@@ -174,14 +174,16 @@ function getPort(    port) {
   return environ::get("AWKBLOG_PORT")
 }
 
-function initialize() {
+function initialize(   port) {
   error::registerErrorHandler("http::internalServerError")
 
-  INET = "/inet/tcp/" getPort() "/0/0";
+  port = getPort()
+
+  INET = "/inet/tcp/" port "/0/0";
   FS=""
   RS = "\n"
 
-  logger::info("Start awkblog. listen port " PORT " ...")
+  logger::info("Start awkblog. listen port " port " ...")
 }
 
 function internalServerError(message, kind) {
