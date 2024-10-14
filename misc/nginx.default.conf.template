@@ -12,7 +12,7 @@ map $request_body $modified_body {
 root /var/www/html;
 
 upstream awkblog {
-  <% for(i=40001; i<= 40000 + ENVIRON["WORKERS"]; i++) { %>
+  <% for(i=40001; i<= 40000 + ENVIRON["AWKBLOG_WORKERS"]; i++) { %>
   server 127.0.0.1:<%= i %> max_conns=1;
   <% } %>
 }
