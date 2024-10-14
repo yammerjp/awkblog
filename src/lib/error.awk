@@ -35,7 +35,7 @@ function raise(message, extraContext) {
   }
 }
 
-function panic(message, extraContxt) {
+function panic(message, extraContext) {
   if (PANIC_HANDLER == "") {
     defaultPanicHandler(message)
   } else {

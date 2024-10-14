@@ -1,7 +1,7 @@
 @load "json"
 @namespace "controller"
 
-function api__v1__images__uploading_sign__post(    req) {
+function api__v1__images__uploading_sign__post(    req, accountId, type, extension, now, key, sizeMin, sizeMax) {
   auth::forbiddenIfFailedToVerify()
   accountId = auth::getAccountId()
 

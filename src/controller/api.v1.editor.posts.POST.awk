@@ -1,7 +1,7 @@
 @load "json"
 @namespace "controller"
 
-function api__v1__editor__posts__post(    req) {
+function api__v1__editor__posts__post(    req, accountId, title, content) {
   auth::forbiddenIfFailedToVerify()
   accountId = auth::getAccountId()
 

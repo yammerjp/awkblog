@@ -14,7 +14,7 @@ function redirectUrl(state) {
   return GITHUB_LOGIN_SERVER "/login/oauth/authorize?client_id=" OAUTH_CLIENT_ID "&redirect_uri=" OAUTH_CALLBACK_URI "&state=" state
 }
 
-function verify(ret, code    , response, res_json) {
+function verify(ret, code    , response, res_json, access_token) {
   if (!(code ~ /^[a-zA-Z0-9_ -]+$/)) {
     error::raise("github::verify", "invalid code")
   }

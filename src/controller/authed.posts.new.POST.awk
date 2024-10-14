@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function authed__posts__new__post(        title, content, account_id, query, params, result) {
+function authed__posts__new__post(        title, content, accountId, query, params, result) {
   http::guardCSRF()
   auth::redirectIfFailedToVerify()
 

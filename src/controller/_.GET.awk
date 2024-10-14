@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function _account_name__get(        splitted, params, query, rows, id, html, blog, posts, templateVars, description, accountName) {
+function _account_name__get(        splitted, params, query, rows, id, html, blog, posts, templateVars, description, accountName, accountId) {
   split(http::getPath(), splitted, "@")
   accountName = splitted[2]
 

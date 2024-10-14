@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function oauth_callback__get() {
+function oauth_callback__get(    code, error, stateOnQuery, stateOnCookie, ret) {
   code = http::getParameter("code")
   error = http::getParameter("error")
   if (code == "" || error != "") {

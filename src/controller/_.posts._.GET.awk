@@ -1,9 +1,9 @@
 @namespace "controller"
 
-function _account_name__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars, atAccountName, accountName, accountId, at) {
+function _account_name__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars, atAccountName, accountName, accountId, at, postId) {
   split(http::getPath(), splitted, "/")
   atAccountName = splitted[2]
-  post_id = splitted[4]
+  postId = splitted[4]
 
   at = substr(atAccountName, 1, 1)
   if (at != "@") {
@@ -24,7 +24,7 @@ function _account_name__posts___id__get(        splitted, params, query, rows, i
   templateVars["blog_description"] = markdown::parseMultipleLines(html::escape(blog["description"]))
   templateVars["blog_author_profile"] = markdown::parseMultipleLines(html::escape(blog["author_profile"]))
 
-  model::getPost(post, post_id)
+  model::getPost(post, postId)
   if ("error" in post) {
     notfound()
     return

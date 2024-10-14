@@ -1,6 +1,6 @@
 @namespace "router"
 
-routing_notfound_callback = "router::default_404"
+RoutingNotFoundCallback = "router::default_404"
 
 function default_404() {
   http::send(404, "");
@@ -8,33 +8,33 @@ function default_404() {
 
 function register(method, path, callback,      key) {
   key = method " " path
-  routing_tables[key] = callback
+  RoutingTable[key] = callback
 
   register_wildcard_position(path)
 }
 
 function register_notfound(callback) {
-  routing_notfound_callback = callback
+  RoutingNotFoundCallback = callback
 }
 
-function find(method, path,    key) {
+function find(method, path,    key, pos) {
   key = method " " path
-  if (key in routing_tables) {
-    return routing_tables[key]
+  if (key in RoutingTable) {
+    return RoutingTable[key]
   }
 
-  for (pos in wildcard_positions) {
+  for (pos in WildcardPositions) {
     key = method " " wildcard_compress(path, pos)
-    if (key in routing_tables) {
-      return routing_tables[key]
+    if (key in RoutingTable) {
+      return RoutingTable[key]
     }
   }
-  return routing_notfound_callback
+  return RoutingNotFoundCallback
 }
 
-function debug_print() {
-  for(i in routing_tables) {
-    logger::debug("routing_tables[\"" i "\"] = " routing_tables[i], "router")
+function debug_print(    i) {
+  for(i in RoutingTable) {
+    logger::debug("RoutingTable[\"" i "\"] = " RoutingTable[i], "router")
   }
 }
 
@@ -43,7 +43,7 @@ function call(method, path,        controller) {
   @controller();
 }
 
-function register_wildcard_position(path,         pos, path_parts) {
+function register_wildcard_position(path,         pos, path_parts, i) {
   path = substr(path, 2) # ignore leading a slash
   split(path, path_parts, "/")
   for (i in path_parts) {
@@ -52,11 +52,11 @@ function register_wildcard_position(path,         pos, path_parts) {
     }
   }
   if (pos) {
-    wildcard_positions[pos] = 1
+    WildcardPositions[pos] = 1
   }
 }
 
-function wildcard_compress(path, pos,        path_parts, masked_path, pos_parts) {
+function wildcard_compress(path, pos,        path_parts, masked_path, pos_parts, i) {
   path = substr(path, 2) # ignore leading a slash
   split(path, path_parts, "/")
   split_index(pos, pos_parts, " ")
@@ -70,7 +70,7 @@ function wildcard_compress(path, pos,        path_parts, masked_path, pos_parts)
   return masked_path
 }
 
-function split_index(str, arr, sep,        arr_val) {
+function split_index(str, arr, sep,        arr_val, i) {
   split(str, arr_val, sep)
   for (i in arr_val)
     arr[arr_val[i]] = 1

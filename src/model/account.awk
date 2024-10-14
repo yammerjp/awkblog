@@ -13,7 +13,7 @@ function getAccountId(account_name     , params, query, rows) {
   return pgsql::fetchResult(0, "id")
 }
 
-function getAccount(ret, id    , params, query) {
+function getAccount(ret, id    , params, query, rows) {
   params[1] = id
   query = "SELECT id, name FROM accounts WHERE id = $1"
   pgsql::exec(query, params)

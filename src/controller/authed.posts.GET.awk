@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function authed__posts__get(    query, params, html, result, templateVars) {
+function authed__posts__get(    query, params, html, result, templateVars, accountId, i) {
   auth::redirectIfFailedToVerify()
 
   templateVars["account_name"] = html::escape(auth::getUsername())

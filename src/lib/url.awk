@@ -1,6 +1,6 @@
 @namespace "url"
 
-function decodeWwwForm(result, encodedStr,    encodedParts, key, value, equalIndex) {
+function decodeWwwForm(result, encodedStr,    encodedParts, key, value, equalIndex, i) {
   split(encodedStr, encodedParts, "&");
 
   for (i in encodedParts) {
@@ -28,15 +28,15 @@ function decodeWwwForm(result, encodedStr,    encodedParts, key, value, equalInd
   }
 }
 
-function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, L, N, num, utf32num, p1, p2, p3, p4, b1, b2, b3, b4) {
-  L = length(encodedStr)
-  N = 1
+function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, l, n, num, utf32num, p1, p2, p3, p4, b1, b2, b3, b4) {
+  l = length(encodedStr)
+  n = 1
   decodedStr = ""
   split(encodedStr, chars, "")
-  while (N<=L) {
-    if (chars[N] != "%" || N+2 > L) {
-      decodedStr = decodedStr chars[N]
-      N++
+  while (n<=l) {
+    if (chars[n] != "%" || n+2 > l) {
+      decodedStr = decodedStr chars[n]
+      n++
       continue
     }
 
@@ -44,19 +44,19 @@ function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, L, N, num, 
     #   http://www.unicode.org/versions/Unicode6.0.0/ch03.pdf
     #   Table 3-7. Well-Formed UTF-8 Byte Sequences
 
-    p1 = chars[N] == "%"
-    b1 = awk::strtonum("0x" chars[N+1] chars[N+2])
-    p2 = chars[N+3] == "%"
-    b2 = awk::strtonum("0x" chars[N+4] chars[N+5])
-    p3 = chars[N+6] == "%"
-    b3 = awk::strtonum("0x" chars[N+7] chars[N+8])
-    p4 = chars[N+9] == "%"
-    b4 = awk::strtonum("0x" chars[N+10] chars[N+11])
+    p1 = chars[n] == "%"
+    b1 = awk::strtonum("0x" chars[n+1] chars[n+2])
+    p2 = chars[n+3] == "%"
+    b2 = awk::strtonum("0x" chars[n+4] chars[n+5])
+    p3 = chars[n+6] == "%"
+    b3 = awk::strtonum("0x" chars[n+7] chars[n+8])
+    p4 = chars[n+9] == "%"
+    b4 = awk::strtonum("0x" chars[n+10] chars[n+11])
 
     if (p1 && 0x00 <= b1 && b1 <= 0x7F) {
       # 0xxxxxxx
       decodedStr = sprintf("%s%c", decodedStr, b1)
-      N+=3
+      n+=3
       continue
     }
     if (p1 && p2 && \
@@ -64,7 +64,7 @@ function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, L, N, num, 
     ) {
       # 110xxxxx 10xxxxxx
       decodedStr = sprintf("%s%c%c", decodedStr, b1, b2)
-      N+=6
+      n+=6
       continue
     }
     if (p1 && p2 && p3 && (\
@@ -75,7 +75,7 @@ function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, L, N, num, 
     )) {
       # 1110xxxx 10xxxxxx 10xxxxxx
       decodedStr = sprintf("%s%c%c%c", decodedStr, b1, b2, b3)
-      N+=9
+      n+=9
       continue
     }
     if (p1 && p2 && p3 && p4 && ( \
@@ -85,7 +85,7 @@ function decodeUtf8ParcentEncoding(encodedStr,    chars, decodedStr, L, N, num, 
     )) {
       # 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
       decodedStr = sprintf("%s%c%c%c%c", decodedStr, b1, b2, b3, b4)
-      N+=12
+      n+=12
       continue
     }
     error::raise("failed to decode UTF-8 parcent encoded string", "url")

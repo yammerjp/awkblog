@@ -1,6 +1,6 @@
 @namespace "auth"
 
-function verify(        encrypted, decrypted) {
+function verify(        encrypted, decrypted, splitted) {
   encrypted = http::getCookie("login_session")
   if (encrypted == "empty" || encrypted == "") {
     logger::info("login_session is empty", "auth")

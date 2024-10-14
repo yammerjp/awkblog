@@ -50,7 +50,7 @@ function buildDateRegionKey(now) {
   return hmac::sha256(REGION, "hexkey:" hmac::sha256(datetime::gmdate("%Y%m%d", now), "key:AWS4" SECRET_ACCESS_KEY))
 }
 
-function sign(signee, now) {
+function sign(signee, now,     dateRegionKey, dateRegionServiceKey, signingKey) {
   dateRegionKey = buildDateRegionKey(now)
   dateRegionServiceKey = hmac::sha256("s3", "hexkey:" dateRegionKey)
   signingKey = hmac::sha256("aws4_request", "hexkey:" dateRegionServiceKey)
@@ -58,7 +58,7 @@ function sign(signee, now) {
   return hmac::sha256(signee, "hexkey:" signingKey)
 }
 
-function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret) {
+function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret, stringToSign) {
   needToUseAwsS3()
 
   stringToSign = base64::encode(buildPolicyToUpload(now, key, type, sizeMin, sizeMax))

@@ -14,7 +14,7 @@ function getPosts(result, id       , params, query, html, rows, i) {
   }
 }
 
-function getPostWithAccountId(result, id, accountId    , params) {
+function getPostWithAccountId(result, id, accountId    , params, query, rows) {
   params[1] = id
   params[2] = accountId
   query = "SELECT id, title, content, created_at FROM posts WHERE id = $1 AND account_id = $2;"
@@ -31,7 +31,7 @@ function getPostWithAccountId(result, id, accountId    , params) {
 }
 
 
-function getPost(result, id    , params) {
+function getPost(result, id    , params, query, rows) {
   params[1] = id
   query = "SELECT id, title, content, account_id, created_at FROM posts WHERE id = $1"
   pgsql::exec(query, params)

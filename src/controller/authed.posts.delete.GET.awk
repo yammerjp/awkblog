@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function authed__posts__delete__post(        id, title, content, account_id, query, params, result) {
+function authed__posts__delete__post(        id, title, content, account_id, query, params, result, accountId) {
   http::guardCSRF()
   auth::redirectIfFailedToVerify()
 

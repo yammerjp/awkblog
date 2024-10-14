@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function authed__posts__new__get() {
+function authed__posts__new__get(variables) {
   auth::redirectIfFailedToVerify()
 
   variables["account_name"] = html::escape(auth::getUsername())

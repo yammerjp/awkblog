@@ -1,12 +1,12 @@
 @namespace "controller"
 
-function _account_name__style_css__get(        path_parts, splitted, params, query, rows, id, html, result, templateVars) {
+function _account_name__style_css__get(        path_parts, splitted, params, query, rows, id, html, result, templateVars, accountName, accountId) {
   split(http::getPath(), path_parts, "/")
   split(path_parts[2], splitted, "@")
-  account_name = splitted[2]
+  accountName = splitted[2]
 
 
-  accountId = model::getAccountId(account_name)
+  accountId = model::getAccountId(accountName)
   if (accountId == "") {
     notfound()
     return

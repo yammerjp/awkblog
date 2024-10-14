@@ -3,10 +3,10 @@ function assertEqual(expected, needle) {
     printf(".")
   } else {
     printf("expected: %s\nactual:   %s\n", expected, needle)
-    exitcode = 1
+    ExitCode = 1
   }
 }
 
 END {
-  exit exitcode
+  exit ExitCode
 }

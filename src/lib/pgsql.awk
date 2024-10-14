@@ -2,7 +2,7 @@
 
 @namespace "pgsql"
 
-function exec(query, params,        response, numberOfFields, col, numberOfRow, row, logstr, extraMessage) {
+function exec(query, params,        response, numberOfFields, col, numberOfRow, row, logstr, extraMessage, columns, numberOfRows, columnName) {
   logger::debug("pgsql::exec() query: " query, "pgsql")
   response = awk::pg_execparams(Connection, query, length(params), params)
   logger::debug("pgsql::exec() response: " response, "pgsql")
@@ -57,7 +57,6 @@ function createConnection(  param) {
     param = param " options=" environ::get("POSTGRES_OPTIONS")
   }
   if ((Connection = awk::pg_connect(param)) == "" ) {
-    logger::error(message, "pgsql")
     error::panic("pgsql::createConnection(): pg_connectionect failed: " ERRNO)
   }
   logger::info("created a postgres connection", "pgsql")

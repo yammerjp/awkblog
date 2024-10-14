@@ -48,7 +48,7 @@ function readFirstLine(    line, splitted, parameters, result) {
   }
 }
 
-function readHeader(    line, colonSpace) {
+function readHeader(    line, colonSpace, key, value) {
   for(i = 1; INET |& getline line > 0; i++) {
     logger::debug("readHeader(): " line, "http")
     if (line == "" || line == "\r") {
@@ -115,7 +115,7 @@ function parseCookie(    splitted, i, idx, key, value) {
   }
 }
 
-function buildCookieHeader(        headerStr, maxAge, secure) {
+function buildCookieHeader(        headerStr, maxAge, secure, i) {
   headerStr = ""
   for (i in RESPONSE_COOKIES) {
     if ("Max-Age" in RESPONSE_COOKIES[i]) {
@@ -133,7 +133,7 @@ function buildCookieHeader(        headerStr, maxAge, secure) {
   return headerStr
 }
 
-function logRequest(        params, headers) {
+function logRequest(        params, headers, i) {
   if (getPath() == "/test") {
     logger::debug("request: /test", "http")
     return
@@ -197,7 +197,7 @@ function internalServerError(message, kind) {
   http::send(500, "An error has occured. Please return to the <a href=\"javascript:history.back()\">previous page</a>.")
 }
 
-function buildResponse(statusNum, content,    headerStr, status) {
+function buildResponse(statusNum, content,    headerStr, status, i) {
   switch(statusNum) {
     case 200: status = "200 OK"; break;
     case 201: status = "201 No Content"; break;
