@@ -1,7 +1,26 @@
+function codegen_i18n(    argname, filename, value, previousFs) {
+  filename = ENVIRON["AWKBLOG_LANGFILE"]
+
+  if (filename == "") {
+    return
+  }
+
+  previousFs = FS
+  FS=":"
+  while((getline < filename) > 0) {
+    argname = $1
+    value = substr($2, 2)
+    print "  t[\"" argname "\"] = \"" value "\""
+  }
+  FS = previousFs
+  close(filename)
+}
+
 function codegen_header() {
   print "@namespace \"compiled_templates\""
   print ""
-  print "function render(path, v    , ret) {"
+  print "function render(path, v    , ret, t) {"
+  codegen_i18n()
   print "  switch(path) {"
 }
 

@@ -1,0 +1,23 @@
+logout: Logout
+view_blog: View Blog
+blog_settings: Blog Settings
+new_post: New Post
+posts: Posts
+style_settings: Style Settings
+confirm_delete: Are you sure you want to delete this post? This action cannot be undone.
+blog_settings: Blog Settings
+blog_settings_description: You can change the title, description, and author profile that are displayed at the top of the public page.
+style_settings_title: Style Settings
+style_settings_description: You can change the CSS that is loaded on all pages of the public blog.
+console_title: hello, awkblog!
+descriptive_list_posts: View Posts
+descriptive_new_post: New Post
+descriptive_blog_settings: Blog Settings
+descriptive_style_settings: Style Settings
+not_found: 404 Not Found
+welcome: hello, awkblog!
+welcome_message_1: A blog system implemented with awk.
+welcome_message_2: Sign in with your GitHub account and start using it!
+placeholder_blog_title: Blog Title
+placeholder_blog_description: Blog Description
+placeholder_author_profile: Author Profile

@@ -6,11 +6,11 @@
   <body>
     <%#include components/authed/header.html %>
     <main>
-      <h1>hello, awkblog!</h1>
-      <p>記事の一覧をみる: <a href="/authed/posts">/authed/posts</a></p>
-      <p>記事を投稿する: <a href="/authed/posts/new">/authed/posts/new</a></p>
-      <p>ブログのタイトルや著者欄を変更する: <a href="/authed/settings">/authed/settings</a></p>
-      <p>公開ページのスタイルを変更する: <a href="/authed/styles">/authed/styles</a></p>
+      <h1><%= t["console_title"] %></h1>
+      <p><%= t["descriptive_list_posts"] %>: <a href="/authed/posts">/authed/posts</a></p>
+      <p><%= t["descriptive_new_post"] %>: <a href="/authed/posts/new">/authed/posts/new</a></p>
+      <p><%= t["descriptive_blog_settings"] %>: <a href="/authed/settings">/authed/settings</a></p>
+      <p><%= t["descriptive_style_settings"] %>: <a href="/authed/styles">/authed/styles</a></p>
     </main>
     <footer>
     </footer>

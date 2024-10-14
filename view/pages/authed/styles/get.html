@@ -12,9 +12,9 @@
   <body>
     <%#include components/authed/header.html %>
     <main>
-      <h1>スタイル設定</h1>
+      <h1><%= t["style_settings"] %></h1>
       <p>
-        公開されるブログの全てのページで読み込まれるCSSを変更することができます。
+        <%= t["style_settings_description"] %>
       </p>
       <form action="/authed/styles" method="post">
         <div><textarea name="style"><%= v["style"] %></textarea></div>

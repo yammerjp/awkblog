@@ -1,0 +1,23 @@
+logout: ログアウト
+view_blog: ブログを確認
+blog_settings: ブログ設定
+new_post: 新規投稿
+posts: 記事一覧
+style_settings: スタイル設定
+confirm_delete: 記事を削除しても良いですか？この操作は取り消せません
+blog_settings: ブログ設定
+blog_settings_description: 公開ページの上部に表示されるタイトルや説明、公開ページの下部に紹介される著者の自己紹介の内容を変更できます。
+style_settings_title: スタイル設定
+style_settings_description: 公開されるブログの全てのページで読み込まれるCSSを変更することができます。
+console_title: hello, awkblog!
+descriptive_list_posts: 記事の一覧をみる
+descriptive_new_post: 記事を投稿する
+descriptive_blog_settings: ブログのタイトルや著者欄を変更する
+descriptive_style_settings: 公開ページのスタイルを変更する
+not_found: 404 Not Found
+welcome: hello, awkblog!
+welcome_message_1: gawkで実装されたブログシステムです。
+welcome_message_2: GitHubアカウントで早速ログインし、使ってみましょう！
+placeholder_blog_title: ブログのタイトル
+placeholder_blog_description: ブログの説明
+placeholder_author_profile: 著者の自己紹介

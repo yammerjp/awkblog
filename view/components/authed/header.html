@@ -13,13 +13,13 @@
         <summary><img src="https://github.com/yammerjp.png" class="icon-img"></summary>
         <div class="popup-menu">
           <ul>
-            <li><a href="javascript:document.getElementById('logout-form').submit()">ログアウト</a></li>
+            <li><a href="javascript:document.getElementById('logout-form').submit()"><%= t["logout"] %></a></li>
             <form action="/logout" method="post" id="logout-form"></form>
-            <li><a href="/@<%= v["account_name"] %>">ブログを確認</a></li>
-            <li><a href="/authed/posts/new">新規投稿</a></li>
-            <li><a href="/authed/posts">記事一覧</a></li>
-            <li><a href="/authed/settings">ブログ設定</a></li>
-            <li><a href="/authed/styles">スタイル設定</a></li>
+            <li><a href="/@<%= v["account_name"] %>"><%= t["view_blog"] %></a></li>
+            <li><a href="/authed/posts/new"><%= t["new_post"] %></a></li>
+            <li><a href="/authed/posts"><%= t["posts"] %></a></li>
+            <li><a href="/authed/settings"><%= t["blog_settings"] %></a></li>
+            <li><a href="/authed/styles"><%= t["style_settings"] %></a></li>
           </ul>
         </div>
       </details>

@@ -55,6 +55,7 @@ The main configuration is done through environment variables. Copy `.env.example
 - `AWKBLOG_WORKERS`: The number of request handler processes
 - `NOT_USE_AWS_S3`: If you don't want to use AWS S3 for image uploads, set this to `1`
 - `AWS_*` and `S3_*`: Amazon S3 configuration (if using S3 for image uploads)
+- `AWKBLOG_LANG`: The language of the blog. Currently, only `en` (English) and `ja` (Japanese) are supported.
 
 ## Development
 
