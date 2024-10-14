@@ -1,19 +1,24 @@
 @namespace "controller"
 
-function _account_name__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars) {
+function _account_name__posts___id__get(        splitted, params, query, rows, id, html, blog, post, templateVars, atAccountName, accountName, accountId, at) {
   split(http::getPath(), splitted, "/")
-  at_account_name = splitted[2]
+  atAccountName = splitted[2]
   post_id = splitted[4]
-  # TODO: check to start from @
-  account_name = substr(at_account_name, 2)
 
-  accountId = model::getAccountId(account_name)
+  at = substr(atAccountName, 1, 1)
+  if (at != "@") {
+    notfound()
+    return
+  }
+  accountName = substr(atAccountName, 2)
+
+  accountId = model::getAccountId(accountName)
   if (accountId == "") {
     notfound()
     return
   }
 
-  templateVars["account_name"] = html::escape(account_name)
+  templateVars["account_name"] = html::escape(accountName)
   model::getBlog(blog, accountId)
   templateVars["blog_title"] = html::escape(blog["title"])
   templateVars["blog_description"] = markdown::parseMultipleLines(html::escape(blog["description"]))
