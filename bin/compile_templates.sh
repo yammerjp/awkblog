@@ -10,4 +10,4 @@ else
     export AWKBLOG_LANGFILE="i18n/en.yaml"
 fi
 
-find ./ -type f | grep -e '\.html$' | sed 's#^./##g' | awk -f ../misc/compile_templates.awk > "../src/_compiled_templates.awk"
+find ./ -type f | grep -e '\.html$' -e '\.xml$' | sed 's#^./##g' | awk -f ../misc/compile_templates.awk > "../src/_compiled_templates.awk"
