@@ -3,11 +3,23 @@
 
 BEGIN {
   GITHUB_LOGIN_SERVER = environ::getOrPanic("GITHUB_LOGIN_SERVER")
+  GITHUB_API_SERVER = environ::getOrPanic("GITHUB_API_SERVER")
+
+  # Internal URLs for container-to-container communication
+  # If not set, fallback to external URLs
+  GITHUB_LOGIN_SERVER_INTERNAL = environ::get("GITHUB_LOGIN_SERVER_INTERNAL")
+  if (GITHUB_LOGIN_SERVER_INTERNAL == "") {
+    GITHUB_LOGIN_SERVER_INTERNAL = GITHUB_LOGIN_SERVER
+  }
+
+  GITHUB_API_SERVER_INTERNAL = environ::get("GITHUB_API_SERVER_INTERNAL")
+  if (GITHUB_API_SERVER_INTERNAL == "") {
+    GITHUB_API_SERVER_INTERNAL = GITHUB_API_SERVER
+  }
+
   OAUTH_CLIENT_ID = environ::getOrPanic("OAUTH_CLIENT_ID")
   OAUTH_CLIENT_SECRET = environ::getOrPanic("OAUTH_CLIENT_SECRET")
   OAUTH_CALLBACK_URI = environ::getOrPanic("OAUTH_CALLBACK_URI")
-  GITHUB_LOGIN_SERVER = environ::getOrPanic("GITHUB_LOGIN_SERVER")
-  GITHUB_API_SERVER = environ::getOrPanic("GITHUB_API_SERVER")
 }
 
 function redirectUrl(state) {
@@ -19,7 +31,7 @@ function verify(ret, code    , response, res_json, access_token) {
     error::raise("github::verify", "invalid code")
   }
 
-  response = shell::exec("curl -X POST -H 'Accept: application/json' '" GITHUB_LOGIN_SERVER "/login/oauth/access_token?client_id=" OAUTH_CLIENT_ID "&client_secret=" OAUTH_CLIENT_SECRET "&code=" code "'")
+  response = shell::exec("curl -X POST -H 'Accept: application/json' '" GITHUB_LOGIN_SERVER_INTERNAL "/login/oauth/access_token?client_id=" OAUTH_CLIENT_ID "&client_secret=" OAUTH_CLIENT_SECRET "&code=" code "'")
   json::from_json(response, res_json)
   access_token = res_json["access_token"]
   if (access_token == "") {
@@ -31,7 +43,7 @@ function verify(ret, code    , response, res_json, access_token) {
     error::raise("github::verify", "invalid access token")
   }
 
-  response = shell::exec("curl -H 'Authorization: Bearer " access_token "' -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' " GITHUB_API_SERVER "/user")
+  response = shell::exec("curl -H 'Authorization: Bearer " access_token "' -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' " GITHUB_API_SERVER_INTERNAL "/user")
   json::from_json(response, res_json)
   ret["loginname"] = res_json["login"]
   ret["id"] = res_json["id"]
