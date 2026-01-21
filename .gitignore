@@ -2,3 +2,4 @@
 src/_compiled_templates.awk
 supervisord.pid
 .claude-docs/
+.playwright-mcp/
