@@ -21,3 +21,28 @@ welcome_message_2: Sign in with your GitHub account and start using it!
 placeholder_blog_title: Blog Title
 placeholder_blog_description: Blog Description
 placeholder_author_profile: Author Profile
+submit: Save Changes
+cancel: Cancel
+post_title: Title
+post_content: Content
+upload_image: Upload Image
+publish: Publish
+posts_list_title: Posts
+no_posts_yet: No posts yet
+no_posts_description: Get started by creating your first blog post
+create_post: Create Post
+edit: Edit
+delete: Delete
+create_new_post: Create New Post
+create_new_post_description: Write your blog post in Markdown format
+edit_post_title: Edit Post
+edit_post_description: Update your blog post content
+console_description: Manage your blog content and settings
+list_posts_description: View and manage all your blog posts
+new_post_description: Create a new blog post
+settings_description: Configure your blog title and description
+styles_description: Customize your blog appearance with CSS
+custom_css: Custom CSS
+custom_css_help: Write custom CSS to style your public blog pages. Changes will be applied immediately after saving.
+view_on_github: View on GitHub
+awkblog_description: A blog system implemented with AWK

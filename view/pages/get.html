@@ -3,18 +3,71 @@
   <head>
     <%#include components/authed/console_head.html %>
   </head>
-  <body>
+  <body class="bg-gray-50">
     <%#include components/authed/header.html %>
-    <main>
-      <h1><%= t["welcome"] %></h1>
-      <p>
-      <%= t["welcome_message_1"] %>
-      </p>
-      <p>
-      <%= t["welcome_message_2"] %>
-      </p>
+
+    <!-- Hero Section -->
+    <main class="max-w-6xl mx-auto px-3 sm:px-6 py-16">
+      <div class="text-center mb-16">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6"><%= t["welcome"] %></h1>
+        <p class="text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
+          <%= t["welcome_message_1"] %>
+        </p>
+        <p class="text-lg text-gray-500 mb-8 max-w-2xl mx-auto">
+          <%= t["welcome_message_2"] %>
+        </p>
+        <a href="/login" class="inline-flex items-center px-8 py-4 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+          <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          </svg>
+          Sign in With GitHub
+        </a>
+      </div>
+
+      <!-- Features Section -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+        <div class="bg-white rounded-lg shadow-sm p-6 sm:p-8 text-center border border-gray-200">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 text-primary-600 rounded-full mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-3">AWK-Powered</h3>
+          <p class="text-gray-600">Built entirely with AWK to showcase its capabilities beyond text processing</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6 sm:p-8 text-center border border-gray-200">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 text-primary-600 rounded-full mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-3">Markdown Support</h3>
+          <p class="text-gray-600">Write your posts in Markdown with image upload support</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6 sm:p-8 text-center border border-gray-200">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 text-primary-600 rounded-full mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-3">Customizable</h3>
+          <p class="text-gray-600">Customize your blog's appearance with custom CSS styling</p>
+        </div>
+      </div>
     </main>
-    <footer>
+
+    <footer class="border-t border-gray-200 mt-16 py-8">
+      <div class="max-w-6xl mx-auto px-3 sm:px-6 text-center text-gray-500 text-sm">
+        <p class="mb-3"><%= t["awkblog_description"] %></p>
+        <a href="https://github.com/yammerjp/awkblog" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors no-underline">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          </svg>
+          <%= t["view_on_github"] %>
+        </a>
+      </div>
     </footer>
   </body>
 </html>

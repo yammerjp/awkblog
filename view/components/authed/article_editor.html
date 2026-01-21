@@ -1,117 +1,46 @@
-<div><input type="text" name="title" placeholder="Title" value="<%= v["title"] %>" class="title-input"></div>
-<div>
-  <div class="editor-controller">
-    <button type="button" id="button-to-add-image">
-      <img src="/assets/photo-up.svg" alt="upload a photo">
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
+  <div class="mb-6">
+    <label for="title-input" class="block text-sm font-medium text-gray-700 mb-2"><%= t["post_title"] %></label>
+    <input type="text" name="title" id="title-input" placeholder="Enter your post title..." value="<%= v["title"] %>" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+  </div>
+
+  <div class="mb-6">
+    <div class="flex justify-between items-center mb-2">
+      <label for="textarea-of-article" class="block text-sm font-medium text-gray-700"><%= t["post_content"] %></label>
+      <button type="button" id="button-to-add-image" class="inline-flex items-center px-3 py-1.5 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <%= t["upload_image"] %>
+      </button>
+    </div>
+    <div class="content-container relative">
+      <div id="content-dummy" class="invisible overflow-hidden whitespace-pre-wrap break-words p-4 min-h-[300px] border border-gray-300"></div>
+      <textarea name="content" id="textarea-of-article" placeholder="Write your post content in Markdown..." class="absolute top-0 left-0 w-full h-full p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all bg-white font-mono text-sm"><%= v["content"] %></textarea>
+    </div>
+  </div>
+
+  <input type="file" id="input-image" accept="image/jpeg,image/png,image/gif,image/webp" class="hidden">
+  <input type="hidden" name="zpadding" value="<%= http::defaultLeftOverPadding() %>">
+
+  <div class="flex justify-end gap-3">
+    <a href="/authed/posts" class="px-6 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 font-medium rounded-lg transition-colors no-underline inline-flex items-center">
+      <%= t["cancel"] %>
+    </a>
+    <button type="submit" class="px-6 py-2.5 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-lg transition-colors inline-flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <%= t["publish"] %>
     </button>
   </div>
-  <div class="content-container">
-    <div id="content-dummy"></div>
-    <textarea name="content" id="textarea-of-article" placeholder="Write in Markdown" class="content-textarea"><%= v["content"] %></textarea></div>
-</div>
-
-<input type="file" id="input-image" accept="image/jpeg,image/png,image/gif,image/webp">
-<input type="hidden" name="zpadding" value="<%= http::defaultLeftOverPadding() %>">
-<div class="publish-bar">
-  <input type="submit" value="Publish" class="publish-button">
 </div>
 
 <style>
-  .publish-button {
-    border: none;
-    background-color: #3ea8ff;
-    color: #ffffff;
-    border-radius: 8px;
-    font-size: 1rem;
-    padding: 16px;
-    margin-top: 16px;
-  }
-  .publish-button:hover, .publish-button:focus {
-    background-color: #219afe;
-  }
-  .publish-button:active {
-    background-color: #008cff;
-  }
-  #button-to-add-image {
-    border: none;
-    width: 32px;
-    height: 32px;
-    background: none;
-  }
-
-  #input-image {
-    display: none;
-  }
-  .publish-bar {
-    text-align: right;
-  }
-  .title-input {
-    width: 100%;
-    font-size: 1rem;
-    line-height: 1.8;
-    box-sizing: border-box;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #b6c3c6;
-    background-color: #ffffff;
-    margin-bottom: 32px;
-  }
-  .editor-controller {
-    text-align: right;
-  }
-  .content-container {
-    width: 100%;
-    position: relative;
-    font-size: 1rem;
-    line-height: 1.8;
-  }
-  #content-dummy {
-    overflow: hidden;
-    visibility: hidden;
-    box-sizing: border-box;
-    padding: 16px;
-    min-height: min(50vh, 10em);
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    border: 1px solid;
-  }
-
-  #textarea-of-article {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    overflow: hidden;
-    box-sizing: border-box;
-    padding: 16px;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    border: 1px solid #b6c3c6;
-    border-radius: 8px;
-    color: inherit;
-    font: inherit;
-    letter-spacing: inherit;
-    resize: none;
-    background-color:  #ffffff;
-  }
-  #textarea-of-article:focus {
-    outline: 0;
-  }
-  .title-input:focus {
-    outline: 0;
-  }
-
-  #textarea-of-article:not(.dragover) {
-    padding: 16px;
-  }
   #textarea-of-article.dragover {
-    box-sizing :border-box;
-    border: dashed 3px #ccc;
-    padding: 14px;
+    border: dashed 3px #93c5fd !important;
+    background-color: #eff6ff !important;
   }
-
 </style>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.js"></script>
