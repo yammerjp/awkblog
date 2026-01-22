@@ -7,7 +7,9 @@ RUN apt-get update -y && apt-get install -y \
   curl \
   nginx \
   supervisor \
-  gettext-base\
+  gettext-base \
+  fonts-noto-cjk \
+  imagemagick \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 

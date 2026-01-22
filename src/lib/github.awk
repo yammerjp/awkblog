@@ -22,6 +22,14 @@ BEGIN {
   OAUTH_CALLBACK_URI = environ::getOrPanic("OAUTH_CALLBACK_URI")
 }
 
+function isValidUsername(username) {
+  if (length(username) < 1 || length(username) > 39) return 0
+  if (username !~ /^[a-zA-Z0-9][a-zA-Z0-9-]*$/) return 0
+  if (username ~ /-$/) return 0
+  if (username ~ /--/) return 0
+  return 1
+}
+
 function redirectUrl(state) {
   return GITHUB_LOGIN_SERVER "/login/oauth/authorize?client_id=" OAUTH_CLIENT_ID "&redirect_uri=" OAUTH_CALLBACK_URI "&state=" state
 }
