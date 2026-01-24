@@ -25,6 +25,10 @@ function needToUseAwsS3() {
   }
 }
 
+function getAssetHost() {
+  return ASSET_HOST
+}
+
 function buildPolicyToUpload(now, key, type, sizeMin, sizeMax    , policy) {
   policy["expiration"] = datetime::gmdate("%Y-%m-%dT%H:%M:%S.000Z", now + 60)
   policy["conditions"][1]["bucket"] = BUCKET

@@ -24,6 +24,7 @@ placeholder_author_profile: 著者の自己紹介
 submit: 保存
 cancel: キャンセル
 post_title: タイトル
+og_image: OG画像URL
 post_content: 本文
 upload_image: 画像をアップロード
 publish: 公開

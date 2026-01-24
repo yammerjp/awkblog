@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <%#include components/_account_name/head.html %>
+  <head>
+    <%#include components/_account_name/head.html %>
+    <title><%= v["title"] %> - <%= v["blog_title"] %></title>
+    <meta property="og:title" content="<%= v["title"] %>">
+    <meta property="og:site_name" content="<%= v["blog_title"] %>">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="<%= v["og_image"] %>">
+    <meta property="og:description" content="<%= v["og_description"] %>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= v["title"] %>">
+    <meta name="twitter:image" content="<%= v["og_image"] %>">
+    <meta name="twitter:description" content="<%= v["og_description"] %>">
+  </head>
   <body>
     <div class="blog-page-top">
       <%#include components/_account_name/header.html %>
