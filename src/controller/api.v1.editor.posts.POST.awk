@@ -1,7 +1,7 @@
 @load "json"
 @namespace "controller"
 
-function api__v1__editor__posts__post(    req, accountId, title, content) {
+function api__v1__editor__posts__post(    req, accountId, title, content, ogImage, account) {
   auth::forbiddenIfFailedToVerify()
   accountId = auth::getAccountId()
 
@@ -19,7 +19,15 @@ function api__v1__editor__posts__post(    req, accountId, title, content) {
     return
   }
 
-  model::createPost(title, content, accountId)
+  ogImage = req["ogImage"]
+
+  # Generate OGP image from title only if not provided
+  if (ogImage == "") {
+    model::getAccount(account, accountId)
+    ogImage = ogp::generateAndUpload(title, account["name"], accountId)
+  }
+
+  model::createPost(title, content, ogImage, accountId)
   http::send(201)
   return
 }

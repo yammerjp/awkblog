@@ -1,6 +1,40 @@
 @load "gd"
 @namespace "ogp"
 
+# Check if a character is ASCII (single-byte)
+function _isAscii(c) {
+    return c ~ /^[\x00-\x7F]$/
+}
+
+# Truncate string based on visual width, adding "…" if truncated
+# ASCII = width 0.9, non-ASCII UTF-8 = width 2
+# maxWidth is the maximum visual width (e.g., 30 for ~14 Japanese chars or ~31 ASCII)
+# Note: gawk in UTF-8 locale handles multi-byte characters properly with length()/substr()
+function truncate(str, maxWidth,    charCount, width, cutPos, i, c, cw) {
+    charCount = length(str)
+    if (charCount == 0) return ""
+
+    width = 0
+    cutPos = 0
+
+    for (i = 1; i <= charCount; i++) {
+        c = substr(str, i, 1)
+        cw = _isAscii(c) ? 0.9 : 2
+
+        if (width + cw > maxWidth - 2) {
+            cutPos = i - 1
+            break
+        }
+
+        width += cw
+    }
+
+    if (cutPos > 0) {
+        return substr(str, 1, cutPos) "…"
+    }
+    return str
+}
+
 function generateImage(title, github_user, output,
     fontBold, fontRegular, width, height, avatarSize,
     avatar_url, avatar_file, cmd, im, white, darkGray, lightGray, accentYellow,
@@ -112,7 +146,7 @@ function generateImage(title, github_user, output,
     titleLineCount = split(title, titleLines, "\n")
     for (i = 1; i <= titleLineCount; i++) {
         delete brect
-        awk::gdImageStringFT(im, brect, darkGray, fontBold, titleSize, 0, titleX, titleY + (i - 1) * titleLineHeight, titleLines[i])
+        awk::gdImageStringFT(im, brect, darkGray, fontBold, titleSize, 0, titleX, titleY + (i - 1) * titleLineHeight, truncate(titleLines[i], 30))
     }
 
     avatarX = contentLeft
@@ -163,4 +197,24 @@ function generateImage(title, github_user, output,
 
     awk::gdImageDestroy(im)
     return 0
+}
+
+# Generate OGP image and upload to S3
+# Returns the public URL of the uploaded image, or empty string on failure
+function generateAndUpload(title, github_user, accountId,
+    tempFile, key, result, publicUrl) {
+
+    tempFile = "/tmp/ogp_" accountId "_" awk::systime() "_" substr(http::getRequestId(), 1, 16) ".png"
+
+    result = generateImage(title, github_user, tempFile)
+    if (result != 0) {
+        return ""
+    }
+
+    key = "ogp/" accountId "/" awk::systime() substr(http::getRequestId(), 1, 8) ".png"
+    publicUrl = awss3::upload(tempFile, key, "image/png")
+
+    system("rm " tempFile)
+
+    return publicUrl
 }

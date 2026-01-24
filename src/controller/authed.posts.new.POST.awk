@@ -1,6 +1,6 @@
 @namespace "controller"
 
-function authed__posts__new__post(        title, content, ogImage, accountId, query, params, result) {
+function authed__posts__new__post(        title, content, ogImage, accountId, query, params, result, account) {
   http::guardCSRF()
   auth::redirectIfFailedToVerify()
 
@@ -11,12 +11,10 @@ function authed__posts__new__post(        title, content, ogImage, accountId, qu
   ogImage = result["og_image"]
   accountId = auth::getAccountId()
 
-  # Validate og_image URL - must be from S3_ASSET_HOST
-  if (ogImage != "") {
-    assetHost = awss3::getAssetHost()
-    if (assetHost == "" || index(ogImage, assetHost) != 1) {
-      ogImage = ""
-    }
+  # Generate OGP image from title only if not provided
+  if (ogImage == "") {
+    model::getAccount(account, accountId)
+    ogImage = ogp::generateAndUpload(title, account["name"], accountId)
   }
 
   model::createPost(title, content, ogImage, accountId)
