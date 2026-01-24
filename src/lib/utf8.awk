@@ -114,3 +114,9 @@ function slice(s, start, len,    byteLen, i, charCount, charBytes, result, start
 
     return result
 }
+
+# Check if a character is ASCII (single-byte)
+# c should be a single UTF-8 character (may be 1-4 bytes)
+function isAscii(c) {
+    return length(c) == 1 && c ~ /^[\x00-\x7F]$/
+}

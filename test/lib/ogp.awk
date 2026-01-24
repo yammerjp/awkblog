@@ -188,3 +188,24 @@
     n = split(result, lines, "\n")
     assertEqual(1, n)
 }
+
+# wrapTitle: should not break if width allows
+"wrapTitle: no unnecessary break" {
+    # "複数行に" (width 8) + "分割される" (width 10) = 18, fits in 30
+    # Should NOT break between these chunks
+    title = "複数行に分割される"
+    result = ogp::wrapTitle(title, 30, 4)
+    n = split(result, lines, "\n")
+    # Should be one line since total width is 18 < 30
+    assertEqual(1, n)
+}
+
+# wrapTitle: combine chunks on same line when possible
+"wrapTitle: combine chunks" {
+    # Even if BudouX splits into multiple chunks, they should stay on same line if they fit
+    title = "これはテスト"  # Width = 12
+    result = ogp::wrapTitle(title, 30, 4)
+    n = split(result, lines, "\n")
+    assertEqual(1, n)
+    assertEqual("これはテスト", result)
+}

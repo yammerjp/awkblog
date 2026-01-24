@@ -1,19 +1,16 @@
 @load "gd"
 @namespace "ogp"
 
-# Check if a character is ASCII (single-byte)
-function _isAscii(c) {
-    return c ~ /^[\x00-\x7F]$/
-}
-
-# Calculate visual width of a string
+# Calculate visual width of a string for OGP title rendering
 # ASCII = width 0.9, non-ASCII UTF-8 = width 2
+# Uses utf8:: functions to work correctly in POSIX locale
 function _visualWidth(str,    charCount, width, i, c) {
-    charCount = length(str)
+    utf8::_init()
+    charCount = utf8::strlen(str)
     width = 0
     for (i = 1; i <= charCount; i++) {
-        c = substr(str, i, 1)
-        width += _isAscii(c) ? 0.9 : 2
+        c = utf8::charAt(str, i)
+        width += utf8::isAscii(c) ? 0.9 : 2
     }
     return width
 }
@@ -21,17 +18,18 @@ function _visualWidth(str,    charCount, width, i, c) {
 # Truncate string based on visual width, adding "…" if truncated
 # ASCII = width 0.9, non-ASCII UTF-8 = width 2
 # maxWidth is the maximum visual width (e.g., 30 for ~14 Japanese chars or ~31 ASCII)
-# Note: gawk in UTF-8 locale handles multi-byte characters properly with length()/substr()
-function truncate(str, maxWidth,    charCount, width, cutPos, i, c, cw) {
-    charCount = length(str)
+# Uses utf8:: functions to work correctly in POSIX locale
+function truncate(str, maxWidth,    charCount, width, cutPos, i, c, cw, result) {
+    utf8::_init()
+    charCount = utf8::strlen(str)
     if (charCount == 0) return ""
 
     width = 0
     cutPos = 0
 
     for (i = 1; i <= charCount; i++) {
-        c = substr(str, i, 1)
-        cw = _isAscii(c) ? 0.9 : 2
+        c = utf8::charAt(str, i)
+        cw = utf8::isAscii(c) ? 0.9 : 2
 
         if (width + cw > maxWidth - 2) {
             cutPos = i - 1
@@ -42,7 +40,11 @@ function truncate(str, maxWidth,    charCount, width, cutPos, i, c, cw) {
     }
 
     if (cutPos > 0) {
-        return substr(str, 1, cutPos) "…"
+        result = ""
+        for (i = 1; i <= cutPos; i++) {
+            result = result utf8::charAt(str, i)
+        }
+        return result "…"
     }
     return str
 }
