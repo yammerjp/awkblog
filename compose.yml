@@ -5,6 +5,7 @@ services:
     depends_on:
       - db
       - oauth-mock
+      - garage
     volumes:
       - ./:/app
     ports:
@@ -34,5 +35,26 @@ services:
       - PORT=${OAUTH_MOCK_PORT:-8080}
     env_file:
       - .env
+  garage:
+    image: dxflrs/garage:v1.1.0
+    ports:
+      - "${GARAGE_S3_PORT:-3900}:3900"      # S3 API
+      - "${GARAGE_RPC_PORT:-3901}:3901"     # RPC
+      - "${GARAGE_WEB_PORT:-3902}:3902"     # Web
+      - "${GARAGE_ADMIN_PORT:-3903}:3903"   # Admin
+    volumes:
+      - ./garage.toml:/etc/garage.toml
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+  s3-proxy:
+    image: nginx:alpine
+    ports:
+      - "${S3_PROXY_PORT:-3904}:80"
+    volumes:
+      - ./misc/nginx-s3-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - garage
 volumes:
   db-store:
+  garage-meta:
+  garage-data:
