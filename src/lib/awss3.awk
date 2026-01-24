@@ -82,3 +82,97 @@ function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret, s
   ret["data"]["Content-Type"] = type
   return json::to_json(ret)
 }
+
+# INTERNAL: filepath must be a server-generated safe path
+function hashFile(filepath,    cmd, ret, splitted) {
+  cmd = "openssl dgst -sha256 -hex " filepath
+  ret = shell::exec(cmd)
+  split(ret, splitted, " ")
+  gsub(/\n/, "", splitted[2])
+  return splitted[2]
+}
+
+function sha256hash(str,    ret, splitted) {
+  ret = shell::exec("openssl dgst -sha256 -hex", str)
+  split(ret, splitted, " ")
+  gsub(/\n/, "", splitted[2])
+  return splitted[2]
+}
+
+function extractHost(endpoint,    tmp) {
+  tmp = endpoint
+  sub(/^https?:\/\//, "", tmp)
+  sub(/\/.*$/, "", tmp)
+  sub(/:.*$/, "", tmp)
+  return tmp
+}
+
+function buildCanonicalRequest(method, key, contentType, contentHash, amzDate,    host, canonicalUri, canonicalQueryString, canonicalHeaders, signedHeaders) {
+  host = extractHost(ENDPOINT)
+  canonicalUri = "/" BUCKET "/" key
+  canonicalQueryString = ""
+  canonicalHeaders = "content-type:" contentType "\n" \
+                     "host:" host "\n" \
+                     "x-amz-content-sha256:" contentHash "\n" \
+                     "x-amz-date:" amzDate "\n"
+  signedHeaders = "content-type;host;x-amz-content-sha256;x-amz-date"
+
+  return method "\n" \
+         canonicalUri "\n" \
+         canonicalQueryString "\n" \
+         canonicalHeaders "\n" \
+         signedHeaders "\n" \
+         contentHash
+}
+
+function buildStringToSign(amzDate, dateStamp, canonicalRequestHash) {
+  return "AWS4-HMAC-SHA256\n" \
+         amzDate "\n" \
+         dateStamp "/" REGION "/s3/aws4_request\n" \
+         canonicalRequestHash
+}
+
+# Server-side upload to S3
+# IMPORTANT: All parameters must be server-generated values to prevent command injection.
+# - filepath: temporary file path (e.g., /tmp/ogp_123_456.png)
+# - key: S3 object key (e.g., ogp/123/456.png)
+# - contentType: MIME type (e.g., image/png)
+# DO NOT pass user input directly to these parameters.
+function upload(filepath, key, contentType,
+    now, amzDate, dateStamp, contentHash, canonicalRequest,
+    canonicalRequestHash, stringToSign, signature, authHeader, cmd, host, url) {
+
+  needToUseAwsS3()
+
+  now = awk::systime()
+  amzDate = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
+  dateStamp = datetime::gmdate("%Y%m%d", now)
+
+  contentHash = hashFile(filepath)
+
+  canonicalRequest = buildCanonicalRequest("PUT", key, contentType, contentHash, amzDate)
+
+  canonicalRequestHash = sha256hash(canonicalRequest)
+
+  stringToSign = buildStringToSign(amzDate, dateStamp, canonicalRequestHash)
+
+  signature = sign(stringToSign, now)
+
+  host = extractHost(ENDPOINT)
+  authHeader = "AWS4-HMAC-SHA256 Credential=" ACCESS_KEY_ID "/" dateStamp "/" REGION "/s3/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=" signature
+
+  url = ENDPOINT "/" BUCKET "/" key
+
+  cmd = "curl -s -X PUT " \
+        "-H 'Content-Type: " contentType "' " \
+        "-H 'Host: " host "' " \
+        "-H 'x-amz-date: " amzDate "' " \
+        "-H 'x-amz-content-sha256: " contentHash "' " \
+        "-H 'Authorization: " authHeader "' " \
+        "--data-binary @" filepath " " \
+        "'" url "'"
+
+  shell::exec(cmd)
+
+  return ASSET_HOST "/" key
+}
