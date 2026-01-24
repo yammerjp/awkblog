@@ -11,8 +11,8 @@ fi
 echo "start.sh: Build templates to src/_compiled_templates.awk"
 bin/compile_templates.sh
 
-# echo "start.sh: Migrate Database Schema"
-# /app/bin/psqldef --user="$POSTGRES_USER" --password="$POSTGRES_PASSWORD" --host="$POSTGRES_HOSTNAME" --file=schema.sql "$POSTGRES_DATABASE"
+echo "start.sh: Migrate Database Schema"
+/app/bin/psqldef --user="$POSTGRES_USER" --password="$POSTGRES_PASSWORD" --host="$POSTGRES_HOSTNAME" --config=psqldef.yml --file=schema.sql "$POSTGRES_DATABASE"
 
 echo "start.sh: Start Web Application"
 

@@ -24,6 +24,7 @@ placeholder_author_profile: Author Profile
 submit: Save Changes
 cancel: Cancel
 post_title: Title
+og_image: OG Image URL
 post_content: Content
 upload_image: Upload Image
 publish: Publish

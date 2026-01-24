@@ -9,6 +9,7 @@ CREATE TABLE posts (
   account_id bigint NOT NULL REFERENCES accounts(id),
   title text,
   content text,
+  og_image VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

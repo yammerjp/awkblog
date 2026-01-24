@@ -32,6 +32,8 @@ function _account_name__posts___id__get(        splitted, params, query, rows, i
   templateVars["id"] = html::escape(post["id"])
   templateVars["title"] = html::escape(post["title"])
   templateVars["content"] = markdown::parseMultipleLines(html::escape(post["content"]))
+  templateVars["og_image"] = html::escape(post["og_image"])
+  templateVars["og_description"] = html::escape(text::headAbout500(html::toText(markdown::parseMultipleLines(html::escape(post["content"])))))
   templateVars["created_at"] = html::escape(post["created_at"])
 
   template::render("_account_name/posts/_id/get.html", templateVars);
