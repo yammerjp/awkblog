@@ -6,6 +6,18 @@ function _isAscii(c) {
     return c ~ /^[\x00-\x7F]$/
 }
 
+# Calculate visual width of a string
+# ASCII = width 0.9, non-ASCII UTF-8 = width 2
+function _visualWidth(str,    charCount, width, i, c) {
+    charCount = length(str)
+    width = 0
+    for (i = 1; i <= charCount; i++) {
+        c = substr(str, i, 1)
+        width += _isAscii(c) ? 0.9 : 2
+    }
+    return width
+}
+
 # Truncate string based on visual width, adding "…" if truncated
 # ASCII = width 0.9, non-ASCII UTF-8 = width 2
 # maxWidth is the maximum visual width (e.g., 30 for ~14 Japanese chars or ~31 ASCII)
@@ -35,6 +47,98 @@ function truncate(str, maxWidth,    charCount, width, cutPos, i, c, cw) {
     return str
 }
 
+# Split a BudouX chunk further by spaces (for ASCII text)
+# Returns the number of sub-chunks, stores them in result array
+function _splitBySpace(chunk, result,    n, i, parts, partCount) {
+    # Split by space, keeping spaces at word boundaries
+    partCount = split(chunk, parts, " ")
+    n = 0
+    for (i = 1; i <= partCount; i++) {
+        if (parts[i] != "") {
+            n++
+            # Add space back except for first part
+            if (i > 1) {
+                result[n] = " " parts[i]
+            } else {
+                result[n] = parts[i]
+            }
+        }
+    }
+    return n
+}
+
+# Wrap title into multiple lines using BudouX for word segmentation
+# Returns title with newlines inserted, up to maxLines lines
+# Each line limited to maxWidth visual width
+function wrapTitle(title, maxWidth, maxLines,
+    chunks, chunkCount, lines, lineCount, currentLine, currentWidth, i, j, chunkWidth, result,
+    subChunks, subChunkCount) {
+
+    # Initialize BudouX
+    budoux::_init()
+
+    # Parse title into chunks
+    chunkCount = budoux::parse(title, chunks)
+    if (chunkCount == 0) return ""
+
+    # Build lines from chunks
+    lineCount = 1
+    currentLine = ""
+    currentWidth = 0
+
+    for (i = 1; i <= chunkCount; i++) {
+        # For ASCII-heavy chunks, split further by spaces
+        subChunkCount = _splitBySpace(chunks[i], subChunks)
+
+        for (j = 1; j <= subChunkCount; j++) {
+            chunkWidth = _visualWidth(subChunks[j])
+
+            # Check if adding this chunk would exceed line width
+            if (currentWidth > 0 && currentWidth + chunkWidth > maxWidth) {
+                # Save current line and start new one
+                lines[lineCount] = currentLine
+                lineCount++
+
+                # If we've reached max lines, truncate and finish
+                if (lineCount > maxLines) {
+                    # Truncate the last line if needed
+                    lines[maxLines] = truncate(lines[maxLines] subChunks[j], maxWidth)
+                    lineCount = maxLines
+                    # Skip remaining chunks
+                    i = chunkCount + 1
+                    break
+                }
+
+                # Start new line (trim leading space if present)
+                if (substr(subChunks[j], 1, 1) == " ") {
+                    currentLine = substr(subChunks[j], 2)
+                    currentWidth = _visualWidth(currentLine)
+                } else {
+                    currentLine = subChunks[j]
+                    currentWidth = chunkWidth
+                }
+            } else {
+                # Add chunk to current line
+                currentLine = currentLine subChunks[j]
+                currentWidth += chunkWidth
+            }
+        }
+    }
+
+    # Don't forget the last line
+    if (lineCount <= maxLines && currentLine != "") {
+        lines[lineCount] = currentLine
+    }
+
+    # Join lines with newlines
+    result = lines[1]
+    for (i = 2; i <= lineCount; i++) {
+        result = result "\n" lines[i]
+    }
+
+    return result
+}
+
 function generateImage(title, github_user, output,
     fontBold, fontRegular, width, height, avatarSize,
     avatar_url, avatar_file, cmd, im, white, darkGray, lightGray, accentYellow,
@@ -43,7 +147,7 @@ function generateImage(title, github_user, output,
     bottomRatio, cornerBottomR, cornerBottomG, cornerBottomB,
     largeRadius, corner, bgColor,
     padding, contentLeft, contentRight, contentTop, contentBottom,
-    titleSize, titleX, titleY, titleLineHeight, titleLineCount, titleLines, i, brect,
+    titleSize, titleX, titleY, titleLineHeight, titleLineCount, titleLines, i, brect, wrappedTitle,
     avatarX, avatarY, avatarCenterY, avatar, avatarW, avatarH, largeSize, avatarLarge,
     userFontSize, userX, userY, userName,
     brandFontSize, brandWidth, brandX, brandY, result) {
@@ -143,10 +247,12 @@ function generateImage(title, github_user, output,
     titleY = contentTop + titleSize + 20
     titleLineHeight = int(titleSize * 1.4)
 
-    titleLineCount = split(title, titleLines, "\n")
+    # Wrap title using BudouX (max 4 lines, max width 30)
+    wrappedTitle = wrapTitle(title, 30, 4)
+    titleLineCount = split(wrappedTitle, titleLines, "\n")
     for (i = 1; i <= titleLineCount; i++) {
         delete brect
-        awk::gdImageStringFT(im, brect, darkGray, fontBold, titleSize, 0, titleX, titleY + (i - 1) * titleLineHeight, truncate(titleLines[i], 30))
+        awk::gdImageStringFT(im, brect, darkGray, fontBold, titleSize, 0, titleX, titleY + (i - 1) * titleLineHeight, titleLines[i])
     }
 
     avatarX = contentLeft

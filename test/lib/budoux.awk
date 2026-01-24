@@ -1,3 +1,5 @@
+@include "src/lib/utf8.awk"
+@include "src/vendor/budoux_model_ja.awk"
 @include "src/lib/budoux.awk"
 @include "test/testutil.awk"
 

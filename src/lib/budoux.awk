@@ -1,6 +1,4 @@
 @namespace "budoux"
-@include "src/vendor/budoux_model_ja.awk"
-@include "src/lib/utf8.awk"
 
 # Internal model array
 # Initialized by _init()
