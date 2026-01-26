@@ -12,8 +12,8 @@ function authed__posts__edit__post(        id, title, content, ogImage, account_
   ogImage = result["og_image"]
   accountId = auth::getAccountId()
 
-  # Generate OGP image from title only if not provided
-  if (ogImage == "") {
+  # Generate OGP image from title only if not provided and S3 is enabled
+  if (ogImage == "" && !awss3::isDisabled()) {
     model::getAccount(account, accountId)
     ogImage = ogp::generateAndUpload(title, account["name"], accountId)
   }

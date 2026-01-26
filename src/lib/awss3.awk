@@ -15,6 +15,10 @@ function loadEnviron() {
     REGION = environ::getOrPanic("AWS_REGION")
     SECRET_ACCESS_KEY = environ::getOrPanic("AWS_SECRET_ACCESS_KEY")
     ENDPOINT = environ::getOrPanic("S3_BUCKET_ENDPOINT")
+    UPLOAD_ENDPOINT = environ::get("S3_UPLOAD_ENDPOINT")
+    if (!UPLOAD_ENDPOINT) {
+      UPLOAD_ENDPOINT = ENDPOINT
+    }
     ASSET_HOST = environ::getOrPanic("S3_ASSET_HOST")
   }
 }
@@ -23,6 +27,10 @@ function needToUseAwsS3() {
   if (NOT_USE_AWS_S3) {
     error::raise("need to use aws s3", "awss3")
   }
+}
+
+function isDisabled() {
+  return NOT_USE_AWS_S3
 }
 
 function getAssetHost() {
@@ -37,11 +45,10 @@ function buildPolicyToUpload(now, key, type, sizeMin, sizeMax    , policy) {
   policy["conditions"][4][1] = "content-length-range"
   policy["conditions"][4][2] = sizeMin
   policy["conditions"][4][3] = sizeMax
-  policy["conditions"][5]["acl"] = "public-read"
-  policy["conditions"][6]["success_action_status"] = "201"
-  policy["conditions"][7]["x-amz-algorithm"] = "AWS4-HMAC-SHA256"
-  policy["conditions"][8]["x-amz-credential"] = ACCESS_KEY_ID "/" datetime::gmdate("%Y%m%d", now) "/" REGION "/s3/aws4_request"
-  policy["conditions"][9]["x-amz-date"] = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
+  policy["conditions"][5]["success_action_status"] = "201"
+  policy["conditions"][6]["x-amz-algorithm"] = "AWS4-HMAC-SHA256"
+  policy["conditions"][7]["x-amz-credential"] = ACCESS_KEY_ID "/" datetime::gmdate("%Y%m%d", now) "/" REGION "/s3/aws4_request"
+  policy["conditions"][8]["x-amz-date"] = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
 
   return json::to_json(policy, 1)
 }
@@ -68,11 +75,10 @@ function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret, s
   stringToSign = base64::encode(buildPolicyToUpload(now, key, type, sizeMin, sizeMax))
   gsub("\n", "", stringToSign)
 
-  ret["upload_url"] = ENDPOINT # "https://" BUCKET ".s3.amazonaws.com"
-  ret["public_url"] = ASSET_HOST "/" key # "https://" BUCKET ".s3.amazonaws.com/" key
+  ret["upload_url"] = UPLOAD_ENDPOINT
+  ret["public_url"] = ASSET_HOST "/" key
   ret["data"]["bucket"] = BUCKET
   ret["data"]["key"] = key
-  ret["data"]["acl"] = "public-read"
   ret["data"]["success_action_status"] = "201"
   ret["data"]["policy"] = stringToSign
   ret["data"]["x-amz-credential"] = ACCESS_KEY_ID "/" datetime::gmdate("%Y%m%d", now) "/" REGION "/s3/aws4_request"
@@ -109,7 +115,7 @@ function extractHost(endpoint,    tmp) {
 
 function buildCanonicalRequest(method, key, contentType, contentHash, amzDate,    host, canonicalUri, canonicalQueryString, canonicalHeaders, signedHeaders) {
   host = extractHost(ENDPOINT)
-  canonicalUri = "/" BUCKET "/" key
+  canonicalUri = "/" key
   canonicalQueryString = ""
   canonicalHeaders = "content-type:" contentType "\n" \
                      "host:" host "\n" \
@@ -161,7 +167,7 @@ function upload(filepath, key, contentType,
   host = extractHost(ENDPOINT)
   authHeader = "AWS4-HMAC-SHA256 Credential=" ACCESS_KEY_ID "/" dateStamp "/" REGION "/s3/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=" signature
 
-  url = ENDPOINT "/" BUCKET "/" key
+  url = ENDPOINT "/" key
 
   cmd = "curl -s -X PUT " \
         "-H 'Content-Type: " contentType "' " \
@@ -172,7 +178,14 @@ function upload(filepath, key, contentType,
         "--data-binary @" filepath " " \
         "'" url "'"
 
-  shell::exec(cmd)
+  logger::info("[awss3] upload URL: " url)
+  logger::info("[awss3] upload cmd: " cmd)
+  result = shell::exec(cmd)
+  if (result != "") {
+    logger::error("[awss3] upload error: " result)
+  } else {
+    logger::info("[awss3] upload success")
+  }
 
   return ASSET_HOST "/" key
 }

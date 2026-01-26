@@ -37,6 +37,10 @@ services:
       - .env
   garage:
     image: dxflrs/garage:v1.1.0
+    networks:
+      default:
+        aliases:
+          - awkblog-images.s3.garage
     ports:
       - "${GARAGE_S3_PORT:-3900}:3900"      # S3 API
       - "${GARAGE_RPC_PORT:-3901}:3901"     # RPC
@@ -50,6 +54,7 @@ services:
     image: nginx:alpine
     ports:
       - "${S3_PROXY_PORT:-3904}:80"
+      - "${S3_API_PROXY_PORT:-8717}:8080"
     volumes:
       - ./misc/nginx-s3-proxy.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
