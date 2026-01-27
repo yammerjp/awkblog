@@ -7,9 +7,9 @@ BEGIN {
 function loadEnviron() {
   NOT_USE_AWS_S3 = environ::get("NOT_USE_AWS_S3")
   if (NOT_USE_AWS_S3) {
-    logger::info("The environment variable NOT_USE_AWS_S3 is set; remove this environment variable if you want to use S3.")
+    logger::info("The environment variable NOT_USE_AWS_S3 is set; S3 will not be used.")
   } else {
-    logger::info("S3 will be used. If you do not use it, set the environment variable NOT_USE_AWS_S3")
+    logger::info("S3 will be used.")
     ACCESS_KEY_ID = environ::getOrPanic("AWS_ACCESS_KEY_ID")
     BUCKET = environ::getOrPanic("AWS_BUCKET")
     REGION = environ::getOrPanic("AWS_REGION")
@@ -20,12 +20,6 @@ function loadEnviron() {
       UPLOAD_ENDPOINT = ENDPOINT
     }
     ASSET_HOST = environ::getOrPanic("S3_ASSET_HOST")
-  }
-}
-
-function needToUseAwsS3() {
-  if (NOT_USE_AWS_S3) {
-    error::raise("need to use aws s3", "awss3")
   }
 }
 
@@ -70,8 +64,6 @@ function sign(signee, now,     dateRegionKey, dateRegionServiceKey, signingKey) 
 }
 
 function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret, stringToSign) {
-  needToUseAwsS3()
-
   stringToSign = base64::encode(buildPolicyToUpload(now, key, type, sizeMin, sizeMax))
   gsub("\n", "", stringToSign)
 
@@ -148,8 +140,6 @@ function upload(filepath, key, contentType,
     now, amzDate, dateStamp, contentHash, canonicalRequest,
     canonicalRequestHash, stringToSign, signature, authHeader, cmd, host, url) {
 
-  needToUseAwsS3()
-
   now = awk::systime()
   amzDate = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
   dateStamp = datetime::gmdate("%Y%m%d", now)
@@ -178,14 +168,7 @@ function upload(filepath, key, contentType,
         "--data-binary @" filepath " " \
         "'" url "'"
 
-  logger::info("[awss3] upload URL: " url)
-  logger::info("[awss3] upload cmd: " cmd)
-  result = shell::exec(cmd)
-  if (result != "") {
-    logger::error("[awss3] upload error: " result)
-  } else {
-    logger::info("[awss3] upload success")
-  }
+  shell::exec(cmd)
 
   return ASSET_HOST "/" key
 }
