@@ -7,22 +7,24 @@ BEGIN {
 function loadEnviron() {
   NOT_USE_AWS_S3 = environ::get("NOT_USE_AWS_S3")
   if (NOT_USE_AWS_S3) {
-    logger::info("The environment variable NOT_USE_AWS_S3 is set; remove this environment variable if you want to use S3.")
+    logger::info("The environment variable NOT_USE_AWS_S3 is set; S3 will not be used.")
   } else {
-    logger::info("S3 will be used. If you do not use it, set the environment variable NOT_USE_AWS_S3")
+    logger::info("S3 will be used.")
     ACCESS_KEY_ID = environ::getOrPanic("AWS_ACCESS_KEY_ID")
     BUCKET = environ::getOrPanic("AWS_BUCKET")
     REGION = environ::getOrPanic("AWS_REGION")
     SECRET_ACCESS_KEY = environ::getOrPanic("AWS_SECRET_ACCESS_KEY")
     ENDPOINT = environ::getOrPanic("S3_BUCKET_ENDPOINT")
+    UPLOAD_ENDPOINT = environ::get("S3_UPLOAD_ENDPOINT")
+    if (!UPLOAD_ENDPOINT) {
+      UPLOAD_ENDPOINT = ENDPOINT
+    }
     ASSET_HOST = environ::getOrPanic("S3_ASSET_HOST")
   }
 }
 
-function needToUseAwsS3() {
-  if (NOT_USE_AWS_S3) {
-    error::raise("need to use aws s3", "awss3")
-  }
+function isDisabled() {
+  return NOT_USE_AWS_S3
 }
 
 function getAssetHost() {
@@ -37,11 +39,10 @@ function buildPolicyToUpload(now, key, type, sizeMin, sizeMax    , policy) {
   policy["conditions"][4][1] = "content-length-range"
   policy["conditions"][4][2] = sizeMin
   policy["conditions"][4][3] = sizeMax
-  policy["conditions"][5]["acl"] = "public-read"
-  policy["conditions"][6]["success_action_status"] = "201"
-  policy["conditions"][7]["x-amz-algorithm"] = "AWS4-HMAC-SHA256"
-  policy["conditions"][8]["x-amz-credential"] = ACCESS_KEY_ID "/" datetime::gmdate("%Y%m%d", now) "/" REGION "/s3/aws4_request"
-  policy["conditions"][9]["x-amz-date"] = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
+  policy["conditions"][5]["success_action_status"] = "201"
+  policy["conditions"][6]["x-amz-algorithm"] = "AWS4-HMAC-SHA256"
+  policy["conditions"][7]["x-amz-credential"] = ACCESS_KEY_ID "/" datetime::gmdate("%Y%m%d", now) "/" REGION "/s3/aws4_request"
+  policy["conditions"][8]["x-amz-date"] = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
 
   return json::to_json(policy, 1)
 }
@@ -63,16 +64,13 @@ function sign(signee, now,     dateRegionKey, dateRegionServiceKey, signingKey) 
 }
 
 function buildPreSignedUploadParams(now, key, type, sizeMin, sizeMax    , ret, stringToSign) {
-  needToUseAwsS3()
-
   stringToSign = base64::encode(buildPolicyToUpload(now, key, type, sizeMin, sizeMax))
   gsub("\n", "", stringToSign)
 
-  ret["upload_url"] = ENDPOINT # "https://" BUCKET ".s3.amazonaws.com"
-  ret["public_url"] = ASSET_HOST "/" key # "https://" BUCKET ".s3.amazonaws.com/" key
+  ret["upload_url"] = UPLOAD_ENDPOINT
+  ret["public_url"] = ASSET_HOST "/" key
   ret["data"]["bucket"] = BUCKET
   ret["data"]["key"] = key
-  ret["data"]["acl"] = "public-read"
   ret["data"]["success_action_status"] = "201"
   ret["data"]["policy"] = stringToSign
   ret["data"]["x-amz-credential"] = ACCESS_KEY_ID "/" datetime::gmdate("%Y%m%d", now) "/" REGION "/s3/aws4_request"
@@ -109,7 +107,7 @@ function extractHost(endpoint,    tmp) {
 
 function buildCanonicalRequest(method, key, contentType, contentHash, amzDate,    host, canonicalUri, canonicalQueryString, canonicalHeaders, signedHeaders) {
   host = extractHost(ENDPOINT)
-  canonicalUri = "/" BUCKET "/" key
+  canonicalUri = "/" key
   canonicalQueryString = ""
   canonicalHeaders = "content-type:" contentType "\n" \
                      "host:" host "\n" \
@@ -142,8 +140,6 @@ function upload(filepath, key, contentType,
     now, amzDate, dateStamp, contentHash, canonicalRequest,
     canonicalRequestHash, stringToSign, signature, authHeader, cmd, host, url) {
 
-  needToUseAwsS3()
-
   now = awk::systime()
   amzDate = datetime::gmdate("%Y%m%dT%H%M%SZ", now)
   dateStamp = datetime::gmdate("%Y%m%d", now)
@@ -161,7 +157,7 @@ function upload(filepath, key, contentType,
   host = extractHost(ENDPOINT)
   authHeader = "AWS4-HMAC-SHA256 Credential=" ACCESS_KEY_ID "/" dateStamp "/" REGION "/s3/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=" signature
 
-  url = ENDPOINT "/" BUCKET "/" key
+  url = ENDPOINT "/" key
 
   cmd = "curl -s -X PUT " \
         "-H 'Content-Type: " contentType "' " \

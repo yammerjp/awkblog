@@ -23,7 +23,9 @@ BEGIN {
 }
 
 function isValidUsername(username) {
-  if (length(username) < 1 || length(username) > 39) return 0
+  # GitHub's actual limit is 39, but extended to 48 to support the OAuth mock server
+  # (github-oauth2-login-mock-server returns "github-oauth2-login-mock-server-dummy-user" which is 48 chars)
+  if (length(username) < 1 || length(username) > 48) return 0
   if (username !~ /^[a-zA-Z0-9][a-zA-Z0-9-]*$/) return 0
   if (username ~ /-$/) return 0
   if (username ~ /--/) return 0
