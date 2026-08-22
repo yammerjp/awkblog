@@ -31,3 +31,15 @@
   assertEqual("controller::notfound", router::find("POST", "/path/to/notfound"))
   assertEqual("controller::_accounts__account_id__posts__post_id__get", router::find("GET", "/accounts/13/posts/15"))
 }
+
+"HEAD falls back to GET when no HEAD route is registered" {
+  router::register("GET", "/", "controller::get")
+  router::register("GET", "/login", "controller::login__get")
+  router::register("GET", "/*", "controller::_account_id__get")
+  router::register_notfound("controller::notfound")
+
+  assertEqual("controller::get", router::find("HEAD", "/"))
+  assertEqual("controller::login__get", router::find("HEAD", "/login"))
+  assertEqual("controller::_account_id__get", router::find("HEAD", "/@yammerjp"))
+  assertEqual("controller::notfound", router::find("HEAD", "/nonexistent/deep/path"))
+}

@@ -29,6 +29,13 @@ function find(method, path,    key, pos) {
       return RoutingTable[key]
     }
   }
+
+  if (method == "HEAD") {
+    # HEAD is expected to behave like GET per RFC 7231, so fall back to
+    # the GET route when no HEAD-specific route is registered.
+    return find("GET", path)
+  }
+
   return RoutingNotFoundCallback
 }
 

@@ -19,12 +19,17 @@ function receiveRequest() {
   logRequest()
 }
 
+function isValidRequestLine(line) {
+  return line ~ /^(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH) \/.* HTTP\/1\.[01]\r?$/
+}
+
 function readFirstLine(    line, splitted, parameters, result) {
   # read first line
   awk::RS="\n"
   INET |& getline line;
+  gsub(/\r/, "", line)
   logger::debug("readFirstLine: " line, "http")
-  if (line !~ /^\(HEAD|GET|POST|PUT|DELETE|OPTIONS|PATCH\) \/.* HTTP\/1\.[01]$/) {
+  if (!isValidRequestLine(line)) {
     send(400)
     return
   }
