@@ -1,3 +1,5 @@
+
+
 # awkblog
 
 awkblog is an AWK-based blogging platform that demonstrates AWK's capability to build full-fledged web applications. It features GitHub OAuth, Markdown support, and optional S3 image hosting, showcasing that AWK can be used for more than just text processing.
@@ -19,7 +21,7 @@ cp .env.example .env
 # Write OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET
 # vim .env
 docker compose up -d
-# open browser localhost:4567
+# open browser http://localhost:4567
 ```
 
 
@@ -74,4 +76,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
